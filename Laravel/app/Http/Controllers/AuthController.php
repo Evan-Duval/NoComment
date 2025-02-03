@@ -29,11 +29,15 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
+            'username' => 'required|string',
+            'birthday' => 'required|string',
             'email'=>'required|string|unique:users',
             'password'=>'required|string|min:8',
             'c_password' => 'required|same:password',
-            'birthday' => 'required|string',
             'rank' => 'required|string',
+            'logo' => 'required|string',
+            'bio' => 'required|string',
+            'certified' => 'boolean',
         ]);
 
         $user = new User([
