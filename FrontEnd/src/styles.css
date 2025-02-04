@@ -50,7 +50,8 @@ body {
 
 .register-container .register-box input, .login-container .login-box input {
     width: 100%;
-    padding: 0.8rem;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
