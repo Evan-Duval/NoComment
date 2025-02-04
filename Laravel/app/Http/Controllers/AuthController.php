@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,16 +15,16 @@ use Illuminate\Support\Facades\Mail;
 class AuthController extends Controller
 {
     /**
-    * Create user
-    *
-    * @param  [string] first_name
-    * @param  [string] last_name
-    * @param  [string] email
-    * @param  [string] password
-    * @param  [string] password_confirmation
-    * @param  [date] birthday
-    * @return [string] message
-    */
+     * Create user
+     *
+     * @param  [string] first_name
+     * @param  [string] last_name
+     * @param  [string] email
+     * @param  [string] password
+     * @param  [string] password_confirmation
+     * @param  [date] birthday
+     * @return [string] message
+     */
     public function register(Request $request)
     {
         $request->validate([
@@ -31,12 +32,12 @@ class AuthController extends Controller
             'last_name' => 'required|string',
             'username' => 'required|string',
             'birthday' => 'required|string',
-            'email'=>'required|string|unique:users',
-            'password'=>'required|string|min:8',
+            'email' => 'required|string|unique:users',
+            'password' => 'required|string|min:8',
             'c_password' => 'required|same:password',
-            'rank' => 'required|string',
-            'logo' => 'required|string',
-            'bio' => 'required|string',
+            'rank' => 'string',
+            'logo' => 'string',
+            'bio' => 'string',
             'certified' => 'boolean',
         ]);
 
@@ -49,17 +50,16 @@ class AuthController extends Controller
             'rank' => $request->rank,
         ]);
 
-        if($user->save()){
+        if ($user->save()) {
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->plainTextToken;
 
             return response()->json([
-            'message' => 'Successfully created user!',
-            'accessToken'=> $token,
-            ],201);
-        }
-        else{
-            return response()->json(['error'=>'Provide proper details']);
+                'message' => 'Successfully created user!',
+                'accessToken' => $token,
+            ], 201);
+        } else {
+            return response()->json(['error' => 'Provide proper details']);
         }
     }
 
@@ -69,22 +69,21 @@ class AuthController extends Controller
      * @param  [string] email
      * @param  [string] password
      * @param  [boolean] remember_me
-    */
+     */
 
     public function login(Request $request)
     {
         $request->validate([
-        'email' => 'required|string|email',
-        'password' => 'required|string',
-        'remember_me' => 'boolean'
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+            'remember_me' => 'boolean'
         ]);
 
-        $credentials = request(['email','password']);
-        if(!Auth::attempt($credentials))
-        {
-        return response()->json([
-            'message' => 'Unauthorized'
-        ],401);
+        $credentials = request(['email', 'password']);
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
         }
 
         $user = $request->user();
@@ -100,8 +99,8 @@ class AuthController extends Controller
         $token = $tokenResult->plainTextToken;
 
         return response()->json([
-        'accessToken' =>$token,
-        'token_type' => 'Bearer',
+            'accessToken' => $token,
+            'token_type' => 'Bearer',
         ]);
     }
 
@@ -109,7 +108,7 @@ class AuthController extends Controller
      * Get the authenticated User
      *
      * @return [json] user object
-    */
+     */
     public function user(Request $request)
     {
         return response()->json($request->user());
@@ -119,15 +118,14 @@ class AuthController extends Controller
      * Logout user (Revoke the token)
      *
      * @return [string] message
-    */
+     */
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
 
         return response()->json([
-        'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out'
         ]);
-
     }
 
     /**
@@ -178,11 +176,11 @@ class AuthController extends Controller
     /**
      * This PHP function deletes a user by setting the 'deleted_at' timestamp field to the current time
      * for soft deletion.
-     * 
+     *
      * @param int id The `delete` function you provided is used to perform a soft delete on a user
      * record in the database. The function takes an integer parameter `` which represents the
      * unique identifier of the user to be deleted.
-     * 
+     *
      * @return JsonResponse A JSON response is being returned. If the user with the specified ID is
      * found, a success message indicating that the user has been soft deleted is returned with a
      * status code of 200. If the user is not found, a message indicating that the user was not found
@@ -206,12 +204,12 @@ class AuthController extends Controller
     /**
      * The function `resetpassword` resets a user's password, sends a notification email with the new
      * password, and handles exceptions.
-     * 
+     *
      * @param Request request The code you provided is a PHP function that resets a user's password. It
      * first validates the email provided in the request, then searches for the user with that email,
      * resets the password to a default value 'Password1234', saves the new password hashed, sends an
      * email notification with the new password
-     * 
+     *
      * @return `resetpassword` function returns a JSON response with a success message if the
      * password reset and email sending were successful. If an error occurs during the process, it
      * returns a JSON response with an error message and the specific error message caught in the catch
@@ -228,7 +226,7 @@ class AuthController extends Controller
     //     try {
     //         // Recherche de l'utilisateur
     //         $user = User::where('email', $request->email)->first();
-            
+
     //         // Reset du mot de passe
     //         $newPassword = 'Password1234';
     //         $user->password = Hash::make($newPassword);
