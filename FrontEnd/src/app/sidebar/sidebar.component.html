@@ -1,0 +1,61 @@
+<nav class="sidebar">
+  <!-- Section principale -->
+  <div class="sidebar-section">
+    <div class="app-title">
+      <span>NoComment</span>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/accueil" routerLinkActive="active">
+          <span class="icon">🏠</span>
+          <span>Accueil</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Section Groupes -->
+  <div class="sidebar-section">
+    <h3>Vos groupes</h3>
+    <ul class="group-list">
+      <li>
+        <a href="#">
+          <img src="path-to-image" alt="groupe" class="group-avatar" />
+          <span>Les totos du CESI</span>
+          <span class="notification-badge">24</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <img src="path-to-image" alt="groupe" class="group-avatar" />
+          <span>Groupe de travail Crypto</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Section Personnel -->
+  <div class="sidebar-section bottom">
+    <h3>Personnel</h3>
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/profil" routerLinkActive="active">
+          <span class="icon">👤</span>
+          <span>Profil</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/settings" routerLinkActive="active">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
