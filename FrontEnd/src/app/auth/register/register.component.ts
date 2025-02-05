@@ -1,28 +1,62 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, HttpClientModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
   registerForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder, 
+    private authService: AuthService
+  ) {
     this.registerForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      birthday: ['', Validators.required],
       password: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      username: ['', Validators.required]
     });
   }
 
   onSubmit() {
-    // Handle registration logic here
+    console.log('Formulaire soumis');
+    console.log(this.registerForm.value);
+    if (this.registerForm.valid) {
+      console.log('Formulaire valide');
+      const { 
+        first_name,
+        last_name,
+        email,
+        birthday, 
+        password,
+        username,
+      } = this.registerForm.value;
+      this.authService.register(
+        first_name,
+        last_name,
+        email,
+        birthday, 
+        password,
+        username,
+      ).subscribe({
+        next: (response) => {
+          console.log('Inscription réussie', response);
+        },
+        error: (error) => {
+          console.error('Erreur d\'inscription', error);
+        }
+      });
+    }
   }
 }
