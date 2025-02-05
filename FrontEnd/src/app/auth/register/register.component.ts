@@ -29,10 +29,7 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    console.log('Formulaire soumis');
-    console.log(this.registerForm.value);
     if (this.registerForm.valid) {
-      console.log('Formulaire valide');
       const { 
         first_name,
         last_name,
