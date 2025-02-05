@@ -120,7 +120,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
               child: GestureDetector(
                 onTap: () => redirectPage(context),
                 child: Text(
-                  'Mot de passe oublié',
+                  'S\'inscrire ici',
                   style: TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 0.8),
                     fontSize: 12,

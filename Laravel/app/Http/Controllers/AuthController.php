@@ -31,7 +31,7 @@ class AuthController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'username' => 'required|string',
-            'birthday' => 'required|string',
+            'birthday' => 'required|date',
             'email' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
             'c_password' => 'required|same:password',
@@ -44,8 +44,12 @@ class AuthController extends Controller
         $user = new User([
             'first_name'  => $request->first_name,
             'last_name'  => $request->last_name,
+            'username'  => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'logo' => $request->logo,
+            'bio' => $request->bio,
+            'certified' => $request->certified,
             'birthday' => $request->birthday,
             'rank' => $request->rank,
         ]);

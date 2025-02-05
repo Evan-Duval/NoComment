@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:no_comment_flutter/pages/login.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,6 +23,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
 
+  void redirectPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
   Future<void> _submitRegistration() async {
     final apiUrl =
         '${dotenv.env['URL']}api/auth/register'; // Utilisation de dotenv
@@ -35,29 +43,19 @@ class _RegisterPageState extends State<RegisterPage> {
       "email": _emailController.text,
       "password": _passwordController.text,
       "c_password": _confirmPasswordController.text,
+      "bio": "Je suis un nouvel utilisateur de NoComment.",
+      "logo": "image.png",
+      "rank": "user",
+      "certified": 0
     };
 
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(userData),
-      );
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(userData),
+    );
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Inscription réussie : ${responseData['message']}")));
-      } else {
-        final errorData = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                "Erreur : ${errorData['error'] ?? 'Inscription échouée'}")));
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Une erreur est survenue. Veuillez réessayer.")));
-    }
+    Navigator.pushNamed(context, '/login');
   }
 
   @override
@@ -106,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true),
                 _buildTextField('Prénom', _firstNameController),
                 _buildTextField('Nom', _lastNameController),
-                _buildTextField('Date de naissance', _birthdayController),
+                _buildBirthdayField(context, _birthdayController),
                 const SizedBox(height: 40),
                 Center(
                   child: ElevatedButton(
@@ -126,15 +124,22 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    "Déjà un compte ?",
-                    style: GoogleFonts.poppins(
-                      color: Colors.white60,
-                      fontSize: 14,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () => redirectPage(context),
+                      child: Text(
+                        "Déjà un compte ?",
+                        style: GoogleFonts.poppins(
+                          color: const Color.fromRGBO(255, 255, 255, 0.8),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -165,6 +170,65 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
         style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildBirthdayField(
+      BuildContext context, TextEditingController _birthdayController) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: GestureDetector(
+        onTap: () async {
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: const Color.fromRGBO(246, 112, 63, 1),
+                    onPrimary: Colors.white,
+                    surface: const Color.fromRGBO(23, 32, 42, 1),
+                    onSurface: Colors.white,
+                  ),
+                  dialogBackgroundColor: Color.fromARGB(255, 230, 231, 233),
+                ),
+                child: child!,
+              );
+            },
+          );
+
+          if (pickedDate != null) {
+            setState(() {
+              _birthdayController.text =
+                  "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+            });
+          }
+        },
+        child: AbsorbPointer(
+          child: TextField(
+            controller: _birthdayController,
+            decoration: InputDecoration(
+              labelText: 'Date de naissance',
+              labelStyle: GoogleFonts.poppins(
+                color: const Color.fromRGBO(255, 255, 255, 0.8),
+                fontWeight: FontWeight.bold,
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              ),
+            ),
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
       ),
     );
   }
