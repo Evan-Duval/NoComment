@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, HttpClientModule],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -24,7 +23,7 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       birthday: ['', Validators.required],
       password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
+      c_password: ['', Validators.required],
       username: ['', Validators.required]
     });
   }
@@ -40,6 +39,7 @@ export class RegisterComponent {
         email,
         birthday, 
         password,
+        c_password,
         username,
       } = this.registerForm.value;
       this.authService.register(
@@ -48,6 +48,7 @@ export class RegisterComponent {
         email,
         birthday, 
         password,
+        c_password,
         username,
       ).subscribe({
         next: (response) => {

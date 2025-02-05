@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https:127.0.0.1/api/auth';
+  private apiUrl = 'http://127.0.0.1:8000/api/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -20,6 +20,7 @@ export class AuthService {
     email: string, 
     birthday: Date,
     password: string,
+    c_password: string,
     username: string, 
   ): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { 
@@ -28,6 +29,7 @@ export class AuthService {
       email, 
       birthday,
       password,
+      c_password,
       username,
     });
   }

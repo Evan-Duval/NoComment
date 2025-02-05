@@ -34,9 +34,9 @@ class AuthController extends Controller
             'email'=>'required|string|unique:users',
             'password'=>'required|string|min:8',
             'c_password' => 'required|same:password',
-            'rank' => 'required|string',
-            'logo' => 'required|string',
-            'bio' => 'required|string',
+            'rank' => 'string',
+            'logo' => 'string',
+            'bio' => 'string',
             'certified' => 'boolean',
         ]);
 
@@ -47,10 +47,10 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'birthday' => $request->birthday,
-            'rank' => $request->rank,
-            'logo' => $request->logo,
-            'bio' => $request->bio,
-            'certified' => $request->certified,
+            'rank' => $request->rank ?? "user",
+            'logo' => $request->logo ?? null,
+            'bio' => $request->bio ?? null,
+            'certified' => $request->certified ?? 0,
         ]);
 
         if($user->save()){
