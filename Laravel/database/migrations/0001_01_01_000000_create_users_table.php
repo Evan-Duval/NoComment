@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('rank')->nullable();
             $table->string('logo')->nullable();
             $table->string('bio')->nullable();
-            $table->boolean('certified')->nullable();
+            $table->boolean('certified');
             $table->rememberToken();
             $table->timestamps();
         });

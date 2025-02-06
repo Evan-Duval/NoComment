@@ -51,7 +51,10 @@ class AuthController extends Controller
             'bio' => $request->bio,
             'certified' => $request->certified,
             'birthday' => $request->birthday,
-            'rank' => $request->rank,
+            'rank' => $request->rank ?? "user",
+            'logo' => $request->logo ?? null,
+            'bio' => $request->bio ?? null,
+            'certified' => $request->certified ?? 0,
         ]);
 
         if ($user->save()) {
