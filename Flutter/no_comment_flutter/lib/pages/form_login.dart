@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:no_comment_flutter/pages/home.dart';
 import 'package:no_comment_flutter/pages/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class MyCustomForm extends StatefulWidget {
@@ -29,7 +31,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
   final String email = _emailController.text;
   final String password = _passwordController.text;
 
-  final String apiUrl = 'https://fd8e-81-67-89-174.ngrok-free.app/api/auth/login';
+  final apiUrl =
+        '${dotenv.env['URL']}api/auth/login'; // Utilisation de dotenv
 
   try {
     final response = await http.post(
@@ -77,7 +80,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
   void redirectPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RegisterPage()),
+      MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
 
