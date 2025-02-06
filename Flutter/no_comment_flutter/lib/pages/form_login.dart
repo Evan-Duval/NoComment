@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:no_comment_flutter/pages/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
@@ -8,6 +12,66 @@ class MyCustomForm extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<MyCustomForm> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String? _token; 
+  String? _errorMessage;
+
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    print("Token sauvegardé : $token");
+  }
+
+  Future<void> _login() async {
+  final String email = _emailController.text;
+  final String password = _passwordController.text;
+
+  final String apiUrl = 'https://fd8e-81-67-89-174.ngrok-free.app/api/auth/login';
+
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      _token = data['accessToken'];
+      print("Token reçu : $_token");
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', _token!);
+
+      setState(() {
+        _errorMessage = null; 
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const RegisterPage(), 
+        ),
+      );
+    } else {
+      final errorData = jsonDecode(response.body);
+      setState(() {
+        _errorMessage = errorData['message'] ?? 'Erreur de connexion.';
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _errorMessage = 'Une erreur s\'est produite : $e';
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +94,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.only(top: 100),
             child: TextField(
               cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
-              // controller: _emailController,
+              controller: _emailController,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -59,7 +123,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.only(top: 50),
             child: TextFormField(
               cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
-              // controller: _passwordController,
+              controller: _passwordController,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -94,7 +158,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent, 

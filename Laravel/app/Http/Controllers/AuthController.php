@@ -35,8 +35,8 @@ class AuthController extends Controller
             'password'=>'required|string|min:8',
             'c_password' => 'required|same:password',
             'rank' => 'required|string',
-            'logo' => 'required|string',
-            'bio' => 'required|string',
+            'logo' => 'string',
+            'bio' => 'string',
             'certified' => 'boolean',
         ]);
 
