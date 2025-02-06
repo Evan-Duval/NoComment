@@ -12,7 +12,7 @@
 .swiftpm/
 .env
 migrate_working_dir/
-
+Flutter/no_comment_flutter/.env
 # IntelliJ related
 *.iml
 *.ipr
