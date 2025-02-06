@@ -16,7 +16,7 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder, 
     private authService: AuthService
-  ) {
+    ) {
     this.registerForm = this.formBuilder.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
@@ -50,6 +50,7 @@ export class RegisterComponent {
       ).subscribe({
         next: (response) => {
           console.log('Inscription réussie', response);
+          localStorage.setItem('token', response.accessToken);
         },
         error: (error) => {
           console.error('Erreur d\'inscription', error);
