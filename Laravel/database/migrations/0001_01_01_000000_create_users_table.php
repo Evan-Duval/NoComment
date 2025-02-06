@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('rank');
-            $table->string('logo');
-            $table->string('bio');
+            $table->string('rank')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('bio')->nullable();
             $table->boolean('certified');
             $table->rememberToken();
             $table->timestamps();

@@ -1,0 +1,79 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #1e1e2d;
+    color: white;
+    width: 250px;
+    padding: 1rem;
+}
+
+.sidebar-section {
+    margin-bottom: 2rem;
+
+    &.bottom {
+        margin-top: auto;
+    }
+}
+
+.app-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+}
+
+h3 {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.nav-links, .group-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li a, .group-list li a {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem;
+    text-decoration: none;
+    color: #a7a7b5;
+    border-radius: 8px;
+    margin-bottom: 0.3rem;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-links li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .link-active {
+    background-color: #1a73e8 !important;
+    color: white !important;
+  }
+
+.group-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 0.8rem;
+}
+
+.icon {
+    margin-right: 0.8rem;
+    width: 20px;
+    display: inline-block;
+}
+
+.notification-badge {
+    background-color: #ff4081;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
