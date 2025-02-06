@@ -1,1 +1,93 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Quicksand, sans-serif;
+    color: #f5f5f5;
+    background-color: #17202A;
+}
+
+
+/* Login & Register */
+.login-container, .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #17202A;
+}
+
+.login-box, .register-box {
+    background: rgba(255, 255, 255, 0.46);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(7.7px);
+    -webkit-backdrop-filter: blur(7.7px);
+    border: 1px solid rgba(255, 255, 255, 1);
+
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.register-container .register-box h2, .login-container .login-box h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.register-container .register-box label, .login-container .login-box label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.register-container .register-box input, .login-container .login-box input {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.register-container .register-box input:focus, .login-container .login-box input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.register-container .register-box button, .login-container .login-box button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.register-container .register-box button:hover, .login-container .login-box button:hover {
+    background-color: #0056b3;
+}
+
+.register-link, .login-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.register-container .register-box .login-link a, .login-container .login-box .register-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-container .register-box .login-link a:hover, .login-container .login-box .register-link a:hover {
+    text-decoration: underline;
+}

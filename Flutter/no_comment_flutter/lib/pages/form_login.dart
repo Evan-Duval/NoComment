@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/pages/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
 
@@ -73,6 +74,14 @@ class _MyCustomFormState extends State<MyCustomForm> {
   }
 }
 
+  void redirectPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterPage()),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -84,35 +93,38 @@ class _MyCustomFormState extends State<MyCustomForm> {
             child: Text(
               'Connexion',
               style: TextStyle(
-                fontSize: 30,
-                color: Color.fromRGBO(255, 255, 255, 0.8), 
-                fontWeight: FontWeight.bold
-              ),
+                  fontSize: 30,
+                  color: Color.fromRGBO(255, 255, 255, 0.8),
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 100),
             child: TextField(
+
               cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
               controller: _emailController,
+
+
+
               style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red), 
+                  borderSide: BorderSide(color: Colors.red),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red, width: 2), 
+                  borderSide: BorderSide(color: Colors.red, width: 2),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red), 
+                  borderSide: BorderSide(color: Colors.red),
                 ),
                 labelText: 'Adresse mail',
-                labelStyle: TextStyle( 
-                  color: Color.fromRGBO(255, 255, 255, 0.8), 
+                labelStyle: TextStyle(
+                  color: Color.fromRGBO(255, 255, 255, 0.8),
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -124,25 +136,26 @@ class _MyCustomFormState extends State<MyCustomForm> {
             child: TextFormField(
               cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
               controller: _passwordController,
+
               style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
               obscureText: true,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red), // Couleur du soulignement
+                  borderSide: BorderSide(color: Colors.red),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red, width: 2), // Quand le champ est actif
+                  borderSide: BorderSide(color: Colors.red, width: 2),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red), // Quand le champ est inactif
+                  borderSide: BorderSide(color: Colors.red),
                 ),
                 labelText: 'Mot de passe',
-                labelStyle: TextStyle( 
-                  color: Color.fromRGBO(255, 255, 255, 0.8), 
+                labelStyle: TextStyle(
+                  color: Color.fromRGBO(255, 255, 255, 0.8),
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -151,8 +164,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
           ),
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: 100), 
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 54), 
+              margin: const EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 54),
               decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(40),
@@ -161,14 +174,14 @@ class _MyCustomFormState extends State<MyCustomForm> {
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent, 
+                  shadowColor: Colors.transparent,
                 ),
                 child: const Text(
                   'Soumettre',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(255, 255, 255, 0.8), 
+                    color: Color.fromRGBO(255, 255, 255, 0.8),
                   ),
                 ),
               ),
@@ -177,18 +190,25 @@ class _MyCustomFormState extends State<MyCustomForm> {
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Center(
-              child: Text(
-              'Mot de passe oublié',
-              style: TextStyle(
-                color: Color.fromRGBO(255, 255, 255, 0.8), 
-                fontSize: 12,
-                fontWeight: FontWeight.w600
+              child: GestureDetector(
+                onTap: () => redirectPage(context),
+                child: Text(
+                  'S\'inscrire ici',
+                  style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-              ),
-            )
+            ),
           )
         ],
       ),
     );
   }
+}
+
+void main() {
+  runApp(const MaterialApp(home: MyCustomForm()));
 }
