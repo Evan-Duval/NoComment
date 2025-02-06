@@ -1,0 +1,122 @@
+/* Base dark theme styles */
+:host {
+    display: flex;
+    height: 100vh;
+    background-color: #111827; /* Dark background similar to the image */
+    color: #ffffff;
+  }
+  
+  .main-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  /* Posts section */
+  .posts-section {
+    width: 75%;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  
+  .post-card {
+    background-color: #1F2937; /* Slightly lighter dark background for cards */
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-author {
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+  
+  .post-timestamp {
+    color: #6B7280; /* Gray color for timestamp */
+    font-size: 0.875rem;
+  }
+  
+  .post-content {
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .action-button {
+    display: flex;
+    align-items: center;
+    color: #9CA3AF; /* Gray color for action buttons */
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .action-button:hover {
+    color: #EF4444; /* Red on hover for like button */
+  }
+  
+  /* Groups sidebar */
+  .groups-sidebar {
+    width: 25%;
+    background-color: #1F2937;
+    padding: 1.5rem;
+  }
+  
+  .groups-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .group-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .group-item:hover {
+    cursor: pointer;
+  }
+  
+  .group-image {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    margin-right: 0.75rem;
+  }
+  
+  .group-name {
+    font-weight: 600;
+  }
+  
+  .group-activity {
+    font-size: 0.875rem;
+    color: #6B7280;
+  }
+  
+  /* Scrollbar styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1F2937;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4B5563;
+  }
