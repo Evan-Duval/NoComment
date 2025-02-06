@@ -37,6 +37,7 @@ export class LoginComponent {
         ).subscribe({
           next: (response) => {
             console.log('Connexion réussie', response);
+            localStorage.setItem('token', response.accessToken);
           },
           error: (error) => {
             console.error('Erreur de Connexion', error);
