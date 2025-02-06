@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -5,7 +7,6 @@ import 'package:no_comment_flutter/pages/home.dart';
 import 'package:no_comment_flutter/pages/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
@@ -18,64 +19,115 @@ class _MyCustomFormState extends State<MyCustomForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String? _token; 
+  String? _username;
+  String? _firstName;
+  String? _lastName;
+  String? _email;
+  String? _birthday;
+  String? _logo;
+  String? _bio;
+  String? _token;
   String? _errorMessage;
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    if (_username != null) prefs.setString('username', _username!);
+    if (_firstName != null) prefs.setString('firstName', _firstName!);
+    if (_lastName != null) prefs.setString('lastName', _lastName!);
+    if (_email != null) prefs.setString('email', _email!);
+    if (_birthday != null) prefs.setString('birthday', _birthday!);
+    if (_logo != null) prefs.setString('logo', _logo!);
+    if (_bio != null) prefs.setString('bio', _bio!);
+
     print("Token sauvegardé : $token");
   }
 
   Future<void> _login() async {
-  final String email = _emailController.text;
-  final String password = _passwordController.text;
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
 
-  final apiUrl =
+    final apiUrl =
         '${dotenv.env['URL']}api/auth/login'; // Utilisation de dotenv
 
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      _token = data['accessToken'];
-      print("Token reçu : $_token");
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', _token!);
-
-      setState(() {
-        _errorMessage = null; 
-      });
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const RegisterPage(), 
-        ),
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
       );
-    } else {
-      final errorData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Récupération des informations utilisateur
+        final userInfo = data['user_info'];
+        if (userInfo != null) {
+          _username = userInfo['username'];
+          _email = userInfo['email'];
+          _bio = userInfo['bio'];
+          _firstName = userInfo['first_name'];
+          _lastName = userInfo['last_name'];
+          _birthday = userInfo['birthday'];
+          _logo = userInfo['logo'];
+
+          print("Données utilisateur obtenues depuis l'API :");
+          print(
+              "Username : $_username, Email : $_email, Bio : $_bio, Prénom : $_firstName, Nom : $_lastName, Date de naissance : $_birthday, Logo : $_logo");
+
+          // Sauvegarde uniquement si les valeurs ne sont pas null
+          if (_username != null &&
+              _email != null &&
+              _bio != null &&
+              _firstName != null &&
+              _lastName != null &&
+              _birthday != null &&
+              _logo != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('username', _username!);
+            await prefs.setString('email', _email!);
+            await prefs.setString('bio', _bio!);
+            await prefs.setString('first_name', _firstName!);
+            await prefs.setString('last_name', _lastName!);
+            await prefs.setString('birthday', _birthday!);
+            await prefs.setString('logo', _logo!);
+            print("Données sauvegardées dans SharedPreferences");
+          } else {
+            print("Certaines données utilisateur sont null");
+          }
+        }
+
+        _token = data['accessToken'];
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', _token!);
+
+        setState(() {
+          _errorMessage = null;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      } else {
+        final errorData = jsonDecode(response.body);
+        setState(() {
+          _errorMessage = errorData['message'] ?? 'Erreur de connexion.';
+        });
+      }
+    } catch (e) {
       setState(() {
-        _errorMessage = errorData['message'] ?? 'Erreur de connexion.';
+        _errorMessage = 'Une erreur s\'est produite : $e';
       });
     }
-  } catch (e) {
-    setState(() {
-      _errorMessage = 'Une erreur s\'est produite : $e';
-    });
   }
-}
 
   void redirectPage(BuildContext context) {
     Navigator.push(
@@ -83,7 +135,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
       MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,12 +155,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
           Padding(
             padding: const EdgeInsets.only(top: 100),
             child: TextField(
-
-              cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
+              cursorColor: Color.fromRGBO(255, 255, 255, 0.8),
               controller: _emailController,
-
-
-
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -137,9 +184,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
           Padding(
             padding: const EdgeInsets.only(top: 50),
             child: TextFormField(
-              cursorColor: Color.fromRGBO(255, 255, 255, 0.8), 
+              cursorColor: Color.fromRGBO(255, 255, 255, 0.8),
               controller: _passwordController,
-
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
