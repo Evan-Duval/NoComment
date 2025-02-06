@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:no_comment_flutter/config/config.dart';
 import 'package:no_comment_flutter/pages/form_login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +19,7 @@ class LoginPage extends StatelessWidget {
           textStyle: GoogleFonts.nanumBrushScript(
             fontSize: 56,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFFF6703F), 
+            color: Config.colors.primaryColor,
           ),
           strokeColor: Colors.black,
           strokeWidth: 6,
