@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 // Auth : 
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { ProfilComponent } from './profil/profil.component';
 import { SettingsComponent } from './settings/settings.component';
 
 // Pages :
@@ -19,6 +20,6 @@ export const routes: Routes = [
   // Pages :
   { path: 'accueil', component: HomeComponent },
   { path: 'dashboard', component: HomeComponent },
-  { path: 'profil', component: HomeComponent },
+  { path: 'profil', component: ProfilComponent },
   { path: 'settings', component: SettingsComponent }
 ];
