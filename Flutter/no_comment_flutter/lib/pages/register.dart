@@ -1,9 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:no_comment_flutter/pages/login.dart';
 import 'package:stroke_text/stroke_text.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _birthdayController = TextEditingController();
+
+  void redirectPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
+  Future<void> _submitRegistration() async {
+    final apiUrl =
+        '${dotenv.env['URL']}api/auth/register'; // Utilisation de dotenv
+
+    // Création de la payload pour la requête
+    final Map<String, dynamic> userData = {
+      "first_name": _firstNameController.text,
+      "last_name": _lastNameController.text,
+      "username": _usernameController.text,
+      "birthday": _birthdayController.text,
+      "email": _emailController.text,
+      "password": _passwordController.text,
+      "c_password": _confirmPasswordController.text,
+      "bio": "Je suis un nouvel utilisateur de NoComment.",
+      "logo": "image.png",
+      "rank": "user",
+      "certified": 0
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(userData),
+    );
+
+    Navigator.pushNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +66,6 @@ class RegisterPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: SingleChildScrollView(
-            // Ajout pour permettre le défilement
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,17 +95,20 @@ class RegisterPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                _buildTextField('Nom d\'utilisateur'),
-                _buildTextField('Adresse mail'),
-                _buildTextField('Mot de passe'),
-                _buildTextField('Confirmer mot de passe'),
-                _buildTextField('Prénom'),
-                _buildTextField('Nom'),
-                _buildTextField('Date de naissance'),
+                _buildTextField('Nom d\'utilisateur', _usernameController),
+                _buildTextField('Adresse mail', _emailController),
+                _buildTextField('Mot de passe', _passwordController,
+                    obscureText: true),
+                _buildTextField(
+                    'Confirmer mot de passe', _confirmPasswordController,
+                    obscureText: true),
+                _buildTextField('Prénom', _firstNameController),
+                _buildTextField('Nom', _lastNameController),
+                _buildBirthdayField(context, _birthdayController),
                 const SizedBox(height: 40),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _submitRegistration,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
@@ -62,20 +117,29 @@ class RegisterPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 15),
                     ),
-                    child: Text('Soumettre',
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      'Soumettre',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    "Déjà un compte ?",
-                    style: GoogleFonts.poppins(
-                      color: Colors.white60,
-                      fontSize: 14,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () => redirectPage(context),
+                      child: Text(
+                        "Déjà un compte ?",
+                        style: GoogleFonts.poppins(
+                          color: const Color.fromRGBO(255, 255, 255, 0.8),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -84,10 +148,13 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(String label) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool obscureText = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: TextField(
+        controller: controller,
+        obscureText: obscureText,
         cursorColor: Colors.white,
         decoration: InputDecoration(
           labelText: label,
@@ -106,8 +173,63 @@ class RegisterPage extends StatelessWidget {
       ),
     );
   }
-}
 
-void main() {
-  runApp(const MaterialApp(home: RegisterPage()));
+  Widget _buildBirthdayField(
+      BuildContext context, TextEditingController _birthdayController) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: GestureDetector(
+        onTap: () async {
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: const Color.fromRGBO(246, 112, 63, 1),
+                    onPrimary: Colors.white,
+                    surface: const Color.fromRGBO(23, 32, 42, 1),
+                    onSurface: Colors.white,
+                  ),
+                  dialogBackgroundColor: Color.fromARGB(255, 230, 231, 233),
+                ),
+                child: child!,
+              );
+            },
+          );
+
+          if (pickedDate != null) {
+            setState(() {
+              _birthdayController.text =
+                  "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+            });
+          }
+        },
+        child: AbsorbPointer(
+          child: TextField(
+            controller: _birthdayController,
+            decoration: InputDecoration(
+              labelText: 'Date de naissance',
+              labelStyle: GoogleFonts.poppins(
+                color: const Color.fromRGBO(255, 255, 255, 0.8),
+                fontWeight: FontWeight.bold,
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              ),
+            ),
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
 }

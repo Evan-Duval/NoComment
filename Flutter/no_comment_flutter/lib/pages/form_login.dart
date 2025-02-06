@@ -118,9 +118,9 @@ class _MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.only(top: 20),
             child: Center(
               child: GestureDetector(
-                onTap: () => redirectPage(context), // Ajout de la redirection
+                onTap: () => redirectPage(context),
                 child: Text(
-                  'Mot de passe oublié',
+                  'S\'inscrire ici',
                   style: TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 0.8),
                     fontSize: 12,
