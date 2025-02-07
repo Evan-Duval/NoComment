@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/pages/home.dart';
-import 'package:no_comment_flutter/pages/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -61,7 +60,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const RegisterPage(), 
+          builder: (context) => const HomePage(), 
         ),
       );
     } else {

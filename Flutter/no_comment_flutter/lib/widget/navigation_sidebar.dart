@@ -1,12 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:no_comment_flutter/config/config.dart';
+import 'package:no_comment_flutter/pages/login.dart';
 import 'package:stroke_text/stroke_text.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class NavigationSidebar extends StatelessWidget {
   final Function(Widget) onNavigate;
 
   const NavigationSidebar({super.key, required this.onNavigate});
+
+
+
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token'); 
+
+    if (token == null) {
+      _navigateToLogin(context);
+      return;
+    }
+
+    final apiUrl = '${dotenv.env['URL']}api/auth/logout';
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await prefs.remove('token'); 
+        _navigateToLogin(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Échec de la déconnexion')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: $e')),
+      );
+    }
+  }
+
+  void _navigateToLogin(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +111,8 @@ class NavigationSidebar extends StatelessWidget {
             ));
           }),
           const SizedBox(height: 20),
-          _buildNavIcon(Icons.logout, "Déconnexion", () {
-            onNavigate(const Center(
-              child: Text('Page Groupe', style: TextStyle(color: Colors.white)),
-            ));
+          _buildNavIcon(Icons.logout, "Déconnexion", () async {
+            await _logout(context);
           }),
           const SizedBox(height: 40),
         ],
