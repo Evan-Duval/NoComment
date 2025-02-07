@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/pages/home.dart';
+import 'package:no_comment_flutter/pages/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -78,7 +79,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
           print(
               "Username : $_username, Email : $_email, Bio : $_bio, Prénom : $_firstName, Nom : $_lastName, Date de naissance : $_birthday, Logo : $_logo");
 
-
           // Sauvegarde uniquement si les valeurs ne sont pas null
           if (_username != null &&
               _email != null &&
@@ -123,7 +123,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
         });
       }
     } catch (e) {
-      
       setState(() {
         _errorMessage = 'Une erreur s\'est produite : $e';
       });
@@ -133,7 +132,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
   void redirectPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
+      MaterialPageRoute(builder: (context) => const RegisterPage()),
     );
   }
 
