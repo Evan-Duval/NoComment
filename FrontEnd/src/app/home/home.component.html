@@ -16,6 +16,7 @@
 
     <!-- Suggestions de groupes -->
     <div class="groups-sidebar">
+        <input type="text" name="searchBar" class="searchBar" placeholder="Rechercher un groupe ou une personne">
         <h2 class="groups-title">Vos groupes</h2>
         <div *ngFor="let group of groups" class="group-item">
             <img [src]="group.image" class="group-image" alt="{{ group.name }}">

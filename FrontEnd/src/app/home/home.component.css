@@ -69,6 +69,20 @@
     width: 25%;
     background-color: #1F2937;
     padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 16px;
+  }
+
+  .groups-sidebar .searchBar {
+    align-items: center;
+    padding: 0.5rem 0px 0.5rem 0;
+    width: 100%;
+    border-radius: 8px;
+    background-color: #212529;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+    padding-left: 0.5rem;
   }
   
   .groups-title {
