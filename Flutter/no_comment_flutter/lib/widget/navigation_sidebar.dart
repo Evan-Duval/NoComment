@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:no_comment_flutter/config/config.dart';
 import 'package:no_comment_flutter/pages/login.dart';
-import 'package:stroke_text/stroke_text.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'package:no_comment_flutter/pages/profile_page.dart';
+import 'package:stroke_text/stroke_text.dart';
+import 'package:no_comment_flutter/pages/form_login.dart';
 
 class NavigationSidebar extends StatelessWidget {
   final Function(Widget) onNavigate;
@@ -92,9 +93,7 @@ class NavigationSidebar extends StatelessWidget {
           }),
           const SizedBox(height: 20),
           _buildNavIcon(Icons.person, "Profil", () {
-            onNavigate(const Center(
-              child: Text('Page Profil', style: TextStyle(color: Colors.white)),
-            ));
+            onNavigate(ProfilePage());
           }),
           const SizedBox(height: 20),
           _buildNavIcon(Icons.group, "Groupe", () {
