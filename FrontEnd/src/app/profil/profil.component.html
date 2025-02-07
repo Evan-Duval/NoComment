@@ -1,1 +1,14 @@
-<p>profil works!</p>
+<div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+        <p>Chargement des informations...</p>
+    </div>
+  
+  <div *ngIf="!isLoading && user" class="profile-container">
+    <h2>Profil de {{ user.first_name }} {{ user.last_name }}</h2>
+    <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
+    <p><strong>Email :</strong> {{ user.email }}</p>
+    <p><strong>Date de naissance :</strong> {{ user.birthday }}</p>
+    <p *ngIf="user.bio"><strong>Bio :</strong> {{ user.bio }}</p>
+    <p *ngIf="!user.bio"><strong>Bio :</strong> Non renseignée</p>
+  </div>
+  
