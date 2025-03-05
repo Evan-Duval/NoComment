@@ -37,7 +37,7 @@ export class RegisterComponent {
       const formValues = this.registerForm.value;
       const birthday = new Date(formValues.birthday);
 
-      const formattedBirthday = birthday.toISOString().split('T')[0];
+      const formattedBirthday = birthday
 
       const userData: IUser = {
         id: null,

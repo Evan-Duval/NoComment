@@ -17,78 +17,107 @@ body {
     align-items: center;
     min-height: 100vh;
     background-color: #17202A;
+    padding: 20px;
 }
 
 .login-box, .register-box {
-    background: rgba(255, 255, 255, 0.46);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(7.7px);
-    -webkit-backdrop-filter: blur(7.7px);
-    border: 1px solid rgba(255, 255, 255, 1);
-
+    background: #333;
+    border: 1px solid #fff;
     padding: 2rem;
     width: 100%;
-    max-width: 500px;
+    max-width: 700px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .register-container .register-box h2, .login-container .login-box h2 {
     text-align: center;
     margin-bottom: 2rem;
-    color: #333;
+    color: #FF5722;
+    font-family: 'Courier', monospace;
 }
 
-.form-group {
+.register-container .register-box .form-grid, .login-container .login-box .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 1fr;
+    gap: 1rem;
+}
+
+.register-container .register-box .form-group, .login-container .login-box .form-group {
     margin-bottom: 1rem;
+    color: #fff;
+}
+
+.register-container .register-box .form-group:nth-child(odd) {
+    grid-column: 1;
+}
+
+.form-group:nth-child(even) {
+    grid-column: 3;
 }
 
 .register-container .register-box label, .login-container .login-box label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #666;
 }
 
-.register-container .register-box input, .login-container .login-box input {
+.register-container .register-box .form-group input[type="text"],
+.register-container .register-box .form-group input[type="email"],
+.register-container .register-box .form-group input[type="password"],
+.register-container .register-box .form-group input[type="date"],
+.login-container .login-box .form-group input[type="email"],
+.login-container .login-box .form-group input[type="password"] {
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #444;
+    color: #fff;
     font-size: 1rem;
 }
 
-.register-container .register-box input:focus, .login-container .login-box input:focus {
-    outline: none;
-    border-color: #007bff;
+.register-container .register-box .form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
 }
 
-.register-container .register-box button, .login-container .login-box button {
+.register-container .register-box .terms {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    margin-top: 2rem;
+}
+
+.register-container .register-box .submit-btn,
+.login-container .login-box .submit-btn {
     width: 100%;
     padding: 0.8rem;
-    background-color: #007bff;
+    background-color: #FF5722;
     color: white;
     border: none;
-    border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
     margin-top: 1rem;
+    transition: background-color 0.3s;
 }
 
-.register-container .register-box button:hover, .login-container .login-box button:hover {
-    background-color: #0056b3;
+.register-container .register-box .submit-btn:hover,
+.login-container .login-box .submit-btn:hover {
+    background-color: #e64a19;
 }
 
-.register-link, .login-link {
+.register-container .register-box .login-link,
+.login-container .login-box .register-link{
     text-align: center;
     margin-top: 1rem;
 }
 
-.register-container .register-box .login-link a, .login-container .login-box .register-link a {
-    color: #007bff;
+.register-container .register-box .login-link a,
+.login-container .login-box .register-link a  {
+    color: #FF5722;
     text-decoration: none;
 }
 
-.register-container .register-box .login-link a:hover, .login-container .login-box .register-link a:hover {
+.register-container .register-box .login-link a:hover,
+.login-container .login-box .register-link a:hover {
     text-decoration: underline;
 }
 
