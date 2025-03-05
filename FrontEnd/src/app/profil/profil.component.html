@@ -4,7 +4,10 @@
     </div>
   
   <div *ngIf="!isLoading &&!user" class="error-container">
-    <p>Aucun utilisateur trouvé avec cet identifiant.</p>
+    <p>
+      Veuillez vous authentifier afin d'accéder à cette page. <a routerLink="/login">Se Connecter</a> <br>
+      Nouveau sur NoComment ? <a routerLink="/register">S'inscrire</a>
+    </p>
   </div>
 
   <div *ngIf="!isLoading && user" class="profile-container">

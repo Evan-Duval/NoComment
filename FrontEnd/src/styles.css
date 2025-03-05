@@ -91,3 +91,23 @@ body {
 .register-container .register-box .login-link a:hover, .login-container .login-box .register-link a:hover {
     text-decoration: underline;
 }
+
+.register-container .register-box .error-message, .login-container .login-box .error-message {
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.register-container .register-box .error-message ul, .login-container .login-box .error-message ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.register-container .register-box .error-message li, .login-container .login-box .error-message li {
+    color: #FF0000;
+    margin-bottom: 0.5rem;
+}

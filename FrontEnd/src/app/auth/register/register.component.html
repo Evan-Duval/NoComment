@@ -2,6 +2,33 @@
     <div class="register-box">
         <h2>Inscription</h2>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="registerForm.invalid && registerForm.touched" class="error-message">
+                <ul>
+                    <li *ngIf="registerForm.get('first_name')?.invalid">
+                        Le champ Prénom est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('last_name')?.invalid">
+                        Le champ Nom est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('email')?.invalid">
+                        Le champ Email est requis et doit être valide.
+                    </li>
+                    <li *ngIf="registerForm.get('birthday')?.invalid">
+                        Le champ Date de naissance est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('password')?.invalid">
+                        Le champ Mot de passe est requis et doit contenir au moins 12 caractères.
+                    </li>
+                    <li *ngIf="registerForm.get('c_password')?.invalid">
+                        Le champ Confirmation du mot de passe est requis et doit être identique au champ Mot de passe.
+                    </li>
+                    <li *ngIf="registerForm.get('username')?.invalid">
+                        Le champ Pseudonyme est requis.
+                    </li>
+                </ul>
+            </div>
+
+
             <div class="form-group">
             <label for="first_name">Prénom</label>
             <input type="text" formControlName="first_name" placeholder="Votre prénom" required>
