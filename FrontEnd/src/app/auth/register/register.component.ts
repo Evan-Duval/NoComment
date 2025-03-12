@@ -37,14 +37,14 @@ export class RegisterComponent {
       const formValues = this.registerForm.value;
       const birthday = new Date(formValues.birthday);
 
-      const formattedBirthday = birthday
+      // Format the birthday to YYYY-MM-DD
+      const formattedBirthday = birthday.toISOString().split('T')[0];
 
       const userData: IUser = {
-        id: null,
         first_name: formValues.first_name,
         last_name: formValues.last_name,
         email: formValues.email,
-        birthday: new Date(formattedBirthday),
+        birthday: formattedBirthday,
         password: formValues.password,
         c_password: formValues.c_password,
         username: formValues.username,
@@ -53,10 +53,10 @@ export class RegisterComponent {
         bio: 'Je suis un Nouvel Utilisateur sur NoComment',
         certified: false,
       };
-
+      
       const newUser = this.authService.createUser(userData);
-
-      this.authService.register(newUser).subscribe({
+      
+      this.authService.register(userData).subscribe({
         next: (response) => {
           console.log('Inscription réussie', response);
           localStorage.setItem('token', response.accessToken);

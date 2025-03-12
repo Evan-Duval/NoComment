@@ -14,7 +14,6 @@ export class AuthService {
 
   createUser(userData: IUser): User {
     return new User(
-      userData.id,
       userData.first_name,
       userData.last_name,
       userData.email,
