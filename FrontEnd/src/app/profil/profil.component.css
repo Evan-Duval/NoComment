@@ -29,7 +29,14 @@
     text-align: center;
     color: red;
     font-weight: bold;
-    margin-top: 20px;
+    font-size: 1.5rem;
+    margin-top: 25%;
+  }
+
+  .error-container a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
   }
   
   .profile-actions {
