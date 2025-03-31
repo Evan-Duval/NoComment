@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { IUser } from '../../interfaces/iuser';
+import { IUser } from '../../../interfaces/iuser';
 
 @Component({
   selector: 'app-register',

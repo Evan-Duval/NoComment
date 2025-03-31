@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
 
 // Auth : 
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
-import { ProfilComponent } from './profil/profil.component';
-import { SettingsComponent } from './settings/settings.component';
+import { LoginComponent } from './pages/auth/login/login.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { ProfilComponent } from './pages/profil/profil.component';
+import { SettingsComponent } from './pages/settings/settings.component';
+import { GroupsComponent } from './pages/groups/groups.component';
 
 // Pages :
 import { HomeComponent } from './home/home.component';
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'accueil', component: HomeComponent },
   { path: 'dashboard', component: HomeComponent },
   { path: 'profil', component: ProfilComponent },
-  { path: 'settings', component: SettingsComponent }
+  { path: 'settings', component: SettingsComponent },
+  { path: 'groups', component: GroupsComponent },
 ];
