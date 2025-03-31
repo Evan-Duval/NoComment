@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { GroupService } from '../services/group.service';
 
 interface Post {
   author: string;
@@ -22,7 +23,24 @@ interface Group {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  groups: any[] = [];
+  userId: number = 1;
+  showCreateButton: boolean = false;
+
+  constructor(private groupService: GroupService) {}
+
+  ngOnInit(): void {
+    this.groupService.getGroupsByUser(this.userId).subscribe(
+      data => {
+        this.groups = data;
+        this.showCreateButton = this.groups.length === 0;
+      },
+      error => {
+        console.error('Erreur lors de la récupération des groupes', error);
+      }
+    );
+  }
   posts: Post[] = [
     {
       author: 'Anaïs',
@@ -37,19 +55,6 @@ export class HomeComponent {
       timestamp: '4 heures',
       likes: 3,
       comments: 1
-    }
-  ];
-
-  groups: Group[] = [
-    {
-      name: 'Les toto du CESI',
-      image: 'assets/images/group1.jpg',
-      lastActivity: 'Dernière activité il y a 2h'
-    },
-    {
-      name: 'Groupe de travail Crypto',
-      image: 'assets/images/group2.jpg',
-      lastActivity: 'Dernière activité il y a 3 jours'
     }
   ];
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -10,6 +12,11 @@ class GroupController extends Controller
     public function index()
     {
         return Group::all();
+    }
+
+    public function getByUser($id): JsonResponse {
+        $groups = Group::where('user_id', $id)->get();
+        return response()->json($groups);
     }
 
     public function show($id)

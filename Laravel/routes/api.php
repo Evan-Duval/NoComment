@@ -22,6 +22,7 @@ Route::prefix('auth')->group(function () {
 
 
 Route::apiResource('groups', GroupController::class);
+Route::get('/groups/get-by-user/{id}', [GroupController::class, 'getByUser']);
 
 // Routes API pour les posts
 Route::apiResource('posts', PostController::class);

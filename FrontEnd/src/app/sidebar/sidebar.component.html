@@ -23,21 +23,19 @@
   <!-- Section Groupes -->
   <div class="sidebar-section">
     <h3>Vos groupes</h3>
-    <ul class="group-list">
-      <li>
+    <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
+      <li *ngFor="let group of groups">
         <a href="#">
-          <img src="path-to-image" alt="groupe" class="group-avatar" />
-          <span>Les totos du CESI</span>
-          <span class="notification-badge">24</span>
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          <img src="path-to-image" alt="groupe" class="group-avatar" />
-          <span>Groupe de travail Crypto</span>
+          <img [src]="group.imagePath" alt="groupe" class="group-avatar" />
+          <span>{{ group.name }}</span>
+          <span class="notification-badge" *ngIf="group.notifications">{{ group.notifications }}</span>
         </a>
       </li>
     </ul>
+    <ng-template #noGroups>
+      <button class="create-group-button">Créer un groupe</button>
+      <!-- <button (click)="createGroup()">Créer un groupe</button> -->
+    </ng-template>
   </div>
 
   <!-- Section Personnel -->
