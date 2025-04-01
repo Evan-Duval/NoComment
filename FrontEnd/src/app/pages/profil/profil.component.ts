@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [RouterLink, RouterLinkActive,CommonModule],
   templateUrl: './profil.component.html',
   styleUrl: './profil.component.css'
 })
