@@ -39,6 +39,7 @@ class AuthController extends Controller
             'logo' => 'string',
             'bio' => 'string',
             'certified' => 'boolean',
+            'deleted_at' => 'date',
         ]);
 
         $user = new User([
@@ -52,6 +53,7 @@ class AuthController extends Controller
             'logo' => $request->logo ?? null,
             'bio' => $request->bio ?? null,
             'certified' => $request->certified ?? 0,
+            'deleted_at' => null,
         ]);
 
         if ($user->save()) {

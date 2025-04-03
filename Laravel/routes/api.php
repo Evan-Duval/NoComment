@@ -20,9 +20,15 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-
+Route::prefix('groups')->group(function () {
+    Route::post('create', [GroupController::class,'store']);
+    Route::get('get-all', [GroupController::class, 'index']);
+    Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
+    Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']);
+    Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
+    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']);
+});
 Route::apiResource('groups', GroupController::class);
-Route::get('/groups/get-by-user/{id}', [GroupController::class, 'getByUser']);
 
 // Routes API pour les posts
 Route::apiResource('posts', PostController::class);

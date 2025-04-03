@@ -14,15 +14,23 @@ class GroupController extends Controller
         return Group::all();
     }
 
-    public function getByUser($id): JsonResponse {
-        $groups = Group::where('user_id', $id)->get();
+    public function getUserGroups($userId): JsonResponse
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $groups = $user->groups;
+
         return response()->json($groups);
     }
 
-    public function show($id)
-    {
-        return Group::findOrFail($id);
-    }
+    // public function show($id)
+    // {
+    //     return Group::findOrFail($id);
+    // }
 
     public function store(Request $request)
     {
@@ -31,13 +39,17 @@ class GroupController extends Controller
 
     public function update(Request $request, $id)
     {
-        $group = Group::findOrFail($id);
+        $group = Group::find($id);
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+
         $group->update($request->all());
         return $group;
     }
 
-    public function destroy($id)
-    {
-        return Group::destroy($id);
-    }
+    // public function destroy($id)
+    // {
+    //     return Group::destroy($id);
+    // }
 }
