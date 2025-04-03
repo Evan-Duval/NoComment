@@ -46,7 +46,7 @@ class GroupController extends Controller
         $group = Group::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
-            'logo' => $validatedData['logo'] ?? null,
+            'logo' => $validatedData['logo'] ?? "default_logo.png",
             'group_owner' => $validatedData['group_owner'],
         ]);
 
