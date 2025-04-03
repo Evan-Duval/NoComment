@@ -32,9 +32,28 @@ class GroupController extends Controller
     //     return Group::findOrFail($id);
     // }
 
-    public function store(Request $request)
+    public function createGroup(Request $request)
     {
-        return Group::create($request->all());
+        // Valider les données entrantes
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:20',
+            'description' => 'required|string|max:255',
+            'logo' => 'nullable|string',
+            'group_owner' => 'required|exists:users,id',
+        ]);
+
+        // Créer le groupe avec le propriétaire
+        $group = Group::create([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'logo' => $validatedData['logo'] ?? null,
+            'group_owner' => $validatedData['group_owner'],
+        ]);
+
+        // Ajouter le propriétaire du groupe à la table de jointure
+        $group->users()->attach($validatedData['group_owner']);
+
+        return response()->json($group, 201);
     }
 
     public function update(Request $request, $id)

@@ -19,7 +19,7 @@
                     <li *ngIf="registerForm.get('password')?.invalid">
                         Le champ Mot de passe est requis et doit contenir au moins 12 caractères.
                     </li>
-                    <li *ngIf="registerForm.get('c_password')?.invalid">
+                    <li *ngIf="registerForm.get('c_password')?.invalid || registerForm.hasError('passwordMismatch')">
                         Le champ Confirmation du mot de passe est requis et doit être identique au champ Mot de passe.
                     </li>
                     <li *ngIf="registerForm.get('username')?.invalid">

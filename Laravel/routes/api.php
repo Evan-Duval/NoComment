@@ -21,7 +21,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('groups')->group(function () {
-    Route::post('create', [GroupController::class,'store']);
+    Route::post('create', [GroupController::class,'createGroup']);
     Route::get('get-all', [GroupController::class, 'index']);
     Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
     Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']);

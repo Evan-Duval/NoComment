@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
@@ -29,7 +29,22 @@ export class RegisterComponent {
       password: [null, [Validators.required, Validators.minLength(12)]],
       c_password: [null, [Validators.required, Validators.minLength(12)]],
       username: [null, Validators.required]
+    }, {
+      validators: this.passwordMatchValidator
     });
+  }
+
+  // Validateur personnalisé pour vérifier si les mots de passe correspondent
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('c_password')?.value;
+    
+    if (password !== confirmPassword && password && confirmPassword) {
+      control.get('c_password')?.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    return null;
   }
 
   onSubmit(): void {
