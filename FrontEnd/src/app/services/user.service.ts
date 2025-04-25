@@ -18,4 +18,20 @@ export class UserService {
 
     return this.http.get<any>(`${this.apiUrl}/user`, { headers });
   }
+
+  changePassword(email:string, passwordData: any): Observable<any> {
+
+    const headers = new HttpHeaders({
+      'Accept': 'application/json'
+    });
+
+    const data = {
+      email: email,
+      current_password: passwordData.current_password,
+      new_password: passwordData.new_password,
+      new_password_confirmation: passwordData.new_password_confirmation
+    };
+
+    return this.http.post<any>(`${this.apiUrl}/update-password`, data, { headers });
+  }
 }

@@ -22,7 +22,7 @@
 
   <!-- Section Groupes -->
   <div class="sidebar-section">
-    <h3>Vos groupes</h3>
+    <h3><a [routerLink]="['/groups']">Vos groupes</a></h3>
     <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
       <li *ngFor="let group of groups">
         <a href="#">

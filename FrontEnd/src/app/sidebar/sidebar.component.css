@@ -30,6 +30,11 @@ h3 {
     padding-left: 0.5rem;
 }
 
+.sidebar-section h3 a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
 .nav-links, .group-list {
     list-style: none;
     padding: 0;

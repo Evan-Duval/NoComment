@@ -1,77 +1,181 @@
+/* ============================= */
+/*        CHARGEMENT SPINNER    */
+/* ============================= */
 .loading-container {
-    text-align: center;
-    margin-top: 50px;
-  }
-  
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    display: inline-block;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .profile-container {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
-  
-  .error-container {
-    text-align: center;
-    color: red;
-    font-weight: bold;
-    font-size: 1.5rem;
-    margin-top: 25%;
-  }
+  text-align: center;
+  margin-top: 50px;
+}
 
-  .error-container a {
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .profile-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .profile-actions button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .profile-actions button:hover {
-    background-color: #0056b3;
-  }
-  
-  .profile-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .profile-picture {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    margin-bottom: 10px;
-  }
-  
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff9800; /* orange */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============================= */
+/*        CONTAINER PROFIL      */
+/* ============================= */
+.profile-container {
+  margin: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* ============================= */
+/*         IMAGE DE PROFIL      */
+/* ============================= */
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  margin-bottom: 10px;
+}
+
+/* ============================= */
+/*      MESSAGES D'ERREUR       */
+/* ============================= */
+.error-container {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 25%;
+}
+
+.error-container a {
+  color: #ff9800;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* ============================= */
+/*      ACTIONS DU PROFIL       */
+/* ============================= */
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.profile-actions button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff9800; /* orange principal */
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.profile-actions button:hover {
+  background-color: #e67e00;
+}
+
+/* ============================= */
+/*        ZONE FORMULAIRE       */
+/* ============================= */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px 14px;
+  margin: 10px auto;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fefefe;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #ff9800;
+  box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+  outline: none;
+}
+
+/* ============================= */
+/*     FORMULAIRE MOT DE PASSE  */
+/* ============================= */
+.password-form {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: rgba(85, 85, 85, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ============================= */
+/*         BOUTONS FORM         */
+/* ============================= */
+.password-form button,
+.profile-container button {
+  margin-top: 10px;
+  width: 220px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff9800;
+  color: white;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.password-form button:hover,
+.profile-container button:hover {
+  background-color: #e67e00;
+}
+
+/* Bouton vert pour "Enregistrer" */
+.profile-container button.save-button {
+  background-color: #28a745;
+}
+.profile-container button.save-button:hover {
+  background-color: #218838;
+}
+
+/* ============================= */
+/*        MESSAGES ALERTES      */
+/* ============================= */
+.alert {
+  margin: 15px auto;
+  padding: 12px 20px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 500px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.success-alert {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.error-alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
