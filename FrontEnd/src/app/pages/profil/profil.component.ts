@@ -18,8 +18,9 @@ export class ProfilComponent {
   changePasswordMode: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+  showPassword: boolean = false;
 
-  // Champs du formulaire pour changer le mot de passe
+  // Champs du formulaire 
   updatedUser: any = {};
   passwordData = {
     current_password: '',
@@ -30,12 +31,18 @@ export class ProfilComponent {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
+    this.loadUserProfile();
+  }
+
+  loadUserProfile(): void {
     const token = localStorage.getItem('token') as string;
+    this.isLoading = true;
+    
     this.userService.getUserByToken(token).subscribe({
       next: (response) => {
         this.user = response;
+        this.updatedUser = {...this.user};
         this.isLoading = false;
-        // console.log('Utilisateur récupéré:', this.user);
       },
       error: (error) => {
         console.error("Erreur lors de la récupération de l'utilisateur:", error);
@@ -44,33 +51,114 @@ export class ProfilComponent {
     });
   }
 
-  toggleEditMode() {
+  toggleEditMode(): void {
     this.editMode = !this.editMode;
-    this.updatedUser = { ...this.user };
+    this.changePasswordMode = false;
+    if (this.editMode) {
+      // Copie les données pour l'édition
+      this.updatedUser = {...this.user};
+    }
+    this.clearMessages();
   }
 
-  togglePasswordMode() {
+  cancelEdit(): void {
+    this.editMode = false;
+    // Réinitialise les données modifiées
+    this.updatedUser = {...this.user};
+    this.clearMessages();
+  }
+
+  togglePasswordMode(): void {
     this.changePasswordMode = !this.changePasswordMode;
-    this.passwordData = { current_password: '', new_password: '', new_password_confirmation: '' };
+    this.editMode = false;
+    this.clearPasswordData();
+    this.clearMessages();
   }
 
-  submitUserEdit() {
-    console.log('Utilisateur mis à jour:', this.updatedUser);
+  cancelPasswordChange(): void {
+    this.changePasswordMode = false;
+    this.clearPasswordData();
+    this.clearMessages();
   }
 
-  submitPasswordChange() {
+  clearPasswordData(): void {
+    this.passwordData = {
+      current_password: '',
+      new_password: '',
+      new_password_confirmation: ''
+    };
+  }
+
+  clearMessages(): void {
     this.successMessage = '';
     this.errorMessage = '';
+  }
+
+  submitUserEdit(): void {
+    console.log('Utilisateur mis à jour:', this.updatedUser);
+    
+    this.userService.updateUser(this.user.id, this.updatedUser).subscribe({
+      next: (response) => {
+        this.successMessage = 'Profil mis à jour avec succès !';
+        this.errorMessage = '';
+        this.changePasswordMode = false;
+        this.clearPasswordData();
+        this.editMode = false;
+        
+        // Efface le message après 3 secondes
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du profil:', error);
+        
+        if (error.error?.errors) {
+          // Convertir l'objet d'erreurs en un seul string
+          const errorMessages = Object.values(error.error.errors)
+            .flat()
+            .join('• ');
+            
+          this.errorMessage = '• ' + errorMessages;
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de la mise à jour du profil.';
+        }
+
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 10000);
+      }
+    });
+    
+    // Efface le message après 3 secondes
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
+  }
+
+  submitPasswordChange(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+    
+    // Validation côté client
+    if (this.passwordData.new_password !== this.passwordData.new_password_confirmation) {
+      this.errorMessage = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
   
     this.userService.changePassword(this.user.email, this.passwordData).subscribe({
       next: (response) => {
-        // console.log('Mot de passe changé avec succès:', response);
         this.successMessage = 'Mot de passe changé avec succès.';
         this.changePasswordMode = false;
+        this.clearPasswordData();
+        
+        // Efface le message après 3 secondes
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
       },
       error: (error) => {
-        // console.error('Erreur lors du changement de mot de passe:', error);
-        this.errorMessage = error.error?.message || 'Une erreur est survenue.';
+        this.errorMessage = error.error?.message || 'Une erreur est survenue lors du changement de mot de passe.';
       }
     });
   }

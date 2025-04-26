@@ -34,4 +34,12 @@ export class UserService {
 
     return this.http.post<any>(`${this.apiUrl}/update-password`, data, { headers });
   }
+
+  updateUser(id: string, userData: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Accept': 'application/json'
+    });
+
+    return this.http.post<any>(`${this.apiUrl}/update-user/${id}`, userData, { headers });
+  }
 }
