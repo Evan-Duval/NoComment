@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IUser } from '../../../interfaces/iuser';
 
@@ -19,7 +18,6 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private http: HttpClient
   ) {
     this.registerForm = this.formBuilder.group({
       first_name: [null, Validators.required],
@@ -68,9 +66,7 @@ export class RegisterComponent {
         bio: 'Je suis un Nouvel Utilisateur sur NoComment',
         certified: false,
       };
-      
-      const newUser = this.authService.createUser(userData);
-      
+            
       this.authService.register(userData).subscribe({
         next: (response) => {
           console.log('Inscription réussie', response);

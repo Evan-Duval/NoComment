@@ -1,0 +1,129 @@
+.creategroup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #17202A;
+    padding: 20px;
+}
+
+.creategroup-box {
+    background: #333;
+    border: 1px solid #fff;
+    padding: 2rem;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.creategroup-container .creategroup-box h2, h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #FF5722;
+    font-family: 'Courier', monospace;
+}
+
+.creategroup-container .creategroup-box .form-grid, .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 1fr;
+    gap: 1rem;
+}
+
+.creategroup-container .creategroup-box .form-group, .form-group {
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.creategroup-container .creategroup-box .form-group:nth-child(odd) {
+    grid-column: 1;
+}
+
+.form-group:nth-child(even) {
+    grid-column: 3;
+}
+
+.creategroup-container .creategroup-box label, label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.creategroup-container .creategroup-box .form-group input[type="text"],
+.creategroup-container .creategroup-box .form-group input[type="email"],
+.creategroup-container .creategroup-box .form-group input[type="password"],
+.creategroup-container .creategroup-box .form-group input[type="file"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #444;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.creategroup-container .creategroup-box .form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.creategroup-container .creategroup-box .terms {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    margin-top: 2rem;
+}
+
+.creategroup-container .creategroup-box .submit-btn,
+.submit-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #FF5722;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+}
+
+.creategroup-container .creategroup-box .submit-btn:hover,
+.submit-btn:hover {
+    background-color: #e64a19;
+}
+
+.creategroup-container .creategroup-box .login-link,
+.creategroup-link{
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.creategroup-container .creategroup-box .login-link a,
+.creategroup-link a  {
+    color: #FF5722;
+    text-decoration: none;
+}
+
+.creategroup-container .creategroup-box .login-link a:hover,
+.creategroup-link a:hover {
+    text-decoration: underline;
+}
+
+.creategroup-container .creategroup-box .error-message, .error-message {
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.creategroup-container .creategroup-box .error-message ul, .error-message ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.creategroup-container .creategroup-box .error-message li, .error-message li {
+    color: #FF0000;
+    margin-bottom: 0.5rem;
+}
