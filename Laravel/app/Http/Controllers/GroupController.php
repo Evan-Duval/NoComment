@@ -14,6 +14,17 @@ class GroupController extends Controller
         return Group::all();
     }
 
+    public function getGroupById($groupId): JsonResponse
+    {
+        $group = Group::find($groupId);
+
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+
+        return response()->json($group);
+    }
+
     public function getUserGroups($userId): JsonResponse
     {
         $user = User::find($userId);

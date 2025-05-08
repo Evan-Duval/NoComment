@@ -17,6 +17,12 @@
           <span>Dashboard</span>
         </a>
       </li>
+      <li>
+        <a [routerLink]="['/certification-form']" routerLinkActive="link-active">
+          <span class="icon"><img src="..//public/certified.png" alt="certified-badge" width="125%"></span>
+          <span>Certification</span>
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -25,7 +31,7 @@
     <h3><a [routerLink]="['/groups']">Vos groupes</a></h3>
     <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
       <li *ngFor="let group of groups">
-        <a href="#">
+        <a [routerLink]="['/groups/view', group.id_group]">
           <img [src]="group.imagePath" alt="groupe" class="group-avatar" />
           <span>{{ group.name }}</span>
           <span class="notification-badge" *ngIf="group.notifications">{{ group.notifications }}</span>

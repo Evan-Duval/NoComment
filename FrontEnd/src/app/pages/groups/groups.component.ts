@@ -50,5 +50,9 @@ export class GroupsComponent implements OnInit {
   redirectToCreate(): void {
     this.router.navigate(['/groups/create']);
   }
+
+  redirectToGroup(groupId: number): void {
+    this.router.navigate([`/groups/view/${groupId}`]);
+  }
   
 }

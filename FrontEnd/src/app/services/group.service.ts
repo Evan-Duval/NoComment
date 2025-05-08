@@ -17,5 +17,10 @@ export class GroupService {
   createGroup(groupData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, groupData);
   }
+
+  getGroupById(groupId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getGroup/${groupId}`);
+  }
+
 }
 

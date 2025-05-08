@@ -10,7 +10,7 @@ use App\Http\Controllers\CommentController;
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-    Route::post('reset-password', [AuthController::class, 'resetpassword']);
+    Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
     Route::post('update-password', [AuthController::class, 'changePassword']);
     Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
     Route::post('delete-user/{id}', [AuthController::class, 'delete']);
@@ -24,10 +24,11 @@ Route::prefix('auth')->group(function () {
 Route::prefix('groups')->group(function () {
     Route::post('create', [GroupController::class,'createGroup']);
     Route::get('get-all', [GroupController::class, 'index']);
+    Route::get('getGroup/{groupId}', [GroupController::class, 'getGroupById']);
     Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
-    Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']);
+    Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
     Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
-    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']);
+    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
 });
 Route::apiResource('groups', GroupController::class);
 

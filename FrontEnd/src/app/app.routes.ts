@@ -27,11 +27,12 @@ export const routes: Routes = [
   // Pages :
   { path: 'accueil', component: HomeComponent },
   { path: 'dashboard', component: HomeComponent },
+  { path: 'certification-form', component: HomeComponent },
   { path: 'profil', component: ProfilComponent },
   { path: 'settings', component: SettingsComponent },
+  
+  // Groups:
   { path: 'groups', component: GroupsComponent },
-
-  // Sous-pages :
   { path: 'groups/create', component: CreateGroupComponent }, 
   { path: 'groups/view/:id', component: GroupViewComponent }
 ];

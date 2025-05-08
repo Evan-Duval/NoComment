@@ -1,6 +1,6 @@
 <div class="groups-container">
     <div *ngIf="groups.length > 0; else noGroups">
-      <div *ngFor="let group of groups" class="group-card">
+      <div *ngFor="let group of groups" class="group-card" (click)="redirectToGroup(group.id_group)">
         <h3 class="group-title">{{ group.name }}</h3>
         <p class="group-description">
           {{ group.description || 'Aucune description disponible.' }}

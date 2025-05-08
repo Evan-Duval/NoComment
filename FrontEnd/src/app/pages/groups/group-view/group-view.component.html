@@ -1,6 +1,20 @@
 <div class="main-content">
     <!-- Liste des posts -->
     <div class="posts-section">
+
+      <div class="group-header">
+        <img [src]="groupData.imagePath" class="group-image" alt="Groupe">
+      
+        <div class="group-info">
+          <div class="group-header-top">
+            <h1 class="group-title">{{ groupData.name || "Inconnu" }}</h1>
+            <button class="join-group-button" (click)="joinGroup()">Rejoindre le groupe</button>
+          </div>
+          <h2 class="group-description">{{ groupData.description || "Inconnu" }}</h2>
+        </div>
+      </div>      
+
+
       <div *ngFor="let post of posts" class="post-card">
         <div class="post-header">
           <span class="post-author">{{ post.author }}</span>
@@ -16,13 +30,13 @@
   
     <!-- Sidebar des membres -->
     <div class="groups-sidebar">
-      <input type="text" class="searchBar" placeholder="Rechercher un groupe ou une personne">
+      <input type="text" class="searchBar" placeholder="Rechercher une personne">
       <h2 class="groups-title">Membres</h2>
-      <div *ngFor="let group of groups" class="group-item">
-        <img [src]="group.image" class="group-image" alt="{{ group.name }}">
+      <div *ngFor="let member of members" class="group-item">
+        <img [src]="member.image" class="group-image" alt="{{ member.name }}">
         <div>
-          <h3 class="group-name">{{ group.name }}</h3>
-          <p class="group-activity">{{ group.lastActivity }}</p>
+          <h3 class="group-name">{{ member.name }}</h3>
+          <p class="group-activity">{{ member.lastActivity }}</p>
         </div>
       </div>
   

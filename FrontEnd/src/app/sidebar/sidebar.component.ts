@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../services/group.service';
 import { UserService } from '../services/user.service';
@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
   userId: number = 0;
   showCreateButton: boolean = false;
 
-  constructor(private groupService: GroupService, private userService: UserService) {}
+  constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     // Faire l'appel API que si le token utilisateur existe (donc que la personne est login)
