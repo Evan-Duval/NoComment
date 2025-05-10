@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -10,6 +12,18 @@ class PostController extends Controller
     public function index()
     {
         return Post::all();
+    }
+
+    public function getByGroup($groupId): JsonResponse {
+        $group = Group::find($groupId);
+
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+
+        $posts = Post::where('id_group', $groupId)->orderBy('created_at', 'desc')->get();
+
+        return response()->json($posts);
     }
 
     public function show($id)

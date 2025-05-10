@@ -85,6 +85,105 @@
   }
 
 
+
+  /* Create New Post */
+  .toggle-post-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1F2937;
+    color: #ff7a00;
+    border: none;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .toggle-post-button span:last-child {
+    transition: transform 0.3s ease;
+  }
+
+  .arrow-up {
+    transform: rotate(180deg);
+  }
+
+  .arrow-down {
+    transform: rotate(0deg);
+  }
+
+  .create-post-section {
+    background-color: #1F2937;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .create-post-section h2 {
+    margin: 0;
+    color: #ff7a00;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .input-title,
+  .input-text,
+  .input-location {
+    background-color: #374151;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    font-size: 1rem;
+    width: 95%;
+  }
+
+  .input-text {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .input-media {
+    color: #ffffff;
+  }
+
+  .submit-post-button {
+    background-color: #ff7a00;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    align-self: flex-start;
+    transition: background 0.3s ease;
+  }
+
+  .submit-post-button:hover {
+    background-color: #e06d00;
+  }
+
+  .media-preview {
+    margin-top: 1rem;
+  }
+
+  .preview-image,
+  .preview-video {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+
+
+
   /* Posts */
   .post-card {
     background-color: #1F2937; /* Slightly lighter dark background for cards */
@@ -97,6 +196,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+    justify-content: space-between;
   }
   
   .post-author {
@@ -108,9 +208,13 @@
     color: #6B7280; /* Gray color for timestamp */
     font-size: 0.875rem;
   }
+
+  .post-location {
+    color: #93dcf8
+  }
   
-  .post-content {
-    margin-bottom: 0.5rem;
+  .post-text {
+    margin-bottom: 1rem;
   }
   
   .post-actions {
@@ -132,6 +236,12 @@
     color: #EF4444; /* Red on hover for like button */
   }
   
+  .empty-state {
+    margin-top: 2rem;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
 
 
 

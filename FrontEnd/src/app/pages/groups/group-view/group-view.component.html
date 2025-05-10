@@ -1,4 +1,5 @@
 <div class="main-content">
+
     <!-- Liste des posts -->
     <div class="posts-section">
 
@@ -14,18 +15,52 @@
         </div>
       </div>      
 
+      <!-- Bouton de toggle pour afficher/masquer le formulaire -->
+      <button (click)="toggleCreatePost()" class="toggle-post-button">
+        <span>{{ showCreatePost ? 'Masquer le formulaire' : 'Créer un nouveau post' }}</span>
+        <span [ngClass]="{ 'arrow-up': showCreatePost, 'arrow-down': !showCreatePost }">▼</span>
+      </button>
 
-      <div *ngFor="let post of posts" class="post-card">
-        <div class="post-header">
-          <span class="post-author">{{ post.author }}</span>
-          <span class="post-timestamp">{{ post.timestamp }}</span>
+      <!-- Zone de création de post -->
+      <div class="create-post-section" *ngIf="showCreatePost">
+        <h2>Créer un nouveau post</h2>
+        
+        <input type="text" [(ngModel)]="newPost.title" class="input-title" placeholder="Titre du post">
+        
+        <textarea [(ngModel)]="newPost.text" class="input-text" placeholder="Contenu du post"></textarea>
+        
+        <input type="file" (change)="onMediaSelected($event)" accept="image/*,video/*" class="input-media">
+        <!-- Prévisualisation du média -->
+        <div class="media-preview" *ngIf="mediaPreviewUrl">
+          <img *ngIf="isImage" [src]="mediaPreviewUrl" alt="Aperçu de l'image" class="preview-image">
+          <video *ngIf="!isImage" [src]="mediaPreviewUrl" controls class="preview-video"></video>
         </div>
-        <p class="post-content">{{ post.content }}</p>
+        
+        <input type="text" [(ngModel)]="newPost.location" class="input-location" placeholder="Lieu">
+        
+        <button (click)="submitPost()" class="submit-post-button">Publier</button>
+      </div>
+
+      <div *ngFor="let post of postData" class="post-card">
+        <div class="post-header">
+          <div>
+            <span class="post-author">{{ post.author }}</span>
+            <span class="post-timestamp">{{ post.datetime }}</span>
+          </div>
+          <span class ='post-location'>{{ post.location }}</span>
+        </div>
+        <h2 class="post-title">{{ post.title }}</h2>
+        <p class="post-text">{{ post.text }}</p>
         <div class="post-actions">
           <button class="action-button">❤️ {{ post.likes || 0 }}</button>
           <button class="action-button">💬 {{ post.comments || 0 }}</button>
         </div>
       </div>
+
+       <div *ngIf="!postData || postData.length === 0" class="empty-state">
+        Aucun post pour le moment, soyez le premier à commenter !
+      </div>
+
     </div>
   
     <!-- Sidebar des membres -->

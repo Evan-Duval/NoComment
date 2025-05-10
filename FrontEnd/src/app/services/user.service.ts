@@ -42,4 +42,8 @@ export class UserService {
 
     return this.http.post<any>(`${this.apiUrl}/update-user/${id}`, userData, { headers });
   }
+
+  getUsernameByUserId(userId: number): Observable<any> {
+      return this.http.get<any>(`http://127.0.0.1:8000/api/user/getUsernameByUserId/${userId}`);
+  }
 }
