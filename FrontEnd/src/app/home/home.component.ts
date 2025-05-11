@@ -28,48 +28,6 @@ export class HomeComponent implements OnInit {
   filteredGroups: any[] = [];
   searchQuery: string = '';
 
-  constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
-
-  ngOnInit(): void {
-    // Faire l'appel API que si le token utilisateur existe (donc que la personne est login)
-    if (this.userToken) {
-      this.userService.getUserByToken(this.userToken).subscribe({
-        next: (data) => {
-          this.userId = data.id;
-          
-          // Récupérer les groupes seulement après avoir obtenu l'userId
-          if (this.userId) {
-            this.loadGroups();
-          }
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération de l\'utilisateur', error);
-          this.showCreateButton = true;
-        }
-      });
-    } else {
-      this.showCreateButton = true;
-    }
-  }
-
-  loadGroups(): void {
-    this.groupService.getGroupsByUser(this.userId).subscribe({
-      next: (data) => {
-        this.groups = data;
-        this.filteredGroups = data;
-        this.showCreateButton = this.groups.length === 0;
-      },
-      error: (error) => {
-        console.error('Erreur lors de la récupération des groupes', error);
-        this.showCreateButton = true;
-      }
-    });
-  }
-
-  redirectToCreate(): void {
-    this.router.navigate(['/groups/create']);
-  }
-
   posts: Post[] = [
     {
       author: 'Anaïs',
@@ -86,6 +44,41 @@ export class HomeComponent implements OnInit {
       comments: 1
     }
   ];
+
+  constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
+
+  ngOnInit(): void {
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (currentUser) {
+      this.userId = currentUser.id!;
+      this.loadGroups();
+    } else {
+      this.showCreateButton = true;
+    }
+  }
+
+  loadGroups(): void {
+    this.groupService.getGroupsByUser(this.userId).subscribe({
+      next: (data) => {
+        this.groups = data;
+        console.log('Groups:', this.groups);
+        this.filteredGroups = data;
+        this.showCreateButton = this.groups.length === 0;
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération des groupes', error);
+        this.showCreateButton = true;
+      }
+    });
+  }
+
+  redirectToGroup(groupId: number): void {
+    this.router.navigate(['/groups/view', groupId]);
+  }
+
+  redirectToCreate(): void {
+    this.router.navigate(['/groups/create']);
+  }
 
   onSearchChange(): void {
     if (this.searchQuery.trim() === '') {

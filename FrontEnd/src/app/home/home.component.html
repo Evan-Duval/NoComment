@@ -25,7 +25,7 @@
       >
         <h2 class="groups-title">Vos groupes</h2>
         <div *ngIf="filteredGroups.length > 0; else noResults">
-            <div *ngFor="let group of filteredGroups" class="group-item">
+            <div *ngFor="let group of filteredGroups" (click)="redirectToGroup(group.id_group)" class="group-item">
                 <img [src]="group.image" class="group-image" alt="{{ group.name }}">
                 <div>
                     <h3 class="group-name">{{ group.name }}</h3>
