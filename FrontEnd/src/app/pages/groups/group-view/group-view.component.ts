@@ -31,7 +31,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   groupData: any;
   postData: any;
   showCreatePost = false;
-  hasJoinedGroup: boolean = false;
+  hasJoinedGroup!: boolean;
 
   newPost = {
     title: '',
@@ -70,6 +70,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
 
     this.routeSub = this.route.paramMap.subscribe(params => {
       this.groupId = Number(this.route.snapshot.paramMap.get('id'));
+      this.hasJoinedGroup = false;
 
       this.groupService.getGroupById(this.groupId).subscribe({
         next: (data) => {
@@ -84,8 +85,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.groupService.getGroupMembers(this.groupId).subscribe({
         next: (data) => {
           this.members = data;
-          this.filteredMembers = data; // Initialiser la liste filtrée avec tous les membres
-          this.hasJoinedGroup = this.members.some((member: any) => member.id_user === this.userId);
+          this.filteredMembers = data;
+          console.log(this.members)
+          this.hasJoinedGroup = this.members.some((member: any) => member.id === this.userId);
+          console.log(this.userId, this.members.some((member: any) => member.id === this.userId))
         },
         error: (error) => {
           console.error('Erreur lors de la récupération des membres du groupe', error);

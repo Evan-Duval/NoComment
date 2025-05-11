@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../services/group.service';
 import { UserService } from '../services/user.service';
+import { FormsModule } from '@angular/forms';
 
 interface Post {
   author: string;
@@ -15,7 +16,7 @@ interface Post {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -24,6 +25,8 @@ export class HomeComponent implements OnInit {
   userToken: string | null = localStorage.getItem('token');
   userId: number = 0;
   showCreateButton: boolean = false;
+  filteredGroups: any[] = [];
+  searchQuery: string = '';
 
   constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
@@ -53,6 +56,7 @@ export class HomeComponent implements OnInit {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
         this.groups = data;
+        this.filteredGroups = data;
         this.showCreateButton = this.groups.length === 0;
       },
       error: (error) => {
@@ -82,6 +86,16 @@ export class HomeComponent implements OnInit {
       comments: 1
     }
   ];
+
+  onSearchChange(): void {
+    if (this.searchQuery.trim() === '') {
+      this.filteredGroups = this.groups;
+    } else {
+      this.filteredGroups = this.groups.filter((group) =>
+        group.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
+  }
 }
 
 export default HomeComponent;

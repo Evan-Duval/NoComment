@@ -16,15 +16,26 @@
 
     <!-- Suggestions de groupes -->
     <div class="groups-sidebar">
-        <input type="text" name="searchBar" class="searchBar" placeholder="Rechercher un groupe ou une personne">
+      <input 
+        type="text" 
+        class="searchBar" 
+        placeholder="Rechercher une personne" 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearchChange()"
+      >
         <h2 class="groups-title">Vos groupes</h2>
-        <div *ngFor="let group of groups" class="group-item">
-            <img [src]="group.image" class="group-image" alt="{{ group.name }}">
-            <div>
-                <h3 class="group-name">{{ group.name }}</h3>
-                <p class="group-activity">{{ group.lastActivity }}</p>
+        <div *ngIf="filteredGroups.length > 0; else noResults">
+            <div *ngFor="let group of filteredGroups" class="group-item">
+                <img [src]="group.image" class="group-image" alt="{{ group.name }}">
+                <div>
+                    <h3 class="group-name">{{ group.name }}</h3>
+                    <p class="group-activity">{{ group.lastActivity }}</p>
+                </div>
             </div>
         </div>
+        <ng-template #noResults>
+            <p class="no-results">Aucun groupe trouvé.</p>
+        </ng-template>
 
         <!-- Bouton pour créer un nouveau groupe -->
          <button class="create-group-button" (click)="redirectToCreate()">Créer un nouveau groupe</button>
