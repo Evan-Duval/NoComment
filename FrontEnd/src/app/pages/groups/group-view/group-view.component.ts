@@ -25,9 +25,11 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   userId!: number;
   username!: string;
   private routeSub: Subscription = new Subscription();
+  members: any;
   groupData: any;
   postData: any;
   showCreatePost = false;
+  hasJoinedGroup: boolean = false;
 
   newPost = {
     title: '',
@@ -40,19 +42,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   };
   mediaPreviewUrl: string | ArrayBuffer | null = null;
   isImage: boolean = true;
-
-  members = [
-    {
-      name: 'Groupe Alpha',
-      image: 'https://via.placeholder.com/48',
-      lastActivity: 'Il y a 1h'
-    },
-    {
-      name: 'Groupe Beta',
-      image: 'https://via.placeholder.com/48',
-      lastActivity: 'Il y a 3h'
-    }
-  ];
 
   constructor(
     private route: ActivatedRoute, 
@@ -86,6 +75,17 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Erreur lors de la récupération du groupe', error);
+        }
+      });
+
+      // Vérifier si l'utilisateur a rejoint le groupe
+      this.groupService.getGroupMembers(this.groupId).subscribe({
+        next: (data) => {
+          this.members = data;
+          this.hasJoinedGroup = this.members.some((member: any) => member.id_user === this.userId);
+        },
+        error: (error) => {
+          console.error('Erreur lors de la récupération des membres du groupe', error);
         }
       });
 
@@ -125,6 +125,11 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   joinGroup(): void {
     // Logique pour rejoindre le groupe
     console.log('Rejoindre le groupe', this.groupId);
+  }
+
+  leaveGroup(): void {
+    console.log('Quitter le groupe');
+    // Logique à implémenter plus tard
   }
 
   toggleCreatePost() {

@@ -38,10 +38,18 @@ class GroupController extends Controller
         return response()->json($groups);
     }
 
-    // public function show($id)
-    // {
-    //     return Group::findOrFail($id);
-    // }
+    public function getGroupMembers($groupId): JsonResponse
+    {
+        $group = Group::find($groupId);
+
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+
+        $members = $group->users()->get();
+
+        return response()->json($members);
+    }
 
     public function createGroup(Request $request)
     {

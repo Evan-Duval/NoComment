@@ -84,6 +84,27 @@
     transition: background 0.3s ease;
   }
 
+  /* Bouton "Rejoint" */
+  .join-group-button[disabled] {
+    background-color: #28a745; /* Vert */
+    cursor: not-allowed;
+  }
+
+  /* Bouton "Quitter le groupe" */
+  .leave-group-button {
+    background-color: #dc3545; /* Rouge */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 8rem;
+  }
+
+  .leave-group-button:hover {
+    background-color: #c82333;
+  }
 
 
   /* Create New Post */
@@ -266,13 +287,13 @@
     padding-left: 0.5rem;
   }
   
-  .groups-title {
+  .members-title {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 1rem;
   }
   
-  .group-item {
+  .member-item {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
@@ -282,18 +303,18 @@
     cursor: pointer;
   }
   
-  .group-image {
+  .member-image {
     width: 3rem;
     height: 3rem;
     border-radius: 0.5rem;
     margin-right: 0.75rem;
   }
   
-  .group-name {
+  .member-name {
     font-weight: 600;
   }
   
-  .group-activity {
+  .member-activity {
     font-size: 0.875rem;
     color: #6B7280;
   }

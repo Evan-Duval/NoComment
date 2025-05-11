@@ -31,11 +31,11 @@ Route::prefix('groups')->group(function () {
     Route::get('get-all', [GroupController::class, 'index']);
     Route::get('getGroup/{groupId}', [GroupController::class, 'getGroupById']);
     Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
+    Route::get('getGroupMembers/{groupId}', [GroupController::class, 'getGroupMembers']);
     Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
     Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
     Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
 });
-Route::apiResource('groups', GroupController::class);
 
 // Routes API pour les posts
 Route::apiResource('posts', PostController::class);

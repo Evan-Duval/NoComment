@@ -9,7 +9,13 @@
         <div class="group-info">
           <div class="group-header-top">
             <h1 class="group-title">{{ groupData.name || "Inconnu" }}</h1>
-            <button class="join-group-button" (click)="joinGroup()">Rejoindre le groupe</button>
+            <button 
+              class="join-group-button" 
+              (click)="joinGroup()" 
+              [disabled]="hasJoinedGroup">
+              <span *ngIf="hasJoinedGroup">Rejoint ✔</span>
+              <span *ngIf="!hasJoinedGroup">Rejoindre le groupe</span>
+            </button>
           </div>
           <h2 class="group-description">{{ groupData.description || "Inconnu" }}</h2>
         </div>
@@ -71,15 +77,21 @@
     <!-- Sidebar des membres -->
     <div class="groups-sidebar">
       <input type="text" class="searchBar" placeholder="Rechercher une personne">
-      <h2 class="groups-title">Membres</h2>
-      <div *ngFor="let member of members" class="group-item">
-        <img [src]="member.image" class="group-image" alt="{{ member.name }}">
+      <h2 class="members-title">
+        Membres
+        <button 
+          *ngIf="hasJoinedGroup" 
+          class="leave-group-button" 
+          (click)="leaveGroup()">
+          Quitter le groupe
+        </button>
+      </h2>
+      <div *ngFor="let member of members" class="member-item">
+        <img [src]="member.logo" class="member-image" alt="{{ member.logo }}">
         <div>
-          <h3 class="group-name">{{ member.name }}</h3>
-          <p class="group-activity">{{ member.lastActivity }}</p>
+          <h3 class="member-name">{{ member.username }}</h3>
+          <p class="member-activity">{{ member.lastActivity }}</p>
         </div>
       </div>
-  
-      <button class="create-group-button">Créer un nouveau groupe</button>
     </div>
 </div>

@@ -22,5 +22,9 @@ export class GroupService {
     return this.http.get(`${this.apiUrl}/getGroup/${groupId}`);
   }
 
+  getGroupMembers(groupId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getGroupMembers/${groupId}`);
+  }
+
 }
 
