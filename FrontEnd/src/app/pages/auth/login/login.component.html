@@ -1,22 +1,27 @@
 <div class="login-container">
-    <div class="login-box">
-        <h2>Connexion</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" formControlName="email" placeholder="Votre email">
-            </div>
-            
-            <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input type="password" formControlName="password" placeholder="Votre mot de passe">
-            </div>
-    
-            <button type="submit" class="submit-btn">Se connecter</button>
-            
-            <div class="register-link">
-            <p>Vous n'avez pas de compte ? <a routerLink="/register">S'inscrire</a></p>
-            </div>
-        </form>
-    </div>
+  <div class="login-box">
+    <h2>Connexion</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Afficher le message de succès -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" formControlName="email" placeholder="Votre email">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" formControlName="password" placeholder="Votre mot de passe">
+      </div>
+
+      <button type="submit" class="submit-btn">Se connecter</button>
+      
+      <div class="register-link">
+        <p>Vous n'avez pas de compte ? <a routerLink="/register">S'inscrire</a></p>
+      </div>
+    </form>
+  </div>
 </div>

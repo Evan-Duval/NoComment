@@ -5,6 +5,7 @@ import { GroupService } from '../../../services/group.service';
 import { PostService } from '../../../services/post.service';
 import { UserService } from '../../../services/user.service';
 import { GlobalFunctionsService } from '../../../services/global-functions.service';
+import { GlobalUserService } from '../../../services/global-user.service';
 
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -50,24 +51,22 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private groupService: GroupService, 
     private postService: PostService, 
     private userService: UserService, 
-    private globalFunctions: GlobalFunctionsService
+    private globalFunctions: GlobalFunctionsService,
+    private globalUserService: GlobalUserService // Injecter le service global
   ) {}
 
   ngOnInit(): void {
-    const token = localStorage.getItem('token') as string;
-    this.userService.getUserByToken(token).subscribe({
-      next: (response) => {
-        this.userId = response['id'] || null;
-        this.username = response['username'] || null;
-        if (!this.userId || !this.username) {
-          console.error("Utilisateur non trouvé")
-        }
-      },
-      error: (error) => {
-        console.error("Erreur lors de la récupération de l'utilisateur:", error);
-      }
-    });
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
 
+    if (currentUser) {
+      this.userId = currentUser.id!;
+      this.username = currentUser.username;
+      console.log('Utilisateur connecté:', this.userId, this.username);
+    } else {
+      console.error('Utilisateur non trouvé dans le service global');
+    }
+
+    // Charger les données du groupe
     this.routeSub = this.route.paramMap.subscribe(params => {
       this.groupId = Number(this.route.snapshot.paramMap.get('id'));
       this.hasJoinedGroup = false;

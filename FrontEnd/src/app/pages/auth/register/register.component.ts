@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { IUser } from '../../../interfaces/iuser';
+import { GlobalUserService } from '../../../services/global-user.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -14,10 +16,14 @@ import { IUser } from '../../../interfaces/iuser';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  successMessage: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private userService: UserService,
+    private globalUserService: GlobalUserService,
+    private router: Router
   ) {
     this.registerForm = this.formBuilder.group({
       first_name: [null, Validators.required],
@@ -49,8 +55,6 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       const formValues = this.registerForm.value;
       const birthday = new Date(formValues.birthday);
-
-      // Format the birthday to YYYY-MM-DD
       const formattedBirthday = birthday.toISOString().split('T')[0];
 
       const userData: IUser = {
@@ -66,11 +70,29 @@ export class RegisterComponent {
         bio: 'Je suis un Nouvel Utilisateur sur NoComment',
         certified: false,
       };
-            
+
       this.authService.register(userData).subscribe({
         next: (response) => {
           console.log('Inscription réussie', response);
           localStorage.setItem('token', response.accessToken);
+
+          const token = localStorage.getItem('token') as string;
+
+          this.userService.getUserByToken(token).subscribe({
+            next: (response) => {
+              const user = { ...userData, id: response['id'] };
+              this.globalUserService.saveUser(user);
+              this.successMessage = 'Inscription réussie ! Vous serez redirigé dans 3 secondes.';
+              console.log('Utilisateur récupéré et sauvegardé:', this.globalUserService.currentUser);
+            },
+            error: (error) => {
+              console.error("Erreur lors de la récupération de l'utilisateur:", error);
+            }
+          });
+
+          setTimeout(() => {
+            this.router.navigate(['/accueil']); // Rediriger après 3 secondes
+          }, 3000);
         },
         error: (error) => {
           console.error('Erreur d\'inscription', error);

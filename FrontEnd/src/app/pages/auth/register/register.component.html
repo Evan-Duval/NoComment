@@ -2,6 +2,7 @@
     <div class="register-box">
         <h2>Formulaire d'Inscription</h2>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <!-- Afficher le(s) message(s) d'erreur -->
             <div *ngIf="registerForm.invalid && registerForm.touched" class="error-message">
                 <ul>
                     <li *ngIf="registerForm.get('first_name')?.invalid">
@@ -27,8 +28,12 @@
                     </li>
                 </ul>
             </div>
+            <!-- Afficher le message de succès -->
+            <div *ngIf="successMessage" class="success-message">
+                {{ successMessage }}
+            </div>
 
-
+            <!-- Formulaire d'inscription -->
             <div class="form-grid">
                 <div class="form-group">
                     <label for="first_name">Prénom</label>

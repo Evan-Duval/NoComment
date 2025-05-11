@@ -141,6 +141,13 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.success-message {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
 
 /* Scrollbar styling for dark theme */
   ::-webkit-scrollbar {
