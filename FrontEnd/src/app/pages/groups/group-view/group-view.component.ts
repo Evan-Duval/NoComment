@@ -25,7 +25,9 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   userId!: number;
   username!: string;
   private routeSub: Subscription = new Subscription();
-  members: any;
+  members: any[] = [];
+  filteredMembers: any[] = [];
+  searchQuery: string = '';
   groupData: any;
   postData: any;
   showCreatePost = false;
@@ -82,6 +84,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.groupService.getGroupMembers(this.groupId).subscribe({
         next: (data) => {
           this.members = data;
+          this.filteredMembers = data; // Initialiser la liste filtrée avec tous les membres
           this.hasJoinedGroup = this.members.some((member: any) => member.id_user === this.userId);
         },
         error: (error) => {
@@ -158,12 +161,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Set the datetime to the current date and time in a basic English format
+    // Récupérer la date actuelle au format SQL
     this.newPost.datetime = this.globalFunctions.getCurrentDateTimeSQL();
     this.newPost.id_user = this.userId;
     this.newPost.id_group = this.groupId;
-
-    console.log('Formatted datetime:', this.newPost.datetime);
 
     this.postService.createPost(this.newPost).subscribe({
       next: (data) => {
@@ -181,5 +182,15 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         this.errorMessage = 'Une erreur est survenue lors de la création du post.';
       }
     });
+  }
+
+  onSearchChange(): void {
+    if (this.searchQuery.trim() === '') {
+      this.filteredMembers = this.members; // Réinitialiser si la recherche est vide
+    } else {
+      this.filteredMembers = this.members.filter((member) =>
+        member.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
   }
 }

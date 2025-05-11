@@ -62,6 +62,7 @@
         </div>
         <h2 class="post-title">{{ post.title }}</h2>
         <p class="post-text">{{ post.text }}</p>
+        <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
         <div class="post-actions">
           <button class="action-button">❤️ {{ post.likes || 0 }}</button>
           <button class="action-button">💬 {{ post.comments || 0 }}</button>
@@ -76,7 +77,13 @@
   
     <!-- Sidebar des membres -->
     <div class="groups-sidebar">
-      <input type="text" class="searchBar" placeholder="Rechercher une personne">
+      <input 
+        type="text" 
+        class="searchBar" 
+        placeholder="Rechercher une personne" 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearchChange()"
+      >
       <h2 class="members-title">
         Membres
         <button 
@@ -86,12 +93,17 @@
           Quitter le groupe
         </button>
       </h2>
-      <div *ngFor="let member of members" class="member-item">
-        <img [src]="member.logo" class="member-image" alt="{{ member.logo }}">
-        <div>
-          <h3 class="member-name">{{ member.username }}</h3>
-          <p class="member-activity">{{ member.lastActivity }}</p>
+      <div *ngIf="filteredMembers.length > 0; else noResults">
+        <div *ngFor="let member of filteredMembers" class="member-item">
+          <img [src]="member.logo" class="member-image" alt="{{ member.logo }}">
+          <div>
+            <h3 class="member-name">{{ member.username }}</h3>
+            <p class="member-activity">{{ member.lastActivity }}</p>
+          </div>
         </div>
       </div>
+      <ng-template #noResults>
+        <p class="no-results">Aucun membre trouvé.</p>
+      </ng-template>
     </div>
 </div>

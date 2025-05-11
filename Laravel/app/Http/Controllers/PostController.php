@@ -20,7 +20,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'text' => 'required|string',
             'location' => 'required|string',
-            'media' => 'nullable',
+            'media' => 'nullable|string',
             'datetime' => 'required',
             'id_user' => 'required|integer|exists:users,id',
             'id_group' => 'required|integer|exists:groups,id_group',
