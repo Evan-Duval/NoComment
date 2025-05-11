@@ -20,7 +20,10 @@ import { Subscription } from 'rxjs';
   styleUrl: './group-view.component.css'
 })
 export class GroupViewComponent implements OnInit, OnDestroy {
+  errorMessage: string = '';
   groupId!: number;
+  userId!: number;
+  username!: string;
   private routeSub: Subscription = new Subscription();
   groupData: any;
   postData: any;
@@ -30,7 +33,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     title: '',
     text: '',
     location: '',
-    media: null
+    media: null,
+    datetime: '',
+    id_user: this.userId,
+    id_group: this.groupId
   };
   mediaPreviewUrl: string | ArrayBuffer | null = null;
   isImage: boolean = true;
@@ -57,6 +63,20 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const token = localStorage.getItem('token') as string;
+    this.userService.getUserByToken(token).subscribe({
+      next: (response) => {
+        this.userId = response['id'] || null;
+        this.username = response['username'] || null;
+        if (!this.userId || !this.username) {
+          console.error("Utilisateur non trouvé")
+        }
+      },
+      error: (error) => {
+        console.error("Erreur lors de la récupération de l'utilisateur:", error);
+      }
+    });
+
     this.routeSub = this.route.paramMap.subscribe(params => {
       this.groupId = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -127,10 +147,34 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   }
 
   submitPost() {
-    // Ajoute ici la logique pour envoyer le post (API, localStorage, etc.)
-    console.log('Nouveau post:', this.newPost);
-    // Réinitialisation
-    this.newPost = { title: '', text: '', location: '', media: null };
-  }
+    // Validation des champs
+    if (!this.newPost.title || !this.newPost.text || !this.newPost.location) {
+      this.errorMessage = 'Tous les champs doivent être remplis avant de soumettre le post.';
+      return;
+    }
 
+    // Set the datetime to the current date and time in a basic English format
+    this.newPost.datetime = this.globalFunctions.getCurrentDateTimeSQL();
+    this.newPost.id_user = this.userId;
+    this.newPost.id_group = this.groupId;
+
+    console.log('Formatted datetime:', this.newPost.datetime);
+
+    this.postService.createPost(this.newPost).subscribe({
+      next: (data) => {
+        data['author'] = this.username;
+        data['datetime'] = this.globalFunctions.formatRelativeDateFR(data['datetime'])
+
+        this.postData = [data, ...this.postData];
+        this.showCreatePost = false;
+
+        // Réinitialiser le formulaire après soumission
+        this.newPost = { title: '', text: '', location: '', media: null, datetime: '', id_user: this.userId, id_group: this.groupId };
+      },
+      error: (error) => {
+        console.error('Erreur lors de la création du post:', error);
+        this.errorMessage = 'Une erreur est survenue lors de la création du post.';
+      }
+    });
+  }
 }

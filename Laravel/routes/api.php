@@ -40,6 +40,7 @@ Route::apiResource('groups', GroupController::class);
 // Routes API pour les posts
 Route::apiResource('posts', PostController::class);
 Route::prefix('posts')->group(function() {
+    Route::post('create', [PostController::class, 'create']);
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
 });
 

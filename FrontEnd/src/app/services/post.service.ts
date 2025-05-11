@@ -13,4 +13,8 @@ export class PostService {
   getGroupsByUser(groupId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/getByGroup/${groupId}`);
   }
+
+  createPost(postData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, postData)
+  }
 }

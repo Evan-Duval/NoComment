@@ -315,6 +315,12 @@
     background-color: #0056b3;
   }
   
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
 
 
   /* Scrollbar styling for dark theme */

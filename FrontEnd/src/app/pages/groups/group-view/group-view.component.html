@@ -38,6 +38,11 @@
         
         <input type="text" [(ngModel)]="newPost.location" class="input-location" placeholder="Lieu">
         
+        <!-- Message d'erreur -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        
         <button (click)="submitPost()" class="submit-post-button">Publier</button>
       </div>
 
@@ -78,4 +83,3 @@
       <button class="create-group-button">Créer un nouveau groupe</button>
     </div>
 </div>
-  

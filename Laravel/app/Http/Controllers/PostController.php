@@ -14,6 +14,29 @@ class PostController extends Controller
         return Post::all();
     }
 
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'text' => 'required|string',
+            'location' => 'required|string',
+            'media' => 'nullable',
+            'datetime' => 'required',
+            'id_user' => 'required|integer|exists:users,id',
+            'id_group' => 'required|integer|exists:groups,id_group',
+        ]);
+        
+        return Post::create([
+            'title' => $validatedData['title'],
+            'text' => $validatedData['text'],
+            'media' => $validatedData['media'] ?? null,
+            'location' => $validatedData['location'],
+            'datetime' => $validatedData['datetime'],
+            'id_user' => $validatedData['id_user'],
+            'id_group' => $validatedData['id_group'],
+        ]);
+    }
+
     public function getByGroup($groupId): JsonResponse {
         $group = Group::find($groupId);
 
@@ -29,11 +52,6 @@ class PostController extends Controller
     public function show($id)
     {
         return Post::findOrFail($id);
-    }
-
-    public function store(Request $request)
-    {
-        return Post::create($request->all());
     }
 
     public function update(Request $request, $id)
