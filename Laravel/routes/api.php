@@ -36,6 +36,18 @@ Route::delete('likes/{id}', [LikeController::class, 'destroy']);
 
 
 
+    // Récupérer tous les utilisateurs
+    Route::get('/users', [AuthController::class, 'index']);  
+
+    // Récupérer un utilisateur par ID
+    Route::get('/users/{id}', [AuthController::class, 'show']);  
+
+    // Mettre à jour un utilisateur
+    Route::put('/users/{id}', [AuthController::class, 'update']);  
+
+    // Supprimer un utilisateur
+    Route::delete('/users/{id}', [AuthController::class, 'destroy']); 
+
 
 
 
