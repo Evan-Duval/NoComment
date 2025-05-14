@@ -15,18 +15,59 @@ use App\Http\Controllers\LikeController;
 
 
 
-// routes publiques
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
 
-Route::apiResource('comments', CommentController::class);
-Route::apiResource('posts', PostController::class);
-Route::apiResource('groups', GroupController::class);
+Route::middleware('auth:sanctum')->group(function () {
 
 
-//gerer les likes 
+       // Info utilisateur connecté
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Déconnexion
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+
+   
+
+
+
+    
+
+//les routes comment
+Route::get('/comments', [CommentController::class, 'index']);
+Route::post('/comments', [CommentController::class, 'store']);
+Route::get('/comments/{id}', [CommentController::class, 'show']);
+Route::put('/comments/{id}', [CommentController::class, 'update']);
+Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+
+
+
+//les routes post
+
+Route::get('/posts', [PostController::class, 'index']);
+Route::post('/posts', [PostController::class, 'store']);
+Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::put('/posts/{id}', [PostController::class, 'update']);
+Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+
+//les routes group
+
+Route::get('/groups', [GroupController::class, 'index']);
+Route::post('/groups', [GroupController::class, 'store']);
+Route::get('/groups/{id}', [GroupController::class, 'show']);
+Route::put('/groups/{id}', [GroupController::class, 'update']);
+Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
+
+
+
+
+
+
 
 // Ajouter un like
 Route::post('likes', [LikeController::class, 'store']);
@@ -52,21 +93,6 @@ Route::delete('likes/{id}', [LikeController::class, 'destroy']);
 
 
 
-
-
-Route::middleware('auth:sanctum')->group(function () {
-
-
-       // Info utilisateur connecté
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    // Déconnexion
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-
-   
 
 
 });
