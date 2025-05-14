@@ -4,68 +4,96 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class GroupController extends Controller
 {
     // 1. Créer un groupe
+
     public function store(Request $request)
     {
-        // Validation des données
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'logo' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'logo' => 'nullable|string|max:255',
+            ]);
 
-        // Créer le groupe
-        $group = Group::create($validated);
+            $group = Group::create($validated);
 
-        return response()->json($group, 201);  // Retourner le groupe créé
+            return response()->json($group, 201);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
 
     // 2. Lire tous les groupes
+
     public function index()
     {
-        $groups = Group::all();  // Récupérer tous les groupes
-
-        return response()->json($groups);
+        try {
+            $groups = Group::all();
+            return response()->json($groups);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
 
     // 3. Lire un groupe spécifique
-    public function show($id)
+     public function show($id)
     {
-        // Trouver le groupe par son ID
-        $group = Group::findOrFail($id);
-
-        return response()->json($group);
+        try {
+            $group = Group::findOrFail($id);
+            return response()->json($group);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Groupe non trouvé'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
 
+
+
+
+
     // 4. Mettre à jour un groupe
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
-        // Trouver le groupe par son ID
-        $group = Group::findOrFail($id);
+        try {
+            $group = Group::findOrFail($id);
 
-        // Validation des données
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'logo' => 'nullable|string|max:255',
-        ]);
+            $validated = $request->validate([
+                'name' => 'sometimes|string|max:255',
+                'logo' => 'nullable|string|max:255',
+            ]);
 
-        // Mettre à jour les informations du groupe
-        $group->update($validated);
+            $group->update($validated);
 
-        return response()->json($group);
+            return response()->json($group);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Groupe non trouvé'], 404);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
 
     // 5. Supprimer un groupe
-    public function destroy($id)
+        public function destroy($id)
     {
-        // Trouver le groupe par son ID
-        $group = Group::findOrFail($id);
+        try {
+            $group = Group::findOrFail($id);
+            $group->delete();
 
-        // Supprimer le groupe
-        $group->delete();
-
-        return response()->json(['message' => 'Group deleted successfully']);
+            return response()->json(['message' => 'Groupe supprimé avec succès']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Groupe non trouvé'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
+
 }
