@@ -46,48 +46,8 @@ class LikeController extends Controller
         return response()->json(['message' => 'Like removed successfully']);
     }
 
-    // 3. Voir tous les likes d'un post spécifique
-    public function likesForPost($postId)
-    {
-        $likes = Like::where('id_post', $postId)->get();
 
-        return response()->json($likes);
-    }
 
-    // 4. Voir tous les likes d'un commentaire spécifique
-    public function likesForComment($commentId)
-    {
-        $likes = Like::where('id_comment', $commentId)->get();
 
-        return response()->json($likes);
-    }
-
-    // 5. Vérifier si un utilisateur a liké un post ou un commentaire
-    public function hasLiked(Request $request)
-    {
-        $validated = $request->validate([
-            'id_user' => 'required|exists:users,id',
-            'id_post' => 'nullable|exists:posts,id_post',
-            'id_comment' => 'nullable|exists:comments,id_comment',
-        ]);
-
-        // Vérification si l'utilisateur a liké un post
-        if ($validated['id_post']) {
-            $like = Like::where('id_user', $validated['id_user'])
-                        ->where('id_post', $validated['id_post'])
-                        ->first();
-        }
-        // Vérification si l'utilisateur a liké un commentaire
-        elseif ($validated['id_comment']) {
-            $like = Like::where('id_user', $validated['id_user'])
-                        ->where('id_comment', $validated['id_comment'])
-                        ->first();
-        }
-
-        if ($like) {
-            return response()->json(['message' => 'User has liked']);
-        } else {
-            return response()->json(['message' => 'User has not liked'], 404);
-        }
-    }
+    
 }
