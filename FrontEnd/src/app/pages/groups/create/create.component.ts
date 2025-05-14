@@ -30,17 +30,9 @@ export class CreateGroupComponent {
   }
 
   ngOnInit(): void {
-    // Faire l'appel API que si le token utilisateur existe (donc que la personne est login)
-    if (this.userToken) {
-      this.userService.getUserByToken(this.userToken).subscribe({
-        next: (data) => {
-          this.group_owner = data.id;
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération de l\'utilisateur', error);
-          this.showErrorMessage = true;
-        }
-      });
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (currentUser) {
+      this.group_owner = currentUser.id;
     } else {
       this.showErrorMessage = true
     }

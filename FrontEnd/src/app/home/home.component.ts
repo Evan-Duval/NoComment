@@ -61,7 +61,6 @@ export class HomeComponent implements OnInit {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
         this.groups = data;
-        console.log('Groups:', this.groups);
         this.filteredGroups = data;
         this.showCreateButton = this.groups.length === 0;
       },

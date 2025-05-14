@@ -35,20 +35,16 @@ export class ProfilComponent {
   }
 
   loadUserProfile(): void {
-    const token = localStorage.getItem('token') as string;
-    this.isLoading = true;
-    
-    this.userService.getUserByToken(token).subscribe({
-      next: (response) => {
-        this.user = response;
-        this.updatedUser = {...this.user};
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erreur lors de la récupération de l'utilisateur:", error);
-        this.isLoading = false;
-      }
-    });
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (!currentUser) {
+      console.error('Utilisateur non trouvé dans le stockage local.');
+      this.isLoading = false;
+      return;
+    }
+
+    this.user = currentUser;
+    this.updatedUser = {...this.user};
+    this.isLoading = false;
   }
 
   toggleEditMode(): void {
@@ -93,22 +89,23 @@ export class ProfilComponent {
     this.successMessage = '';
     this.errorMessage = '';
   }
-
-  submitUserEdit(): void {
-    console.log('Utilisateur mis à jour:', this.updatedUser);
-    
+  submitUserEdit(): void {   
     this.userService.updateUser(this.user.id, this.updatedUser).subscribe({
       next: (response) => {
-        this.successMessage = 'Profil mis à jour avec succès !';
-        this.errorMessage = '';
-        this.changePasswordMode = false;
-        this.clearPasswordData();
-        this.editMode = false;
-        
-        // Efface le message après 3 secondes
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        if (response && response.user) {
+          localStorage.setItem('currentUser', JSON.stringify(response.user))
+          this.successMessage = 'Profil mis à jour, rechargement automatique de la page... !';
+          this.errorMessage = '';
+          this.changePasswordMode = false;
+          this.clearPasswordData();
+          this.editMode = false;
+          
+          // Efface le message après 3 secondes
+          setTimeout(() => {
+            window.location.reload();
+            this.successMessage = '';
+          }, 1000);
+        }
       },
       error: (error) => {
         console.error('Erreur lors de la mise à jour du profil:', error);

@@ -5,9 +5,7 @@ import { GroupService } from '../../../services/group.service';
 import { PostService } from '../../../services/post.service';
 import { UserService } from '../../../services/user.service';
 import { GlobalFunctionsService } from '../../../services/global-functions.service';
-import { GlobalUserService } from '../../../services/global-user.service';
 
-import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -52,7 +50,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private postService: PostService, 
     private userService: UserService, 
     private globalFunctions: GlobalFunctionsService,
-    private globalUserService: GlobalUserService // Injecter le service global
   ) {}
 
   ngOnInit(): void {

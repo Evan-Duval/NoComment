@@ -18,21 +18,13 @@ export class GroupsComponent implements OnInit {
   constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    // Faire l'appel API que si le token utilisateur existe (donc que la personne est login)
-    if (this.userToken) {
-      this.userService.getUserByToken(this.userToken).subscribe({
-        next: (data) => {
-          this.userId = data.id;
-          
-          // Récupérer les groupes seulement après avoir obtenu l'userId
-          if (this.userId) {
-            this.loadGroups();
-          }
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération de l\'utilisateur', error);
-        }
-      });
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (currentUser) {
+      this.userId = currentUser.id!;
+      this.loadGroups();
+    }
+    else {
+      this.router.navigate(['/login']);
     }
   }
 
