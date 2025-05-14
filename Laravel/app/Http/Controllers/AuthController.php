@@ -39,7 +39,7 @@ class AuthController extends Controller
         'certified' => $fields['certified'],
     ]);
 
-    // Réponse sans token
+   
     return response()->json([
         'message' => 'Utilisateur créé avec succès.',
         'user' => $user,

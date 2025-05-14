@@ -34,15 +34,6 @@ Route::post('likes', [LikeController::class, 'store']);
 // Supprimer un like
 Route::delete('likes/{id}', [LikeController::class, 'destroy']);
 
-// Voir tous les likes pour un post
-Route::get('posts/{postId}/likes', [LikeController::class, 'likesForPost']);
-
-// Voir tous les likes pour un commentaire
-Route::get('comments/{commentId}/likes', [LikeController::class, 'likesForComment']);
-
-// Vérifier si un utilisateur a liké un post ou un commentaire
-Route::post('likes/hasLiked', [LikeController::class, 'hasLiked']);
-
 
 
 
