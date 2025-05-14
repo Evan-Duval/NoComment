@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:no_comment_flutter/pages/HomeContent.dart';
 import 'package:no_comment_flutter/widget/navigation_sidebar.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,12 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Widget _currentScreen = const Center(
-    child: Text(
-      "Bienvenue sur la page principale",
-      style: TextStyle(color: Colors.white),
-    ),
-  );
+  Widget _currentScreen = const HomeContent();
 
   @override
   Widget build(BuildContext context) {

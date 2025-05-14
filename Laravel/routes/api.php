@@ -6,6 +6,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Models\Group;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -30,3 +34,21 @@ Route::apiResource('posts', PostController::class);
 Route::apiResource('comments', CommentController::class);
 
 Route::put('comments/{id}', [CommentController::class, 'update']);
+
+Route::middleware('auth:sanctum')->get('/groups/{group}/follow-status', function (Group $group) {
+    return response()->json([
+        'is_following' => Auth::user()->groups->contains($group->id_group)
+    ]);
+});
+
+Route::middleware('auth:sanctum')->post('/groups/{group}/toggle-follow', function (Group $group) {
+    $user = Auth::user();
+
+    if ($user->groups->contains($group->id_group)) {
+        $user->groups()->detach($group->id_group);
+        return response()->json(['following' => false]);
+    } else {
+        $user->groups()->attach($group->id_group);
+        return response()->json(['following' => true]);
+    }
+});

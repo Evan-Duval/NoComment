@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:no_comment_flutter/config/config.dart';
+import 'package:no_comment_flutter/pages/HomeContent.dart';
+import 'package:no_comment_flutter/pages/groupes/GroupsListe.dart';
 import 'package:no_comment_flutter/pages/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,11 +16,9 @@ class NavigationSidebar extends StatelessWidget {
 
   const NavigationSidebar({super.key, required this.onNavigate});
 
-
-
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token'); 
+    final String? token = prefs.getString('token');
 
     if (token == null) {
       _navigateToLogin(context);
@@ -37,7 +37,7 @@ class NavigationSidebar extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        await prefs.remove('token'); 
+        await prefs.remove('token');
         _navigateToLogin(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -68,10 +68,7 @@ class NavigationSidebar extends StatelessWidget {
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () {
-              onNavigate(const Center(
-                child:
-                    Text('Page Accueil', style: TextStyle(color: Colors.white)),
-              ));
+              onNavigate(const HomeContent());
             },
             child: StrokeText(
               text: 'NC',
@@ -97,9 +94,7 @@ class NavigationSidebar extends StatelessWidget {
           }),
           const SizedBox(height: 20),
           _buildNavIcon(Icons.group, "Groupe", () {
-            onNavigate(const Center(
-              child: Text('Page Groupe', style: TextStyle(color: Colors.white)),
-            ));
+            onNavigate(GroupsList());
           }),
           const Spacer(),
           const SizedBox(height: 20),
