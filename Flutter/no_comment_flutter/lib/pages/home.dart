@@ -3,8 +3,6 @@ import 'package:no_comment_flutter/pages/HomeContent.dart';
 import 'package:no_comment_flutter/widget/navigation_sidebar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
   @override
   _HomePageState createState() => _HomePageState();
 }

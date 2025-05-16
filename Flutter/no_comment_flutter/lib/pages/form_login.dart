@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -18,7 +16,7 @@ class MyCustomForm extends StatefulWidget {
 class _MyCustomFormState extends State<MyCustomForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  int? _id;
   String? _username;
   String? _firstName;
   String? _lastName;
@@ -31,6 +29,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
+    // Sauvegarde des autres informations utilisateur
+    if (_id != null) prefs.setInt('id', _id!);
     if (_username != null) prefs.setString('username', _username!);
     if (_firstName != null) prefs.setString('firstName', _firstName!);
     if (_lastName != null) prefs.setString('lastName', _lastName!);
@@ -67,6 +67,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
         // Récupération des informations utilisateur
         final userInfo = data['user_info'];
         if (userInfo != null) {
+          _id = userInfo['id'];
           _username = userInfo['username'];
           _email = userInfo['email'];
           _bio = userInfo['bio'];
@@ -77,10 +78,11 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
           print("Données utilisateur obtenues depuis l'API :");
           print(
-              "Username : $_username, Email : $_email, Bio : $_bio, Prénom : $_firstName, Nom : $_lastName, Date de naissance : $_birthday, Logo : $_logo");
+              "Id user : $_id, Username : $_username, Email : $_email, Bio : $_bio, Prénom : $_firstName, Nom : $_lastName, Date de naissance : $_birthday, Logo : $_logo");
 
           // Sauvegarde uniquement si les valeurs ne sont pas null
-          if (_username != null &&
+          if (_id != null &&
+              _username != null &&
               _email != null &&
               _bio != null &&
               _firstName != null &&
@@ -88,6 +90,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
               _birthday != null &&
               _logo != null) {
             final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('id', _id!);
             await prefs.setString('username', _username!);
             await prefs.setString('email', _email!);
             await prefs.setString('bio', _bio!);
@@ -113,7 +116,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomePage(),
+            builder: (context) => HomePage(),
           ),
         );
       } else {

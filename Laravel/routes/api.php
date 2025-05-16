@@ -30,6 +30,10 @@ Route::apiResource('groups', GroupController::class);
 // Routes API pour les posts
 Route::apiResource('posts', PostController::class);
 
+// Récupérer les posts d’un groupe spécifique
+Route::get('/groups/{id}/posts', [PostController::class, 'getPostsByGroup']);
+
+
 // Routes API pour les commentaires
 Route::apiResource('comments', CommentController::class);
 
