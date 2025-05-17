@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="!isLoading && user" class="profile-container">
-  <div class="profile-image-container">
+  <div class="profile-image-container" *ngIf="isOwnProfile">
     <img
       [src]="user.logo ? 'profiles/' + user.logo : 'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'"
       alt="Photo de profil"
@@ -17,8 +17,8 @@
   </div>
 
   <div class="profile-info">
-    <!-- Mode affichage -->
-    <div *ngIf="!editMode" class="info-display">
+    <!-- Affichage pour son propre profil -->
+    <ng-container *ngIf="isOwnProfile; else otherUserProfile">
       <div class="info-card">
         <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
         <div class="info-item">
@@ -38,45 +38,60 @@
           <span class="info-value">{{ user.birthday | date:'dd/MM/yyyy' }}</span>
         </div>
       </div>
-    </div>
+      <!-- Groupes rejoints (présentation améliorée) -->
+      <div class="groups-section">
+        <h2 class="groups-title">Groupes rejoints</h2>
+        <div *ngIf="groups.length > 0; else noGroups" class="groups-list">
+          <div *ngFor="let group of groups" class="group-card" (click)="redirectToGroup(group.id_group)">
+            <img [src]="group.imagePath || 'assets/default-group.png'" alt="Image groupe" class="group-image">
+            <div class="group-info">
+              <div class="group-name">{{ group.name }}</div>
+              <div class="group-description">{{ group.description }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noGroups>
+          <div class="no-groups">Aucun groupe rejoint.</div>
+        </ng-template>
+      </div>
+    </ng-container>
 
-    <!-- Mode édition -->
-    <div *ngIf="editMode" class="edit-form">
-      <div class="form-group">
-        <label for="first_name">Prénom</label>
-        <input id="first_name" [(ngModel)]="updatedUser.first_name" placeholder="Prénom" class="form-control"/>
+    <!-- Affichage pour un autre utilisateur -->
+    <ng-template #otherUserProfile>
+      <div class="info-card">
+        <div class="profile-image-container">
+          <img
+            [src]="user.logo ? 'profiles/' + user.logo : 'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'"
+            alt="Photo de profil"
+            class="profile-picture"
+          />
+        </div>
+        <div class="info-item">
+          <span class="info-label">Nom d'utilisateur:</span>
+          <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Bio:</span>
+          <span class="info-value">{{ user.bio || 'Non renseignée' }}</span>
+        </div>
       </div>
-      
-      <div class="form-group">
-        <label for="last_name">Nom</label>
-        <input id="last_name" [(ngModel)]="updatedUser.last_name" placeholder="Nom" class="form-control"/>
+      <!-- Groupes rejoints (présentation améliorée) -->
+      <div class="groups-section">
+        <h2 class="groups-title">Groupes rejoints</h2>
+        <div *ngIf="groups.length > 0; else noGroupsOther" class="groups-list">
+          <div *ngFor="let group of groups" class="group-card" (click)="redirectToGroup(group.id_group)">
+            <img [src]="group.imagePath || 'assets/default-group.png'" alt="Image groupe" class="group-image">
+            <div class="group-info">
+              <div class="group-name">{{ group.name }}</div>
+              <div class="group-description">{{ group.description }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noGroupsOther>
+          <div class="no-groups">Aucun groupe rejoint.</div>
+        </ng-template>
       </div>
-      
-      <div class="form-group">
-        <label for="username">Nom d'utilisateur</label>
-        <input id="username" [(ngModel)]="updatedUser.username" placeholder="Nom d'utilisateur" class="form-control"/>
-      </div>
-      
-      <div class="form-group">
-        <label for="bio">Bio</label>
-        <textarea id="bio" [(ngModel)]="updatedUser.bio" placeholder="Bio" class="form-control textarea-bio"></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" [(ngModel)]="updatedUser.email" placeholder="Email" type="email" class="form-control"/>
-      </div>
-      
-      <div class="form-group">
-        <label for="birthday">Date de naissance</label>
-        <input id="birthday" [(ngModel)]="updatedUser.birthday" type="date" class="form-control"/>
-      </div>
-      
-      <div class="form-actions">
-        <button class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
-        <button class="btn btn-primary" (click)="submitUserEdit()">Enregistrer</button>
-      </div>
-    </div>
+    </ng-template>
   </div>
 
   <!-- Actions du profil (boutons) -->

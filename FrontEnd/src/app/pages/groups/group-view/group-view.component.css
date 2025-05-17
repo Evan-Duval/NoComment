@@ -308,27 +308,47 @@
   .member-item {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    transition: background 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    margin-bottom: 8px;
   }
 
-  .group-item:hover {
-    cursor: pointer;
+  .member-item:hover {
+    background: #23272f;
+    box-shadow: 0 2px 8px rgba(96,165,250,0.08);
   }
   
   .member-image {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.5rem;
-    margin-right: 0.75rem;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #1f2937;
+    border: 2px solid #374151;
   }
   
   .member-name {
-    font-weight: 600;
+    font-size: 1.08rem;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .certified-badge {
+    color: #60a5fa;
+    font-size: 1.1em;
+    margin-left: 2px;
   }
   
   .member-activity {
-    font-size: 0.875rem;
-    color: #6B7280;
+    color: #aaa;
+    font-size: 0.92rem;
+    margin: 0;
   }
 
   .create-group-button {

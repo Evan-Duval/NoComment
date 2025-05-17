@@ -113,10 +113,13 @@
         </button>
       </h2>
       <div *ngIf="filteredMembers.length > 0; else noResults">
-        <div *ngFor="let member of filteredMembers" class="member-item">
-          <img [src]="member.logo" class="member-image" alt="{{ member.logo }}">
+        <div *ngFor="let member of filteredMembers" class="member-item" (click)="redirectToUserProfile(member.id)">
+          <img [src]="member.logo || 'assets/default-profile.png'" class="member-image" alt="{{ member.username }}">
           <div>
-            <h3 class="member-name">{{ member.username }}</h3>
+            <h3 class="member-name">
+              {{ member.username }}
+              <span *ngIf="member.certified" class="certified-badge" title="Compte certifié">✔️</span>
+            </h3>
             <p class="member-activity">{{ member.lastActivity }}</p>
           </div>
         </div>

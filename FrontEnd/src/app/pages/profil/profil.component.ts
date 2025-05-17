@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
@@ -34,14 +34,15 @@ export class ProfilComponent {
   constructor(
     private userService: UserService,
     private groupService: GroupService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
-    const otherUserId = this.route.snapshot.paramMap.get('id');
+    const urlUserId = this.route.snapshot.paramMap.get('id');
 
-    if (!otherUserId || (currentUser && +otherUserId === currentUser.id)) {
+    if (!urlUserId || (currentUser && +urlUserId === currentUser.id)) {
       // Mon profil
       this.isOwnProfile = true;
       this.user = currentUser;
@@ -50,10 +51,10 @@ export class ProfilComponent {
     } else {
       // Profil d'un autre utilisateur
       this.isOwnProfile = false;
-      this.userService.getOtherUserById(otherUserId).subscribe({
+      this.userService.getOtherUserById(urlUserId).subscribe({
         next: (user) => {
           this.user = user;
-          this.loadUserGroups(user.id);
+          this.loadUserGroups(urlUserId);
           this.isLoading = false;
         },
         error: () => {
@@ -63,12 +64,16 @@ export class ProfilComponent {
     }
   }
 
-  loadUserGroups(userId: number) {
+  loadUserGroups(userId: number | string) {
     this.groupService.getGroupsByUser(userId).subscribe({
       next: (groups) => {
         this.groups = groups;
       }
     });
+  }
+
+  redirectToGroup(groupId: number) {
+    this.router.navigate(['groups/view', groupId]);
   }
 
   toggleEditMode(): void {
