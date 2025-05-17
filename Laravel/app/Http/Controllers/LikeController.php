@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use Dotenv\Exception\ValidationException;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -62,7 +65,7 @@ class LikeController extends Controller
             return response()->json($like, 201);
 
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
+            return response()->json(['error' => $e], 422);
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors de la création du like.'], 500);
         }

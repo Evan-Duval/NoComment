@@ -115,6 +115,7 @@ class GroupController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }  
+    }
 
     // 4. Mettre à jour un groupe
    public function update(Request $request, $id)
