@@ -105,7 +105,7 @@ class GroupController extends Controller
     }
 
     // 3. Lire un groupe spécifique
-     public function show($id)
+    public function show($id)
     {
         try {
             $group = Group::findOrFail($id);
@@ -114,11 +114,11 @@ class GroupController extends Controller
             return response()->json(['error' => 'Groupe non trouvé'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
-        }  
+        }
     }
 
     // 4. Mettre à jour un groupe
-   public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $group = Group::findOrFail($id);
@@ -132,7 +132,6 @@ class GroupController extends Controller
             $group->update($validated);
 
             return response()->json($group);
-          
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Groupe non trouvé'], 404);
         } catch (ValidationException $e) {
@@ -143,19 +142,17 @@ class GroupController extends Controller
     }
 
     // 5. Supprimer un groupe
-        public function destroy($id)
+    public function destroy($id)
     {
         try {
             $group = Group::findOrFail($id);
             $group->delete();
 
             return response()->json(['message' => 'Groupe supprimé avec succès']);
-          
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Groupe non trouvé'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }
     }
-
 }
