@@ -122,7 +122,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
                 next: (data) => {
                   post['likes'] = data['like_number'] || 0;
                   post['liked'] = data['user_like'] || false;
-                  console.log('Likes:', data);
                 },
                 error: (error) => {
                   console.error(this.globalErrorMessage, error);
