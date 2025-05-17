@@ -35,25 +35,34 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('groups')->group(function () {
-    Route::post('create', [GroupController::class,'createGroup']);
+    Route::post('create', [GroupController::class, 'createGroup']);
     Route::get('get-all', [GroupController::class, 'index']);
     Route::get('getGroup/{groupId}', [GroupController::class, 'getGroupById']);
     Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
     Route::get('getGroupMembers/{groupId}', [GroupController::class, 'getGroupMembers']);
     Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
-    Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
-    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
-    Route::middleware('auth:sanctum')->get('{group}/follow-status', function (Group $group) {
-    return response()->json(['is_following' => Auth::user()->groups->contains($group->id_group)]);
-    Route::middleware('auth:sanctum')->post('{group}/toggle-follow', function (Group $group) {
-    $user = Auth::user();
-    if ($user->groups->contains($group->id_group)) {
-        $user->groups()->detach($group->id_group);
-        return response()->json(['following' => false]);
-    } else {
-        $user->groups()->attach($group->id_group);
-        return response()->json(['following' => true]);
-    }
+    Route::post('updateGroup/{groupId}', [GroupController::class, 'update']);
+    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class, 'removeUserFromGroup']); // todo
+
+    // Routes protégées par Sanctum
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('{group}/follow-status', function (Group $group) {
+            return response()->json([
+                'is_following' => Auth::user()->groups->contains($group->id_group)
+            ]);
+        });
+
+        Route::post('{group}/toggle-follow', function (Group $group) {
+            $user = Auth::user();
+            if ($user->groups->contains($group->id_group)) {
+                $user->groups()->detach($group->id_group);
+                return response()->json(['following' => false]);
+            } else {
+                $user->groups()->attach($group->id_group);
+                return response()->json(['following' => true]);
+            }
+        });
+    });
 });
 
 Route::prefix('posts')->group(function() {
