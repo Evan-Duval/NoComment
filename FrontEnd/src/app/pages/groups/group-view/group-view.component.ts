@@ -11,6 +11,7 @@ import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { LikeService } from '../../../services/like.service';
 
 @Component({
   selector: 'app-group-view',
@@ -19,6 +20,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './group-view.component.css'
 })
 export class GroupViewComponent implements OnInit, OnDestroy {
+  globalErrorMessage: string = '';
   errorMessage: string = '';
   groupId!: number;
   userId!: number;
@@ -49,6 +51,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private groupService: GroupService, 
     private postService: PostService, 
     private userService: UserService, 
+    private likeService: LikeService,
     private globalFunctions: GlobalFunctionsService,
   ) {}
 
@@ -58,7 +61,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     if (currentUser) {
       this.userId = currentUser.id!;
       this.username = currentUser.username;
-      console.log('Utilisateur connecté:', this.userId, this.username);
     } else {
       console.error('Utilisateur non trouvé dans le service global');
     }
@@ -70,10 +72,16 @@ export class GroupViewComponent implements OnInit, OnDestroy {
 
       this.groupService.getGroupById(this.groupId).subscribe({
         next: (data) => {
+          if (!data) {
+            this.globalErrorMessage = 'Aucun groupe trouvé avec cet ID.';
+            return;
+          }
           this.groupData = data;
         },
         error: (error) => {
+          this.globalErrorMessage = 'Erreur lors de la récupération du groupe';
           console.error('Erreur lors de la récupération du groupe', error);
+          return;
         }
       });
 
@@ -82,12 +90,12 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.members = data;
           this.filteredMembers = data;
-          console.log(this.members)
           this.hasJoinedGroup = this.members.some((member: any) => member.id === this.userId);
-          console.log(this.userId, this.members.some((member: any) => member.id === this.userId))
         },
         error: (error) => {
-          console.error('Erreur lors de la récupération des membres du groupe', error);
+          this.globalErrorMessage = 'Erreur lors de la récupération des membres du groupe';
+          console.error(this.globalErrorMessage, error);
+          return;
         }
       });
 
@@ -103,17 +111,33 @@ export class GroupViewComponent implements OnInit, OnDestroy {
                   post['author'] = data['username'] || 'Inconnu';
                 },
                 error: (error) => {
-                  console.error("Erreur lors de la récupération du nom d'utilisateur :", error);
+                  console.error(this.globalErrorMessage, error);
                   post['author'] = 'Inconnu';
+                  return;
                 }
               });
+
+              this.likeService.getLikesByPost(post['id_post'], this.userId).subscribe({
+                next: (data) => {
+                  post['likes'] = data['like_number'] || 0;
+                  post['liked'] = data['liked'] || false;
+                },
+                error: (error) => {
+                  console.error(this.globalErrorMessage, error);
+                  post['likes'] = 0;
+                  return;
+                }
+              });
+              // ajouter likes et commentaires du post ici
             })
 
             this.postData = data;
           }
         },
         error: (error) => {
-          console.error('Erreur lors de la récupération des posts du groupe', error);
+          this.globalErrorMessage = 'Erreur lors de la récupération des posts du groupe';
+          console.error(this.globalErrorMessage, error);
+          return;
         }
       });
 
@@ -190,6 +214,30 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.filteredMembers = this.members.filter((member) =>
         member.username.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
+    }
+  }
+
+  onLikeButtonDown(post: any) {
+    if (post.liked) {
+      this.likeService.unlikePost(post.id_post, this.userId).subscribe({
+        next: () => {
+          post.liked = false;
+          post.likes = (post.likes || 1) - 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du unlike', err);
+        }
+      });
+    } else {
+      this.likeService.likePost(post.id_post, this.userId).subscribe({
+        next: () => {
+          post.liked = true;
+          post.likes = (post.likes || 0) + 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du like', err);
+        }
+      });
     }
   }
 }

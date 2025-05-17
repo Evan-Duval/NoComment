@@ -256,6 +256,12 @@
   .action-button:hover {
     color: #EF4444;
   }
+
+  .action-button.liked {
+    background-color: #dc3545 !important; /* Rouge */
+    color: #fff !important;
+    border-radius: 6px;
+  }
   
   .empty-state {
     margin-top: 2rem;

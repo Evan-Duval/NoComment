@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Like;
+use Illuminate\Http\Request;
+
+class LikeController extends Controller
+{
+    public function getLikesByPost(Request $request, $postId)
+    {
+        $likeNumber = Like::where('id_post', $postId)->count();
+
+        $userId = $request->query('userId');
+        if ($userId) {
+            $userLikes = Like::where('id_post', $postId)
+                ->where('id_user', $userId)
+                ->exists();
+
+            return response()->json([
+                'like_number' => $likeNumber,
+                'user_like' => $userLikes
+            ]);
+        }
+
+        return response()->json([
+            'like_number' => $likeNumber
+        ]);
+    }
+
+    public function getLikesByComment($commentId)
+    {
+        $likes = Like::where('id_comment', $commentId)->get();
+        return response()->json($likes);
+    }
+    
+    public function likePost(Request $request, $postId)
+    {
+        $like = new Like();
+        $like->user_id = $request->user()->id;
+        $like->post_id = $postId;
+        $like->save();
+
+        return response()->json(['message' => 'Post liked successfully', 201]);
+    }
+
+    public function unlikePost(Request $request, $postId)
+    {
+        $like = Like::where('id_user', $request->user()->id)->where('id_post', $postId)->first();
+        if ($like) {
+            $like->delete();
+        }
+
+        return response()->json(['message' => 'Post unliked successfully', 200]);
+    }
+
+    public function likeComment(Request $request, $commentId)
+    {
+        $like = new Like();
+        $like->user_id = $request->user()->id;
+        $like->comment_id = $commentId;
+        $like->save();
+
+        return response()->json(['message' => 'Comment liked successfully', 201]);
+    }
+
+    public function unlikeComment(Request $request, $commentId)
+    {
+        $like = Like::where('id_user', $request->user()->id)->where('id_comment', $commentId)->first();
+        if ($like) {
+            $like->delete();
+        }
+
+        return response()->json(['message' => 'Comment unliked successfully', 200]);
+    }
+}

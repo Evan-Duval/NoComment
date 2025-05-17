@@ -9,7 +9,7 @@
         <div class="group-info">
           <div class="group-header-top">
             <h1 class="group-title">{{ groupData.name || "Inconnu" }}</h1>
-            <button 
+            <button
               class="join-group-button" 
               (click)="joinGroup()" 
               [disabled]="hasJoinedGroup">
@@ -19,8 +19,11 @@
           </div>
           <h2 class="group-description">{{ groupData.description || "Inconnu" }}</h2>
         </div>
-      </div>      
+      </div>
 
+      <div *ngIf="globalErrorMessage">
+        {{ globalErrorMessage }}
+      </div>
       <!-- Bouton de toggle pour afficher/masquer le formulaire -->
       <button (click)="toggleCreatePost()" class="toggle-post-button">
         <span>{{ showCreatePost ? 'Masquer le formulaire' : 'Créer un nouveau post' }}</span>
@@ -64,7 +67,13 @@
         <p class="post-text">{{ post.text }}</p>
         <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
         <div class="post-actions">
-          <button class="action-button">❤️ {{ post.likes || 0 }}</button>
+          <button
+            class="action-button"
+            [ngClass]="{ 'liked': post.liked }"
+            (click)="onLikeButtonDown(post)"
+          >
+            ❤️ {{ post.likes || 0 }}
+          </button>
           <button class="action-button">💬 {{ post.comments || 0 }}</button>
         </div>
       </div>
