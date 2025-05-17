@@ -108,6 +108,23 @@ class PostController extends Controller
             return response()->json(['error' => 'Erreur lors de la suppression', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getPostsByGroup($groupId)
+    {
+        try {
+            $posts = Post::with('user')
+                ->where('id_group', $groupId)
+                ->orderBy('datetime', 'desc')
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors de la récupération des posts pour ce groupe.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
 
 

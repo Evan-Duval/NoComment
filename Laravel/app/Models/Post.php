@@ -14,6 +14,15 @@ class Post extends Model
 
     protected $fillable = ['title', 'text', 'media', 'location', 'datetime', 'id_user', 'id_group'];
 
+    // Ajouter cet attribut pour forcer l'ajout du champ id dans le JSON
+    protected $appends = ['id'];
+
+    // Créer un accessor pour id, qui retourne id_post
+    public function getIdAttribute()
+    {
+        return $this->attributes['id_post'];
+    }
+
     public function comments()
     {
         return $this->hasMany(Comment::class, 'id_post');

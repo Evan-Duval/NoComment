@@ -9,13 +9,16 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\LikeController;
+use App\Models\Group;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 
 Route::prefix('user')->group(function () {
     Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
     Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });
+
 
 Route::prefix('auth')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
@@ -40,6 +43,17 @@ Route::prefix('groups')->group(function () {
     Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
     Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
     Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
+    Route::middleware('auth:sanctum')->get('{group}/follow-status', function (Group $group) {
+    return response()->json(['is_following' => Auth::user()->groups->contains($group->id_group)]);
+    Route::middleware('auth:sanctum')->post('{group}/toggle-follow', function (Group $group) {
+    $user = Auth::user();
+    if ($user->groups->contains($group->id_group)) {
+        $user->groups()->detach($group->id_group);
+        return response()->json(['following' => false]);
+    } else {
+        $user->groups()->attach($group->id_group);
+        return response()->json(['following' => true]);
+    }
 });
 
 Route::prefix('posts')->group(function() {
@@ -64,4 +78,5 @@ Route::prefix('likes')->group(function() {
     Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
     Route::post('addLike', [LikeController::class, 'store']);
     Route::delete('removeLike/{id}', [LikeController::class, 'destroy']);
+
 });
