@@ -6,7 +6,7 @@ import { PostService } from '../../../services/post.service';
 import { UserService } from '../../../services/user.service';
 import { GlobalFunctionsService } from '../../../services/global-functions.service';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -62,6 +62,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private userService: UserService, 
     private likeService: LikeService,
     private globalFunctions: GlobalFunctionsService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -177,6 +178,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   leaveGroup(): void {
     console.log('Quitter le groupe');
     // Logique à implémenter plus tard
+  }
+
+  redirectToUserProfile(userId: number) {
+      this.router.navigate(['/profil', userId]);
   }
 
   toggleCreatePost() {

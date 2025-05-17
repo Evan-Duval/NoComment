@@ -28,7 +28,7 @@ export const routes: Routes = [
   { path: 'accueil', component: HomeComponent },
   { path: 'dashboard', component: HomeComponent },
   { path: 'certification-form', component: HomeComponent },
-  { path: 'profil', component: ProfilComponent },
+  { path: 'profil/:id', component: ProfilComponent },
   { path: 'settings', component: SettingsComponent },
   
   // Groups:

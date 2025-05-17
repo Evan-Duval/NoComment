@@ -77,7 +77,7 @@
             [disabled]="!isConnected || !hasJoinedGroup"
           >
             ❤️ {{ post.likes || 0 }}
-          </button>>
+          </button>
           <button
             class="action-button comment-btn"
             [disabled]="!isConnected || !hasJoinedGroup"
@@ -113,10 +113,13 @@
         </button>
       </h2>
       <div *ngIf="filteredMembers.length > 0; else noResults">
-        <div *ngFor="let member of filteredMembers" class="member-item">
-          <img [src]="member.logo" class="member-image" alt="{{ member.logo }}">
+        <div *ngFor="let member of filteredMembers" class="member-item" (click)="redirectToUserProfile(member.id)">
+          <img [src]="member.logo || 'assets/default-profile.png'" class="member-image" alt="{{ member.username }}">
           <div>
-            <h3 class="member-name">{{ member.username }}</h3>
+            <h3 class="member-name">
+              {{ member.username }}
+              <span *ngIf="member.certified" class="certified-badge" title="Compte certifié">✔️</span>
+            </h3>
             <p class="member-activity">{{ member.lastActivity }}</p>
           </div>
         </div>
@@ -131,12 +134,24 @@
       <div class="popup-overlay" (click)="closeCommentsPopup()"></div>
       <div class="popup-content">
         <button class="close-btn" (click)="closeCommentsPopup()">✖</button>
-        <div class="popup-post">
+        <div class="popup-post post-card">
+          <div class="post-header">
+            <div>
+              <span class="post-author">{{ selectedPost?.author }}</span>
+              <span class="post-timestamp">{{ selectedPost?.datetime }}</span>
+            </div>
+            <span class="post-location">{{ selectedPost?.location }}</span>
+          </div>
           <h2 class="post-title">{{ selectedPost?.title }}</h2>
           <p class="post-text">{{ selectedPost?.text }}</p>
-          <span class="post-timestamp">{{ selectedPost?.datetime }}</span>
-          <span class="post-location">{{ selectedPost?.location }}</span>
-          <img *ngIf="selectedPost?.media" [src]="selectedPost.media" alt="Post media" class="post-media">
+          <button
+            class="action-button"
+            [ngClass]="{ 'liked': selectedPost.liked }"
+            (click)="onLikeButtonDown(selectedPost)"
+            [disabled]="!isConnected || !hasJoinedGroup"
+          >
+            ❤️ {{ selectedPost.likes || 0 }}
+          </button>
         </div>
         <div class="popup-comments">
           <h3>Commentaires</h3>

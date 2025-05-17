@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
+import { GroupService } from '../../services/group.service';
 
 @Component({
   selector: 'app-home',
@@ -14,11 +15,13 @@ import { FormsModule } from '@angular/forms';
 export class ProfilComponent {
   user: any;
   isLoading: boolean = true;
+  isOwnProfile: boolean = false;
   editMode: boolean = false;
   changePasswordMode: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
   showPassword: boolean = false;
+  groups: any[] = [];
 
   // Champs du formulaire 
   updatedUser: any = {};
@@ -28,23 +31,49 @@ export class ProfilComponent {
     new_password_confirmation: ''
   };
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private groupService: GroupService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadUserProfile();
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    const urlUserId = this.route.snapshot.paramMap.get('id');
+
+    if (!urlUserId || (currentUser && +urlUserId === currentUser.id)) {
+      // Mon profil
+      this.isOwnProfile = true;
+      this.user = currentUser;
+      this.loadUserGroups(this.user.id);
+      this.isLoading = false;
+    } else {
+      // Profil d'un autre utilisateur
+      this.isOwnProfile = false;
+      this.userService.getOtherUserById(urlUserId).subscribe({
+        next: (user) => {
+          this.user = user;
+          this.loadUserGroups(urlUserId);
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
-  loadUserProfile(): void {
-    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
-    if (!currentUser) {
-      console.error('Utilisateur non trouvé dans le stockage local.');
-      this.isLoading = false;
-      return;
-    }
+  loadUserGroups(userId: number | string) {
+    this.groupService.getGroupsByUser(userId).subscribe({
+      next: (groups) => {
+        this.groups = groups;
+      }
+    });
+  }
 
-    this.user = currentUser;
-    this.updatedUser = {...this.user};
-    this.isLoading = false;
+  redirectToGroup(groupId: number) {
+    this.router.navigate(['groups/view', groupId]);
   }
 
   toggleEditMode(): void {

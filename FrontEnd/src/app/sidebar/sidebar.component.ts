@@ -15,21 +15,24 @@ export class SidebarComponent implements OnInit {
   groups: any[] = [];
   userToken: string | null = localStorage.getItem('token');
   userId: number = 0;
+  userRank: string = 'user';
   showCreateButton: boolean = false;
+  moderationView: boolean = localStorage.getItem('moderationView') === '1' ? true : false;
 
   constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
     if (currentUser) {
       this.userId = currentUser.id!;
+      this.userRank = currentUser.rank;
       this.loadGroups();
     } else {
       this.showCreateButton = true;
     }
   }
 
-  loadGroups(): void {
+  loadGroups() {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
         this.groups = data;
@@ -42,7 +45,23 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  redirectToCreate(): void {
+  redirectToCreate() {
     this.router.navigate(['/groups/create']);
+  }
+
+  redirectToProfile() {
+    this.router.navigate(['/profil', this.userId]);
+  }
+
+  redirectToGroups() {
+    this.router.navigate(['/groups']);
+  }
+
+  toggleModerationView(value: boolean) {
+    if (!this.userRank || this.userRank !== 'admin') {return;}
+
+    this.moderationView = value;
+    localStorage.setItem('moderationView', value ? '1' : '0');
+    window.location.reload();
   }
 }

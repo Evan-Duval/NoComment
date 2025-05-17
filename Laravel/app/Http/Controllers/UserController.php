@@ -19,4 +19,19 @@ class UserController extends Controller
             'username' => $user->username,
         ]);
     }
+
+    public function getOtherUserById($userId): JsonResponse {
+    $user = User::find($userId);
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    return response()->json([
+        'username' => $user->username,
+        'bio' => $user->bio,
+        'logo' => $user->logo,
+        'certified' => $user->certified,
+    ]);
+}
 }

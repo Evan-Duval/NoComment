@@ -19,6 +19,10 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/user`, { headers });
   }
 
+  getOtherUserById(userId: string): Observable<any> {
+    return this.http.get<any>(`http://127.0.0.1:8000/api/user/getOtherUserById/${userId}`);
+  }
+
   changePassword(email:string, passwordData: any): Observable<any> {
 
     const headers = new HttpHeaders({
