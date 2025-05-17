@@ -30,12 +30,15 @@
   <div class="sidebar-section">
     <h3><a [routerLink]="['/groups']">Vos groupes</a></h3>
     <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
-      <li *ngFor="let group of groups">
+      <li *ngFor="let group of groups | slice:0:5">
         <a [routerLink]="['/groups/view', group.id_group]">
           <img [src]="group.imagePath" alt="groupe" class="group-avatar" />
           <span>{{ group.name }}</span>
           <span class="notification-badge" *ngIf="group.notifications">{{ group.notifications }}</span>
         </a>
+      </li>
+      <li *ngIf="groups.length > 5" class="more-groups" (click)="redirectToGroups()">
+        +{{ groups.length - 5 }} autres
       </li>
     </ul>
     <ng-template #noGroups>

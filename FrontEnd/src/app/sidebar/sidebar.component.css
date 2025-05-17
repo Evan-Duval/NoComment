@@ -99,3 +99,16 @@ h3 {
     font-size: 0.8rem;
     margin-left: auto;
 }
+
+.more-groups {
+  text-align: center;
+  color: #60a5fa;
+  font-weight: 500;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.more-groups:hover {
+  background: #23272f;
+}
