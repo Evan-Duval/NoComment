@@ -32,7 +32,6 @@ class User extends Authenticatable
         'logo',
         'bio',
         'certified',
-        'deleted_at',
     ];
 
     /**

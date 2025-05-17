@@ -9,26 +9,34 @@ class Like extends Model
 {
     use HasFactory;
 
+    // Table associée à ce modèle
     protected $table = 'likes';
+    
+    // Clé primaire
     protected $primaryKey = 'id_like';
 
-    protected $fillable = ['id_user', 'id_post', 'id_comment'];
+    // Attributs pouvant être assignés en masse
+    protected $fillable = [
+        'id_user', 
+        'id_post', 
+        'id_comment'
+    ];
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class, 'id_post');
-    }
-
+    // Relation avec l'utilisateur
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
     }
 
+
+    // Relation avec le post
     public function post()
     {
         return $this->belongsTo(Post::class, 'id_post');
     }
 
+
+    // Relation avec le commentaire
     public function comment()
     {
         return $this->belongsTo(Comment::class, 'id_comment');
