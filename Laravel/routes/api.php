@@ -11,6 +11,7 @@ use App\Http\Controllers\CommentController;
 
 Route::prefix('user')->group(function () {
     Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
+    Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });
 
 Route::prefix('auth')->group(function () {

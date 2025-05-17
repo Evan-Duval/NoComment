@@ -45,4 +45,8 @@ export class SidebarComponent implements OnInit {
   redirectToCreate(): void {
     this.router.navigate(['/groups/create']);
   }
+
+  redirectToProfile(): void {
+    this.router.navigate(['/profil', this.userId]);
+  }
 }

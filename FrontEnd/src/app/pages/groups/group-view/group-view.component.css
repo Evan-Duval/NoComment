@@ -394,9 +394,9 @@
   color: #fff;
   padding: 2rem;
   border-radius: 10px;
-  max-width: 600px;
+  max-width: 50vw;
   width: 90vw;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   z-index: 2010;
 }
@@ -414,9 +414,16 @@
   background: #1F2937;
   border-radius: 8px;
   padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.popup-content .post-card {
+  width: 100%;
+  box-sizing: border-box;
 }
 .popup-comments {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #374151;
+  padding-top: 1rem;
 }
 .comment-item {
   background: #23272f;
@@ -434,11 +441,6 @@
 .comment-text {
   color: #fff;
   margin-bottom: 0.5rem;
-}
-.comment-media {
-  max-width: 100%;
-  border-radius: 6px;
-  margin-top: 0.5rem;
 }
 .no-comments, .info-message {
   color: #aaa;

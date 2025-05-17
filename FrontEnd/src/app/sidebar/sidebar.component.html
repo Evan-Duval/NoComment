@@ -40,7 +40,6 @@
     </ul>
     <ng-template #noGroups>
       <button class="create-group-button" (click)="redirectToCreate()">Créer un groupe</button>
-      <!-- <button (click)="createGroup()">Créer un groupe</button> -->
     </ng-template>
   </div>
 
@@ -49,7 +48,7 @@
     <h3>Personnel</h3>
     <ul class="nav-links">
       <li>
-        <a routerLink="/profil" routerLinkActive="active">
+        <a (click)="redirectToProfile()" routerLinkActive="active">
           <span class="icon">👤</span>
           <span>Profil</span>
         </a>
