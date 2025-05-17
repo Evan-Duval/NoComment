@@ -39,7 +39,6 @@ Route::prefix('groups')->group(function () {
     Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
 });
 
-// Routes API pour les posts
 Route::prefix('posts')->group(function() {
     Route::post('create', [PostController::class, 'create']);
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);

@@ -17,6 +17,7 @@ export class SidebarComponent implements OnInit {
   userId: number = 0;
   userRank: string = 'user';
   showCreateButton: boolean = false;
+  moderationView: boolean = localStorage.getItem('moderationView') === '1' ? true : false;
 
   constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
@@ -54,5 +55,13 @@ export class SidebarComponent implements OnInit {
 
   redirectToGroups() {
     this.router.navigate(['/groups']);
+  }
+
+  toggleModerationView(value: boolean) {
+    if (!this.userRank || this.userRank !== 'admin') {return;}
+
+    this.moderationView = value;
+    localStorage.setItem('moderationView', value ? '1' : '0');
+    window.location.reload();
   }
 }
