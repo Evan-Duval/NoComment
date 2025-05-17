@@ -12,7 +12,7 @@ class Comment extends Model
     protected $table = 'comments';
     protected $primaryKey = 'id_comment';
 
-    protected $fillable = ['text', 'media', 'datetime', 'id_user', 'id_post'];
+    protected $fillable = ['text', 'datetime', 'id_user', 'id_post'];
 
     public function post()
     {

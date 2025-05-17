@@ -3,50 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 
 class CommentController extends Controller
 {
-
-
-
-    // Liste tous les commentaires
-      public function index()
+    public function getCommentNumberByPost($postId)
     {
-        try {
-            $comments = Comment::with(['user', 'post'])->get();
-            return response()->json($comments);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Erreur lors de la récupération des commentaires', 'details' => $e->getMessage()], 500);
-        }
+        $commentNumber = Comment::where('id_post', $postId)->count();
+
+        return response()->json(['comment_number' => $commentNumber]);
     }
 
-
-
-    // Crée un commentaire
-    public function store(Request $request)
+    public function getByPost($postId)
     {
-        try {
-            $validated = $request->validate([
-                'text' => 'required|string',
-                'media' => 'nullable|string',
-                'datetime' => 'required|date',
-                'id_user' => 'required|exists:users,id',
-                'id_post' => 'required|exists:posts,id_post',
-            ]);
+        if(!Post::find($postId)) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
 
-            $comment = Comment::create($validated);
-            return response()->json($comment, 201);
+        $comments = Comment::where('id_post', $postId)->orderBy('created_at', 'desc')->get();
+
+        return response()->json($comments);
+    }
+
+    public function create(Request $request)
+    {
+      try {
+        
+          $validatedData = $request->validate([
+              'text' => 'required|string',
+              'media' => 'nullable|string',
+              'datetime' => 'required|string',
+              'id_user' => 'required|integer|exists:users,id',
+              'id_post' => 'required|integer|exists:posts,id_post',
+          ]);
+
+          if (!Post::find($validatedData['id_post'])) {
+              return response()->json(['message' => 'Post not found'], 404);
+          }
+
+          $comment = Comment::create($validatedData);
+          return response()->json($comment, 201);
 
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors de la création du commentaire', 'details' => $e->getMessage()], 500);
         }
     }
-
-
-
 
 
     // Affiche un commentaire spécifique
@@ -61,10 +65,6 @@ class CommentController extends Controller
             return response()->json(['error' => 'Erreur lors de la récupération du commentaire', 'details' => $e->getMessage()], 500);
         }
     }
-
-
-
-
 
 
     // Met à jour un commentaire

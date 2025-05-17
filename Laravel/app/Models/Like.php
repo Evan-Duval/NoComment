@@ -28,11 +28,13 @@ class Like extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
+
     // Relation avec le post
     public function post()
     {
         return $this->belongsTo(Post::class, 'id_post');
     }
+
 
     // Relation avec le commentaire
     public function comment()

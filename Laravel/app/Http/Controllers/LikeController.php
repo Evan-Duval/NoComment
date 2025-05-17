@@ -3,13 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
-use Exception;
 
 class LikeController extends Controller
 {
+    public function getLikesByPost(Request $request, $postId): JsonResponse
+    {
+        $likeNumber = Like::where('id_post', $postId)->count();
+
+        $userId = $request->query('userId');
+        if ($userId) {
+            $userLikes = Like::where('id_post', $postId)
+                ->where('id_user', $userId)
+                ->exists();
+
+            return response()->json([
+                'like_number' => $likeNumber,
+                'user_like' => $userLikes
+            ]);
+        }
+
+        return response()->json([
+            'like_number' => $likeNumber
+        ]);
+    }
+
+    public function getLikesByComment($commentId): JsonResponse
+    {
+        $likes = Like::where('id_comment', $commentId)->get();
+        return response()->json($likes);
+    }
+    
     // 1. Créer un like pour un post ou un commentaire
     public function store(Request $request)
     {
@@ -42,7 +67,7 @@ class LikeController extends Controller
             return response()->json(['error' => 'Erreur lors de la création du like.'], 500);
         }
     }
-
+  
     // 2. Supprimer un like
     public function destroy($id)
     {

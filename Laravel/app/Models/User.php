@@ -44,6 +44,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_user', 'id_user', 'id_group');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

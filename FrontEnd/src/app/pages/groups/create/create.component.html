@@ -1,0 +1,40 @@
+<div class="creategroup-container">
+    <div class="creategroup-box">
+        <h2>Création d'un nouveau groupe</h2>
+        <form [formGroup]="createGroupForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="createGroupForm.invalid && createGroupForm.touched" class="error-message">
+                <ul>
+                    <li *ngIf="createGroupForm.get('name')?.invalid">
+                        Le champ "Nom du groupe" est requis.
+                    </li>
+                    <li *ngIf="createGroupForm.get('description')?.invalid">
+                        Le champ "Description" est requis.
+                    </li>
+                    <li *ngIf="createGroupForm.get('logo')?.invalid">
+                        Veuillez choisir une image pour le logo de votre groupe.
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Nom du groupe</label>
+                    <input type="text" formControlName="name" placeholder="Nom de votre groupe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description du groupe</label>
+                    <input type="text" formControlName="description" placeholder="La description de votre groupe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="logo">Logo</label>
+                    <input type="file" formControlName="logo" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Créer le groupe</button>
+        </form>
+    </div>
+</div>

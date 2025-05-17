@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../auth.service';
-import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { IUser } from '../../interfaces/iuser';
+import { IUser } from '../../../interfaces/iuser';
+import { GlobalUserService } from '../../../services/global-user.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -15,11 +16,14 @@ import { IUser } from '../../interfaces/iuser';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  successMessage: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private http: HttpClient
+    private userService: UserService,
+    private globalUserService: GlobalUserService,
+    private router: Router
   ) {
     this.registerForm = this.formBuilder.group({
       first_name: [null, Validators.required],
@@ -29,15 +33,28 @@ export class RegisterComponent {
       password: [null, [Validators.required, Validators.minLength(12)]],
       c_password: [null, [Validators.required, Validators.minLength(12)]],
       username: [null, Validators.required]
+    }, {
+      validators: this.passwordMatchValidator
     });
+  }
+
+  // Validateur personnalisé pour vérifier si les mots de passe correspondent
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('c_password')?.value;
+    
+    if (password !== confirmPassword && password && confirmPassword) {
+      control.get('c_password')?.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    return null;
   }
 
   onSubmit(): void {
     if (this.registerForm.valid) {
       const formValues = this.registerForm.value;
       const birthday = new Date(formValues.birthday);
-
-      // Format the birthday to YYYY-MM-DD
       const formattedBirthday = birthday.toISOString().split('T')[0];
 
       const userData: IUser = {
@@ -53,13 +70,29 @@ export class RegisterComponent {
         bio: 'Je suis un Nouvel Utilisateur sur NoComment',
         certified: false,
       };
-      
-      const newUser = this.authService.createUser(userData);
-      
+
       this.authService.register(userData).subscribe({
         next: (response) => {
           console.log('Inscription réussie', response);
           localStorage.setItem('token', response.accessToken);
+
+          const token = localStorage.getItem('token') as string;
+
+          this.userService.getUserByToken(token).subscribe({
+            next: (response) => {
+              const user = { ...userData, id: response['id'] };
+              this.globalUserService.saveUser(user);
+              this.successMessage = 'Inscription réussie ! Vous serez redirigé dans 3 secondes.';
+              console.log('Utilisateur récupéré et sauvegardé:', this.globalUserService.currentUser);
+            },
+            error: (error) => {
+              console.error("Erreur lors de la récupération de l'utilisateur:", error);
+            }
+          });
+
+          setTimeout(() => {
+            this.router.navigate(['/accueil']); // Rediriger après 3 secondes
+          }, 3000);
         },
         error: (error) => {
           console.error('Erreur d\'inscription', error);

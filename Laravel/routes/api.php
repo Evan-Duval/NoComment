@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -10,92 +12,57 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 
 
-
-
-
-
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
-
-
-       // Info utilisateur connecté
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    // Déconnexion
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-
-   
-
-
-
-    
-
-//les routes comment
-Route::get('/comments', [CommentController::class, 'index']);
-Route::post('/comments', [CommentController::class, 'store']);
-Route::get('/comments/{id}', [CommentController::class, 'show']);
-Route::put('/comments/{id}', [CommentController::class, 'update']);
-Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
-
-
-
-//les routes post
-
-Route::get('/posts', [PostController::class, 'index']);
-Route::post('/posts', [PostController::class, 'store']);
-Route::get('/posts/{id}', [PostController::class, 'show']);
-Route::put('/posts/{id}', [PostController::class, 'update']);
-Route::delete('/posts/{id}', [PostController::class, 'destroy']);
-
-//les routes group
-
-Route::get('/groups', [GroupController::class, 'index']);
-Route::post('/groups', [GroupController::class, 'store']);
-Route::get('/groups/{id}', [GroupController::class, 'show']);
-Route::put('/groups/{id}', [GroupController::class, 'update']);
-Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
-
-
-
-
-
-
-
-// Ajouter un like
-Route::post('likes', [LikeController::class, 'store']);
-
-// Supprimer un like
-Route::delete('likes/{id}', [LikeController::class, 'destroy']);
-
-
-
-    // Récupérer tous les utilisateurs
-    Route::get('/users', [AuthController::class, 'index']);  
-
-    // Récupérer un utilisateur par ID
-    Route::get('/users/{id}', [AuthController::class, 'show']);  
-
-    // Mettre à jour un utilisateur
-    Route::put('/users/{id}', [AuthController::class, 'update']);  
-
-    // Supprimer un utilisateur
-    Route::delete('/users/{id}', [AuthController::class, 'destroy']); 
-
-
-
-
-
-
-
+Route::prefix('user')->group(function () {
+    Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
+    Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });
 
+Route::prefix('auth')->group(function () {
+        Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register']);
+        Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
+        Route::post('update-password', [AuthController::class, 'changePassword']);
+        Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
+        Route::post('delete-user/{id}', [AuthController::class, 'delete']);
 
+        Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
+    });
+});
 
+Route::prefix('groups')->group(function () {
+    Route::post('create', [GroupController::class,'createGroup']);
+    Route::get('get-all', [GroupController::class, 'index']);
+    Route::get('getGroup/{groupId}', [GroupController::class, 'getGroupById']);
+    Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
+    Route::get('getGroupMembers/{groupId}', [GroupController::class, 'getGroupMembers']);
+    Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
+    Route::post('updateGroup/{groupId}', [GroupController::class,'update']);
+    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class,'removeUserFromGroup']); // todo
+});
+
+// Routes API pour les posts
+Route::prefix('posts')->group(function() {
+    Route::post('create', [PostController::class, 'create']);
+    Route::get('/getById/{id}', [PostController::class, 'show']);
+    Route::put('/update/{id}', [PostController::class, 'update']);
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+    Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
+});
+
+Route::prefix('comments')->group(function() {
+    Route::get('getByPost/{postId}', [CommentController::class, 'getByPost']);
+    Route::get('getCommentNumberByPost/{postId}', [CommentController::class, 'getCommentNumberByPost']);
+    Route::post('create', [CommentController::class, 'create']);
+    Route::post('update/{id}', [CommentController::class, 'update']);
+    Route::get('/getById/{id}', [CommentController::class, 'show']);
+    Route::put('/update/{id}', [CommentController::class, 'update']);
+    Route::delete('/delete/{id}', [CommentController::class, 'destroy']);
+});
+
+Route::prefix('likes')->group(function() {
+    Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
+    Route::post('addLike', [LikeController::class, 'store']);
+    Route::delete('removeLike/{id}', [LikeController::class, 'destroy']);
+});

@@ -12,6 +12,7 @@ export class User implements IUser {
       public rank: string,
       public logo: string,
       public bio: string,
-      public certified: boolean
+      public certified: boolean,
+      public id?: number,
     ) {}
 }
