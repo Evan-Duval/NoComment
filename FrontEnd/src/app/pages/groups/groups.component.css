@@ -1,0 +1,68 @@
+ 
+.groups-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.group-card {
+    background: rgb(255, 255, 255);
+    border-left: 6px solid #ff7a00;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 1rem;
+}
+
+.group-card:hover {
+    transform: translateY(-3px);
+}
+
+.group-title {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+    color: #ff7a00;
+    font-weight: bold;
+}
+
+.group-description {
+    font-size: 1rem;
+    color: #333;
+}
+
+.invisible-buttoon {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.no-groups-text {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+.creategroup-create-group-btn {
+    align-self: center;
+    padding: 12px 24px;
+    background-color: #ff7a00;
+    color: white;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.creategroup-create-group-btn:hover {
+    background-color: #e96b00;
+}
+  

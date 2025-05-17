@@ -120,6 +120,13 @@
     color: #6B7280;
   }
 
+  .no-results {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
   .create-group-button {
     display: flex;
     padding: 10px 15px;
@@ -135,24 +142,4 @@
 
   .create-group-button:hover {
     background-color: #0056b3;
-  }
-  
-
-
-  /* Scrollbar styling for dark theme */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #1F2937;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #374151;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #4B5563;
   }

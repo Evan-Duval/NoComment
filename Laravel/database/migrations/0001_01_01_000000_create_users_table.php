@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('bio')->nullable();
             $table->boolean('certified');
+            $table->date('deleted_at')->nullable();;
             $table->rememberToken();
             $table->timestamps();
         });

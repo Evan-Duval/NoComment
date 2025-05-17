@@ -17,11 +17,17 @@ class Group extends Model
     protected $fillable = [
         'name',
         'description',
-        'logo'
+        'logo',
+        'group_owner',
     ];
 
     public function users()
     {
         return $this->belongsToMany(User::class, 'group_user', 'id_group', 'id_user');
+    }
+
+    public function groupOwner()
+    {
+        return $this->belongsTo(User::class, 'group_owner');
     }
 }

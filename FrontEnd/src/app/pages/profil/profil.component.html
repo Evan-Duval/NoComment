@@ -1,0 +1,131 @@
+<!-- HTML - profile.component.html -->
+<div *ngIf="isLoading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Chargement du profil...</p>
+</div>
+
+<div *ngIf="!isLoading && user" class="profile-container">
+  <div class="profile-image-container">
+    <img
+      [src]="user.logo ? 'profiles/' + user.logo : 'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'"
+      alt="Photo de profil"
+      class="profile-picture"
+    />
+    <div *ngIf="editMode" class="profile-image-overlay">
+      <button class="image-edit-btn"><i class="fas fa-camera"></i> Modifier</button>
+    </div>
+  </div>
+
+  <div class="profile-info">
+    <!-- Mode affichage -->
+    <div *ngIf="!editMode" class="info-display">
+      <div class="info-card">
+        <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+        <div class="info-item">
+          <span class="info-label">Nom d'utilisateur:</span>
+          <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Bio:</span>
+          <span class="info-value">{{ user.bio || 'Non renseignée' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email:</span>
+          <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date de naissance:</span>
+          <span class="info-value">{{ user.birthday | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode édition -->
+    <div *ngIf="editMode" class="edit-form">
+      <div class="form-group">
+        <label for="first_name">Prénom</label>
+        <input id="first_name" [(ngModel)]="updatedUser.first_name" placeholder="Prénom" class="form-control"/>
+      </div>
+      
+      <div class="form-group">
+        <label for="last_name">Nom</label>
+        <input id="last_name" [(ngModel)]="updatedUser.last_name" placeholder="Nom" class="form-control"/>
+      </div>
+      
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input id="username" [(ngModel)]="updatedUser.username" placeholder="Nom d'utilisateur" class="form-control"/>
+      </div>
+      
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" [(ngModel)]="updatedUser.bio" placeholder="Bio" class="form-control textarea-bio"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" [(ngModel)]="updatedUser.email" placeholder="Email" type="email" class="form-control"/>
+      </div>
+      
+      <div class="form-group">
+        <label for="birthday">Date de naissance</label>
+        <input id="birthday" [(ngModel)]="updatedUser.birthday" type="date" class="form-control"/>
+      </div>
+      
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
+        <button class="btn btn-primary" (click)="submitUserEdit()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions du profil (boutons) -->
+  <div *ngIf="!editMode && !changePasswordMode" class="profile-actions">
+    <button class="btn btn-edit" (click)="toggleEditMode()">
+      <i class="fas fa-user-edit"></i> Modifier Mes Informations
+    </button>
+    <button class="btn btn-password" (click)="togglePasswordMode()">
+      <i class="fas fa-key"></i> Changer Mot De Passe
+    </button>
+  </div>
+
+  <!-- Message de succès -->
+  <div *ngIf="successMessage" class="alert success-alert">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert error-alert">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Formulaire de changement de mot de passe -->
+  <div *ngIf="changePasswordMode" class="password-form">
+    <h3>Changement de mot de passe</h3>
+    
+    <div class="form-group">
+      <label for="current_password">Ancien mot de passe</label>
+      <div class="password-field">
+        <input id="current_password" [(ngModel)]="passwordData.current_password" [type]="showPassword ? 'text' : 'password'" placeholder="Ancien mot de passe" class="form-control" />
+        <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+          <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="new_password">Nouveau mot de passe</label>
+      <input id="new_password" [(ngModel)]="passwordData.new_password" type="password" placeholder="Nouveau mot de passe" class="form-control" />
+    </div>
+    
+    <div class="form-group">
+      <label for="confirm_password">Confirmer le nouveau mot de passe</label>
+      <input id="confirm_password" [(ngModel)]="passwordData.new_password_confirmation" type="password" placeholder="Confirmer nouveau mot de passe" class="form-control" />
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="cancelPasswordChange()">Annuler</button>
+      <button class="btn btn-primary" (click)="submitPasswordChange()">Valider</button>
+    </div>
+  </div>
+</div>

@@ -30,6 +30,11 @@ h3 {
     padding-left: 0.5rem;
 }
 
+.sidebar-section h3 a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
 .nav-links, .group-list {
     list-style: none;
     padding: 0;
@@ -45,16 +50,33 @@ h3 {
     border-radius: 8px;
     margin-bottom: 0.3rem;
     transition: all 0.3s ease;
-  }
+}
   
-  .nav-links li a:hover {
+.nav-links li a:hover {
     background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .link-active {
+}
+
+.create-group-button {
+    display: flex;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    flex-direction: column;
+    transition: background 0.3s ease;
+}
+
+.create-group-button:hover {
+    background-color: #0056b3;
+}
+
+.link-active {
     background-color: #1a73e8 !important;
     color: white !important;
-  }
+}
 
 .group-avatar {
     width: 32px;

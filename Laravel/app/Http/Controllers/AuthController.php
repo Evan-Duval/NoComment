@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 // use App\Mail\PasswordResetNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -33,12 +35,13 @@ class AuthController extends Controller
             'username' => 'required|string',
             'birthday' => 'required|date',
             'email' => 'required|string|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:12',
             'c_password' => 'required|same:password',
             'rank' => 'string',
             'logo' => 'string',
             'bio' => 'string',
             'certified' => 'boolean',
+            'deleted_at' => 'date',
         ]);
 
         $user = new User([
@@ -52,6 +55,7 @@ class AuthController extends Controller
             'logo' => $request->logo ?? null,
             'bio' => $request->bio ?? null,
             'certified' => $request->certified ?? 0,
+            'deleted_at' => null,
         ]);
 
         if ($user->save()) {
@@ -161,6 +165,21 @@ class AuthController extends Controller
                 ], 422);
             }
 
+            if ($request->current_password === $request->new_password) {
+                return response()->json([
+                    'message' => 'Le nouveau mot de passe doit être différent de l\'ancien',
+                    'status' => 'error'
+                ], 422);
+            }
+
+            // Vérification de la longueur du mot de passe
+            if (strlen($request->new_password) < 12) {
+                return response()->json([
+                    'message' => 'Le mot de passe doit contenir au moins 12 caractères',
+                    'status' => 'error'
+                ], 422);
+            }
+
             // Mise à jour du mot de passe
             $user->password = Hash::make($request->new_password);
             $user->save();
@@ -177,6 +196,95 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * The updateUser function updates a user's information in a PHP application and returns a JSON
+     * response indicating success or failure.
+     * @param $id (int) -- The `id` parameter in the `updateUser` function represents the unique
+     * identifier of the user that you want to update. This identifier is used to find the specific
+     * user in the database so that their information can be updated accordingly.
+     * @param request (Request) -- The `updateUser` function takes two parameters:
+     * @return JsonResponse with a success message indicating that the user has been updated
+     * successfully, along with a status of 'success'.
+     * 
+     * 04/26/2025
+     */
+    public function updateUser(int $id, Request $request): JsonResponse
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur introuvable',
+                'status' => 'error'
+            ], 404);
+        }
+
+        // Validation des données
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|min:2',
+            'last_name' => 'required|string|min:2',
+            'username' => [
+                'required',
+                'string',
+                'min:4',
+                Rule::unique('users')->ignore($id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($id),
+            ],
+            'bio' => 'nullable|string|min:4',
+            'birthday' => [
+                'required',
+                'date',
+                'before_or_equal:today',
+            ],
+            'logo' => 'nullable|string',
+        ], [
+            'first_name.required' => 'Le prénom est obligatoire',
+            'first_name.min' => 'Le prénom doit contenir au moins 2 caractères',
+            'last_name.required' => 'Le nom est obligatoire',
+            'last_name.min' => 'Le nom doit contenir au moins 2 caractères',
+            'username.required' => 'Le nom d\'utilisateur est obligatoire',
+            'username.min' => 'Le nom d\'utilisateur doit contenir au moins 4 caractères',
+            'username.unique' => 'Ce nom d\'utilisateur est déjà utilisé',
+            'email.required' => 'L\'email est obligatoire',
+            'email.email' => 'Veuillez fournir une adresse email valide',
+            'email.unique' => 'Cette adresse email est déjà utilisée',
+            'bio.min' => 'La bio doit contenir au moins 4 caractères',
+            'birthday.required' => 'La date de naissance est obligatoire',
+            'birthday.date' => 'Format de date invalide',
+            'birthday.before_or_equal' => 'La date de naissance ne peut pas être dans le futur',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors(),
+                'status' => 'error'
+            ], 422);
+        }
+
+        // Mettre à jour seulement les champs autorisés
+        $user->update($request->only([
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'bio',
+            'birthday',
+            'logo'
+        ]));
+
+        return response()->json([
+            'message' => 'Utilisateur mis à jour avec succès',
+            'status' => 'success',
+            'user' => $user
+        ], 200);
+    }
+
 
     /**
      * This PHP function deletes a user by setting the 'deleted_at' timestamp field to the current time
