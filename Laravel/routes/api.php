@@ -44,13 +44,15 @@ Route::prefix('posts')->group(function() {
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
 });
 
+Route::prefix('comments')->group(function() {
+    Route::get('getByPost/{postId}', [CommentController::class, 'getByPost']);
+    Route::get('getCommentNumberByPost/{postId}', [CommentController::class, 'getCommentNumberByPost']);
+    Route::post('create', [CommentController::class, 'create']);
+    Route::post('update/{id}', [CommentController::class, 'update']);
+});
+
 Route::prefix('likes')->group(function() {
     Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
     Route::post('likePost/{postId}', [LikeController::class, 'likePost']);
     Route::post('unlikePost/{postId}', [LikeController::class, 'unlikePost']);
 });
-
-// Routes API pour les commentaires
-Route::apiResource('comments', CommentController::class);
-
-Route::put('comments/{id}', [CommentController::class, 'update']);

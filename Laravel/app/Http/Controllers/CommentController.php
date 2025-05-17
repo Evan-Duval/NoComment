@@ -3,25 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index()
+    public function getCommentNumberByPost($postId)
     {
-        return Comment::all();
+        $commentNumber = Comment::where('id_post', $postId)->count();
+
+        return response()->json(['comment_number' => $commentNumber]);
     }
 
-    public function show($id)
+    public function getByPost($postId)
     {
-        return Comment::findOrFail($id);
+        if(!Post::find($postId)) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        $comments = Comment::where('id_post', $postId)->orderBy('created_at', 'desc')->get();
+
+        return response()->json($comments);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        return Comment::create($request->all());
-    }
+        $validatedData = $request->validate([
+            'text' => 'required|string',
+            'datetime' => 'required|string',
+            'id_user' => 'required|integer|exists:users,id',
+            'id_post' => 'required|integer|exists:posts,id_post',
+        ]);
 
+        if (!Post::find($validatedData['id_post'])) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        return Comment::create($validatedData);
+    }
 
     public function update(Request $request, $id)
     {

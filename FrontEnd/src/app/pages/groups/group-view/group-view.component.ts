@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { LikeService } from '../../../services/like.service';
+import { CommentService } from '../../../services/comment.service';
 
 @Component({
   selector: 'app-group-view',
@@ -33,6 +34,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   postData: any;
   showCreatePost = false;
   hasJoinedGroup!: boolean;
+  isConnected: boolean = false;
 
   newPost = {
     title: '',
@@ -47,10 +49,16 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   isImage: boolean = true;
   likeCooldowns: { [postId: number]: number } = {}; // Ajouté pour le cooldown
 
+  showCommentsPopup = false;
+  selectedPost: any = null;
+  comments: any[] = [];
+  newCommentText: string = '';
+
   constructor(
     private route: ActivatedRoute, 
     private groupService: GroupService, 
     private postService: PostService, 
+    private commentService: CommentService,
     private userService: UserService, 
     private likeService: LikeService,
     private globalFunctions: GlobalFunctionsService,
@@ -62,6 +70,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     if (currentUser) {
       this.userId = currentUser.id!;
       this.username = currentUser.username;
+      this.isConnected = true;
     } else {
       console.error('Utilisateur non trouvé dans le service global');
     }
@@ -95,7 +104,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.globalErrorMessage = 'Erreur lors de la récupération des membres du groupe';
-          console.error(this.globalErrorMessage, error);
+          console.error(error);
           return;
         }
       });
@@ -112,7 +121,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
                   post['author'] = data['username'] || 'Inconnu';
                 },
                 error: (error) => {
-                  console.error(this.globalErrorMessage, error);
+                  console.error(error);
                   post['author'] = 'Inconnu';
                   return;
                 }
@@ -124,8 +133,19 @@ export class GroupViewComponent implements OnInit, OnDestroy {
                   post['liked'] = data['user_like'] || false;
                 },
                 error: (error) => {
-                  console.error(this.globalErrorMessage, error);
+                  console.error(error);
                   post['likes'] = 0;
+                  return;
+                }
+              });
+
+              this.commentService.getCommentNumberByPost(post['id_post']).subscribe({
+                next: (data) => {
+                  post['commentsNumber'] = data['comment_number'] || 0;
+                },
+                error: (error) => {
+                  console.error(error);
+                  post['commentsNumber'] = 0;
                   return;
                 }
               });
@@ -137,7 +157,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.globalErrorMessage = 'Erreur lors de la récupération des posts du groupe';
-          console.error(this.globalErrorMessage, error);
+          console.error(error);
           return;
         }
       });
@@ -226,7 +246,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.likeCooldowns[post.id_post] = now;
-    console.log("1")
     if (post.liked) {
       this.likeService.unlikePost(post.id_post, this.userId).subscribe({
         next: () => {
@@ -248,5 +267,72 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  openCommentsPopup(post: any) {
+    this.selectedPost = post;
+    this.showCommentsPopup = true;
+
+    this.commentService.getCommentsByPost(post['id_post']).subscribe({
+      next: (data) => {
+        if (!data) {
+          this.comments = [];
+          return;
+        }
+
+        data.forEach((comment: any) => {
+          comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime'])
+          this.userService.getUsernameByUserId(comment['id_user']).subscribe({
+            next: (data) => {
+              comment['author'] = data['username'] || 'Inconnu';
+            },
+            error: (error) => {
+              console.error(error);
+              comment['author'] = 'Inconnu';
+              return;
+            }
+          });
+        });
+
+        this.comments = data;
+      },
+      error: (error) => {
+        console.error(error);
+        this.comments = [];
+        return;
+      }
+    });
+  }
+
+  closeCommentsPopup() {
+    this.showCommentsPopup = false;
+    this.selectedPost = null;
+    this.comments = [];
+    this.newCommentText = '';
+  }
+
+  addComment() {
+    if (!this.newCommentText.trim()) return;
+    this.commentService.addComment({
+      text: this.newCommentText,
+      id_user: this.userId,
+      id_post: this.selectedPost.id_post,
+      datetime: this.globalFunctions.getCurrentDateTimeSQL()
+    }).subscribe({
+      next: (newCommentData) => {
+        newCommentData['datetime'] = this.globalFunctions.formatRelativeDateFR(newCommentData['datetime'])
+        newCommentData['author'] = this.username;
+
+        this.comments.unshift(newCommentData);
+        this.newCommentText = '';
+
+        const postIndex = this.postData.findIndex(
+          (post: any) => post.id_post === this.selectedPost.id_post
+        );
+        if (postIndex !== -1) {
+          this.postData[postIndex].commentsNumber = (this.postData[postIndex].commentsNumber || 0) + 1;
+        }
+      }
+    });
   }
 }
