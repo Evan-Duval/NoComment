@@ -30,7 +30,6 @@ class _GroupContentState extends State<GroupContent> {
   void initState() {
     super.initState();
     apiUrl = dotenv.env['URL'] ?? '';
-    // Supprimer le trailing slash s'il existe
     if (apiUrl.endsWith('/')) {
       apiUrl = apiUrl.substring(0, apiUrl.length - 1);
     }

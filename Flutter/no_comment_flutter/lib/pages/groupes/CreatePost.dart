@@ -225,75 +225,68 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!_formKey.currentState!.validate()) return;
 
-      try {
-        final title = _titleController.text.trim();
-        final text = _textController.text.trim();
-        final dateTime = DateTime.now();
+    setState(() {
+      _isLoading = true;
+    });
 
-        final prefs = await SharedPreferences.getInstance();
-        final userId = prefs.getInt('id');
-        final token = prefs.getString('token');
+    try {
+      // Récupération des données
+      final title = _titleController.text.trim();
+      final text = _textController.text.trim();
+      final dateTime = DateTime.now().toIso8601String();
 
-        if (userId == null || token == null) {
-          throw Exception('ID utilisateur ou token manquant');
-        }
+      // Récupération des infos utilisateur
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id');
+      final token = prefs.getString('token');
+      final apiUrl = dotenv.env['URL'];
 
-        // Vérifier si l'URL est correctement configurée
-        final apiUrl = dotenv.env['URL'];
-        if (apiUrl == null || apiUrl.isEmpty) {
-          throw Exception('URL API non configurée dans le fichier .env');
-        }
+      if (userId == null || token == null || apiUrl == null || apiUrl.isEmpty) {
+        throw Exception('ID, token ou URL manquant');
+      }
 
-        final uri = Uri.parse('${apiUrl}api/posts');
+      // Création de la requête
+      final uri = Uri.parse('${apiUrl}api/posts');
+      final request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer $token';
 
-        var request = http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer $token'
-          ..fields['title'] = title
-          ..fields['text'] = text
-          ..fields['id_group'] = widget.groupId.toString()
-          ..fields['id_user'] = userId.toString()
-          ..fields['datetime'] = dateTime.toIso8601String()
-          ..fields['location'] =
-              administrativeArea ?? city ?? country ?? 'Inconnue';
+      request.fields['title'] = title;
+      request.fields['text'] = text;
+      request.fields['id_group'] = widget.groupId.toString();
+      request.fields['id_user'] = userId.toString();
+      request.fields['datetime'] = dateTime;
+      request.fields['location'] = administrativeArea ?? 'Inconnue';
 
-        if (_imageFile != null) {
-          if (await _imageFile!.exists()) {
-            request.files.add(
-                await http.MultipartFile.fromPath('media', _imageFile!.path));
-          } else {
-            throw Exception('Le fichier image n\'existe pas');
-          }
-        }
+      // Ajout de l'image si présente
+      if (_imageFile != null && await _imageFile!.exists()) {
+        final imageFile =
+            await http.MultipartFile.fromPath('media', _imageFile!.path);
+        request.files.add(imageFile);
+      }
 
-        final streamedResponse = await request.send();
-        final response = await http.Response.fromStream(streamedResponse);
+      // Envoi de la requête
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
-        if (response.statusCode == 201 || response.statusCode == 200) {
-          print('Post créé avec succès');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Post créé avec succès')),
-          );
-          Navigator.pop(context);
-        } else {
-          throw Exception(
-              'Erreur lors de la création du post : ${response.statusCode}, ${response.body}');
-        }
-      } catch (e) {
-        print('Erreur: $e');
+      if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
+          const SnackBar(content: Text('Post créé avec succès')),
         );
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        Navigator.pop(context);
+      } else {
+        throw Exception('Erreur ${response.statusCode} : ${response.body}');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
