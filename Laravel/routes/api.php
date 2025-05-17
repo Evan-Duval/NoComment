@@ -5,23 +5,27 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
+
 
 Route::prefix('user')->group(function () {
     Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
+    Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });
 
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
-    Route::post('update-password', [AuthController::class, 'changePassword']);
-    Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
-    Route::post('delete-user/{id}', [AuthController::class, 'delete']);
+        Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register']);
+        Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
+        Route::post('update-password', [AuthController::class, 'changePassword']);
+        Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
+        Route::post('delete-user/{id}', [AuthController::class, 'delete']);
 
-    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
     });
@@ -41,6 +45,9 @@ Route::prefix('groups')->group(function () {
 // Routes API pour les posts
 Route::prefix('posts')->group(function() {
     Route::post('create', [PostController::class, 'create']);
+    Route::get('/getById/{id}', [PostController::class, 'show']);
+    Route::put('/update/{id}', [PostController::class, 'update']);
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
 });
 
@@ -49,10 +56,13 @@ Route::prefix('comments')->group(function() {
     Route::get('getCommentNumberByPost/{postId}', [CommentController::class, 'getCommentNumberByPost']);
     Route::post('create', [CommentController::class, 'create']);
     Route::post('update/{id}', [CommentController::class, 'update']);
+    Route::get('/getById/{id}', [CommentController::class, 'show']);
+    Route::put('/update/{id}', [CommentController::class, 'update']);
+    Route::delete('/delete/{id}', [CommentController::class, 'destroy']);
 });
 
 Route::prefix('likes')->group(function() {
     Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
-    Route::post('likePost/{postId}', [LikeController::class, 'likePost']);
-    Route::post('unlikePost/{postId}', [LikeController::class, 'unlikePost']);
+    Route::post('addLike', [LikeController::class, 'store']);
+    Route::delete('removeLike/{id}', [LikeController::class, 'destroy']);
 });

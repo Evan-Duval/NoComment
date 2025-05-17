@@ -9,10 +9,6 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        return Post::all();
-    }
 
     public function create(Request $request)
     {
@@ -34,10 +30,30 @@ class PostController extends Controller
             'datetime' => $validatedData['datetime'],
             'id_user' => $validatedData['id_user'],
             'id_group' => $validatedData['id_group'],
-        ]);
+        ]); 
     }
 
-    public function getByGroup($groupId): JsonResponse {
+     // Affiche un post spécifique
+       public function show($id)
+    {
+        try {
+            $post = Post::with('user')->findOrFail($id); // je charge le post avec l'utilisateur
+            return response()->json($post);
+          
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Post non retrouvé.'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Une erreur est survenue.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getByGroup($groupId): JsonResponse 
+    {
         $group = Group::find($groupId);
 
         if (!$group) {
@@ -49,20 +65,53 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-    public function show($id)
-    {
-        return Post::findOrFail($id);
-    }
 
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
-        $post->update($request->all());
-        return $post;
+        try {
+            $post = Post::findOrFail($id);
+
+            $validated = $request->validate([
+                'title' => 'sometimes|required|string|max:255',
+                'text' => 'sometimes|required|string',
+                'media' => 'nullable|string',
+                'location' => 'nullable|string',
+                'datetime' => 'sometimes|required|date',
+                'id_user' => 'sometimes|required|exists:users,id',
+                'id_group' => 'nullable|exists:groups,id_group', // Assure-toi que c’est bien id_group dans la table
+            ]);
+
+            $post->update($validated);
+
+            return response()->json($post, 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Post non trouvé'], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
     }
 
+
+    // Supprime un post spécifique
     public function destroy($id)
     {
-        return Post::destroy($id);
+        try {
+            $post = Post::findOrFail($id);
+            $post->delete();
+
+            return response()->json(['message' => 'Post supprimé avec succès'], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Post non trouvé'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression', 'message' => $e->getMessage()], 500);
+        }
     }
 }
+
+
+
+
+
+
