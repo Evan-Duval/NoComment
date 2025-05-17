@@ -46,8 +46,8 @@ Route::prefix('posts')->group(function() {
 
 Route::prefix('likes')->group(function() {
     Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
-    Route::post('likePost', [LikeController::class, 'likePost']);
-    Route::post('unlikePost', [LikeController::class, 'unlikePost']);
+    Route::post('likePost/{postId}', [LikeController::class, 'likePost']);
+    Route::post('unlikePost/{postId}', [LikeController::class, 'unlikePost']);
 });
 
 // Routes API pour les commentaires

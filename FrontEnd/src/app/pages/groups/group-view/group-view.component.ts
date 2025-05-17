@@ -45,6 +45,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   };
   mediaPreviewUrl: string | ArrayBuffer | null = null;
   isImage: boolean = true;
+  likeCooldowns: { [postId: number]: number } = {}; // Ajouté pour le cooldown
 
   constructor(
     private route: ActivatedRoute, 
@@ -120,7 +121,8 @@ export class GroupViewComponent implements OnInit, OnDestroy {
               this.likeService.getLikesByPost(post['id_post'], this.userId).subscribe({
                 next: (data) => {
                   post['likes'] = data['like_number'] || 0;
-                  post['liked'] = data['liked'] || false;
+                  post['liked'] = data['user_like'] || false;
+                  console.log('Likes:', data);
                 },
                 error: (error) => {
                   console.error(this.globalErrorMessage, error);
@@ -218,6 +220,14 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   }
 
   onLikeButtonDown(post: any) {
+    const now = Date.now();
+    const lastClick = this.likeCooldowns[post.id_post] || 0;
+    if (now - lastClick < 500) {
+      // Cooldown de 1 seconde
+      return;
+    }
+    this.likeCooldowns[post.id_post] = now;
+    console.log("1")
     if (post.liked) {
       this.likeService.unlikePost(post.id_post, this.userId).subscribe({
         next: () => {

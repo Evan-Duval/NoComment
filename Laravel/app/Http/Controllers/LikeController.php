@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
-    public function getLikesByPost(Request $request, $postId)
+    public function getLikesByPost(Request $request, $postId): JsonResponse
     {
         $likeNumber = Like::where('id_post', $postId)->count();
 
@@ -28,33 +29,47 @@ class LikeController extends Controller
         ]);
     }
 
-    public function getLikesByComment($commentId)
+    public function getLikesByComment($commentId): JsonResponse
     {
         $likes = Like::where('id_comment', $commentId)->get();
         return response()->json($likes);
     }
     
-    public function likePost(Request $request, $postId)
+    public function likePost(Request $request, $postId): JsonResponse
     {
-        $like = new Like();
-        $like->user_id = $request->user()->id;
-        $like->post_id = $postId;
-        $like->save();
+        $userId = $request->query('userId');
+        if (!$userId) {
+            return response()->json(['message' => 'User not found'], 400);
+        }
 
-        return response()->json(['message' => 'Post liked successfully', 201]);
+        // Vérifie si le like existe déjà pour éviter les doublons
+        $exists = Like::where('id_user', $userId)->where('id_post', $postId)->exists();
+        if (!$exists) {
+            $like = new Like();
+            $like->id_user = $userId;
+            $like->id_post = $postId;
+            $like->save();
+        }
+
+        return response()->json(['message' => 'Post liked successfully'], 201);
     }
 
-    public function unlikePost(Request $request, $postId)
+    public function unlikePost(Request $request, $postId): JsonResponse
     {
-        $like = Like::where('id_user', $request->user()->id)->where('id_post', $postId)->first();
+        $userId = $request->query('userId');
+        if (!$userId) {
+            return response()->json(['message' => 'User not found'], 400);
+        }
+        
+        $like = Like::where('id_user', $userId)->where('id_post', $postId)->first();
         if ($like) {
             $like->delete();
         }
 
-        return response()->json(['message' => 'Post unliked successfully', 200]);
+        return response()->json(['message' => 'Post unliked successfully'], 200);
     }
 
-    public function likeComment(Request $request, $commentId)
+    public function likeComment(Request $request, $commentId): JsonResponse
     {
         $like = new Like();
         $like->user_id = $request->user()->id;
@@ -64,7 +79,7 @@ class LikeController extends Controller
         return response()->json(['message' => 'Comment liked successfully', 201]);
     }
 
-    public function unlikeComment(Request $request, $commentId)
+    public function unlikeComment(Request $request, $commentId): JsonResponse
     {
         $like = Like::where('id_user', $request->user()->id)->where('id_comment', $commentId)->first();
         if ($like) {

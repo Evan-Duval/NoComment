@@ -258,8 +258,7 @@
   }
 
   .action-button.liked {
-    background-color: #dc3545 !important; /* Rouge */
-    color: #fff !important;
+    color: #EF4444 !important;
     border-radius: 6px;
   }
   
