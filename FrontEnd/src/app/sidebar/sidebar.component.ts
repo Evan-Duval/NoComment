@@ -17,8 +17,7 @@ export class SidebarComponent implements OnInit {
   userId: number = 0;
   userRank: string = 'user';
   showCreateButton: boolean = false;
-  moderationView: boolean = localStorage.getItem('moderationView') === '1' ? true : false;
-
+  moderationView: boolean = (localStorage.getItem('moderationView') === '1' && localStorage.getItem('token')) ? true : false;
   constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
 
   ngOnInit() {
@@ -58,7 +57,7 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleModerationView(value: boolean) {
-    if (!this.userRank || this.userRank !== 'admin') {return;}
+    if (!this.userRank || this.userRank !== 'admin' || !this.moderationView) {return;}
 
     this.moderationView = value;
     localStorage.setItem('moderationView', value ? '1' : '0');

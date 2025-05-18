@@ -162,6 +162,15 @@
                 <span class="comment-timestamp">{{ comment.datetime }}</span>
               </div>
               <p class="comment-text">{{ comment.text }}</p>
+              <button
+                class="action-button"
+                [ngClass]="{ 'liked': comment.liked }"
+                (click)="onLikeComment(comment)"
+                [disabled]="!isConnected || !hasJoinedGroup"
+                style="margin-top: 0.5rem;"
+              >
+                ❤️ {{ comment.likes || 0 }}
+              </button>
             </div>
           </div>
           <ng-template #noComments>

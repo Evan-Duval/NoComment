@@ -85,7 +85,9 @@ Route::prefix('comments')->group(function() {
 
 Route::prefix('likes')->group(function() {
     Route::get('getLikesByPost/{postId}', [LikeController::class, 'getLikesByPost']);
+    Route::get('getLikesByComment/{commentId}', [LikeController::class, 'getLikesByComment']);
     Route::post('addLike', [LikeController::class, 'store']);
     Route::delete('removeLike/{id}', [LikeController::class, 'destroy']);
-
+    Route::delete('removePostLike/{postId}', [LikeController::class, 'removePostLike']);
+    Route::delete('removeCommentLike/{commentId}', [LikeController::class, 'removeCommentLike']);
 });

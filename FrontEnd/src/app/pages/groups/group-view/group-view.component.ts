@@ -48,6 +48,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   mediaPreviewUrl: string | ArrayBuffer | null = null;
   isImage: boolean = true;
   likeCooldowns: { [postId: number]: number } = {}; // Ajouté pour le cooldown
+  commentLikeCooldowns: { [commentId: number]: number } = {}; // Cooldown pour les likes de commentaires
 
   showCommentsPopup = false;
   selectedPost: any = null;
@@ -247,7 +248,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     const now = Date.now();
     const lastClick = this.likeCooldowns[post.id_post] || 0;
     if (now - lastClick < 500) {
-      // Cooldown de 1 seconde
+      // Cooldown de 0.5 seconde
       return;
     }
     this.likeCooldowns[post.id_post] = now;
@@ -284,9 +285,8 @@ export class GroupViewComponent implements OnInit, OnDestroy {
           this.comments = [];
           return;
         }
-
         data.forEach((comment: any) => {
-          comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime'])
+          comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime']);
           this.userService.getUsernameByUserId(comment['id_user']).subscribe({
             next: (data) => {
               comment['author'] = data['username'] || 'Inconnu';
@@ -294,17 +294,25 @@ export class GroupViewComponent implements OnInit, OnDestroy {
             error: (error) => {
               console.error(error);
               comment['author'] = 'Inconnu';
-              return;
+            }
+          });
+          // Récupère likes pour chaque commentaire
+          this.likeService.getLikesByComment(comment.id_comment, this.userId).subscribe({
+            next: (likeData) => {
+              comment.likes = likeData.like_number || 0;
+              comment.liked = likeData.user_like || false;
+            },
+            error: () => {
+              comment.likes = 0;
+              comment.liked = false;
             }
           });
         });
-
         this.comments = data;
       },
       error: (error) => {
         console.error(error);
         this.comments = [];
-        return;
       }
     });
   }
@@ -339,5 +347,37 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  onLikeComment(comment: any) {
+    if (!this.isConnected || !this.hasJoinedGroup) return;
+
+    if (!this.commentLikeCooldowns) this.commentLikeCooldowns = {};
+    const now = Date.now();
+    const lastClick = this.commentLikeCooldowns[comment.id_comment] || 0;
+    if (now - lastClick < 500) return; // cooldown de 0.5 seconde
+    this.commentLikeCooldowns[comment.id_comment] = now;
+
+    if (comment.liked) {
+      this.likeService.unLikeComment(comment.id_comment, this.userId).subscribe({
+        next: () => {
+          comment.liked = false;
+          comment.likes = (comment.likes || 1) - 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du unlike commentaire', err);
+        }
+      });
+    } else {
+      this.likeService.likeComment(comment.id_comment, this.userId).subscribe({
+        next: () => {
+          comment.liked = true;
+          comment.likes = (comment.likes || 0) + 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du like commentaire', err);
+        }
+      });
+    }
   }
 }

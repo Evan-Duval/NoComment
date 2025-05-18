@@ -32,10 +32,25 @@ class LikeController extends Controller
         ]);
     }
 
-    public function getLikesByComment($commentId): JsonResponse
+    public function getLikesByComment(Request $request, $commentId): JsonResponse
     {
-        $likes = Like::where('id_comment', $commentId)->get();
-        return response()->json($likes);
+        $likeNumber = Like::where('id_comment', $commentId)->count();
+
+        $userId = $request->query('userId');
+        if ($userId) {
+            $userLikes = Like::where('id_comment', $commentId)
+                ->where('id_user', $userId)
+                ->exists();
+
+            return response()->json([
+                'like_number' => $likeNumber,
+                'user_like' => $userLikes
+            ]);
+        }
+
+        return response()->json([
+            'like_number' => $likeNumber
+        ]);
     }
     
     // 1. Créer un like pour un post ou un commentaire
@@ -81,6 +96,50 @@ class LikeController extends Controller
             return response()->json(['message' => 'Like supprimé avec succès.']);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Like non trouvé.'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression du like.'], 500);
+        }
+    }
+
+    public function removePostLike(Request $request, $postId): JsonResponse
+    {
+        try {
+            $userId = $request->input('id_user');
+            if (!$userId) {
+                return response()->json(['error' => 'Aucun utilisateur trouvé'], 404);
+            }
+
+            $like = Like::where('id_post', $postId)->where('id_user', $userId)->first();
+
+            if ($like) {
+                $like->delete();
+                return response()->json(['message' => 'Like supprimé avec succès.']);
+            } else {
+                return response()->json(['error' => 'Like non trouvé.'], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression du like.'], 500);
+        }
+    }
+
+    public function removeCommentLike(Request $request, $commentId)
+    {
+        try {
+            $userId = $request->input('id_user');
+            if (!$userId) {
+                return response()->json(['error' => 'Aucun utilisateur trouvé'], 404);
+            }
+
+            $like = Like::where('id_comment', $commentId)->where('id_user', $userId)->first();
+            $like->delete();
+
+            if ($like) {
+                $like->delete();
+                return response()->json(['message' => 'Like supprimé avec succès.']);
+            } else {
+                return response()->json(['error' => 'Like non trouvé.'], 404);
+            }
+
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors de la suppression du like.'], 500);
         }
