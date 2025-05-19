@@ -46,8 +46,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    final apiUrl =
-        '${dotenv.env['URL']}api/auth/login'; // Utilisation de dotenv
+    final apiUrl = '${dotenv.env['URL']}api/auth/login';
 
     try {
       final response = await http.post(

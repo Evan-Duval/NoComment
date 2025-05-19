@@ -26,7 +26,7 @@ class _GroupsListState extends State<GroupsList> {
   }
 
   Future<void> fetchGroups() async {
-    final apiUrl = '${dotenv.env['URL']}api/groups';
+    final apiUrl = '${dotenv.env['URL']}api/groups/get-all';
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {

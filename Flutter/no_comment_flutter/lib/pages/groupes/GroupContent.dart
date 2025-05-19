@@ -130,7 +130,7 @@ class _GroupContentState extends State<GroupContent> {
 
       // Correction de l'URL
       final response = await http.get(
-        Uri.parse('$apiUrl/api/groups/$groupId/posts'),
+        Uri.parse('$apiUrl/api/posts/getByGroup/$groupId'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
