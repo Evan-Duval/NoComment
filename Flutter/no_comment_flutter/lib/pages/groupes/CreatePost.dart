@@ -248,7 +248,7 @@ class _CreatePostState extends State<CreatePost> {
       }
 
       // Création de la requête
-      final uri = Uri.parse('${apiUrl}api/posts');
+      final uri = Uri.parse('${apiUrl}api/posts/create');
       final request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer $token';
 

@@ -66,7 +66,7 @@ Route::prefix('groups')->group(function () {
 });
 
 Route::prefix('posts')->group(function () {
-    Route::post('create', [PostController::class, 'create']);
+    Route::post('/create', [PostController::class, 'create']);
     Route::get('/getById/{id}', [PostController::class, 'show']);
     Route::put('/update/{id}', [PostController::class, 'update']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);

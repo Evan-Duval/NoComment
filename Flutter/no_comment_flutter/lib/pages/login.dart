@@ -27,8 +27,13 @@ class LoginPage extends StatelessWidget {
         ),
       ),
       backgroundColor: const Color(0xFF17202A),
-      body: const Center(
-        child: MyCustomForm(),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: SingleChildScrollView(
+            child: MyCustomForm(),
+          ),
+        ),
       ),
     );
   }
