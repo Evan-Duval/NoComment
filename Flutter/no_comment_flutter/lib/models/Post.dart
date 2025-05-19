@@ -1,39 +1,75 @@
 class Post {
+  final int? id;
   final String title;
   final String text;
   final String userName;
   final DateTime dateTime;
   final String? localImagePath;
-  final String? imageUrl; // <-- ajouté
+  final String? imageUrl;
+  final bool? isLiked;
+  final int? likesCount;
 
   Post({
+    this.id,
     required this.title,
     required this.text,
     required this.userName,
     required this.dateTime,
     this.localImagePath,
-    this.imageUrl, // <-- ajouté
+    this.imageUrl,
+    this.likesCount,
+    this.isLiked,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      id: json['id'],
       title: json['title'] ?? '',
       text: json['text'] ?? '',
-      userName: json['user_name'] ?? '',
-      dateTime: DateTime.parse(json['created_at']),
-      localImagePath: json['local_image_path'], // peut être null
-      imageUrl: json['image_url'], // ou 'imageUrl' selon ta clé JSON
+      userName: json['userName'] ?? 'Anonyme',
+      dateTime: DateTime.parse(json['dateTime']),
+      localImagePath: json['localImagePath'],
+      imageUrl: json['imageUrl'],
+      likesCount: json['likesCount'], // camelCase ici
+      isLiked: json['isLiked'], // camelCase ici
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'text': text,
-      'user_name': userName,
-      'created_at': dateTime.toIso8601String(),
-      'local_image_path': localImagePath,
-      'image_url': imageUrl,
+      'userName': userName,
+      'dateTime': dateTime.toIso8601String(),
+      'localImagePath': localImagePath,
+      'imageUrl': imageUrl,
+      'likesCount': likesCount,
+      'isLiked': isLiked,
     };
+  }
+
+  Post copyWith({
+    int? id,
+    String? title,
+    String? text,
+    String? userName,
+    DateTime? dateTime,
+    String? localImagePath,
+    String? imageUrl,
+    bool? isLiked,
+    int? likesCount,
+  }) {
+    return Post(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      text: text ?? this.text,
+      userName: userName ?? this.userName,
+      dateTime: dateTime ?? this.dateTime,
+      localImagePath: localImagePath ?? this.localImagePath,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isLiked: isLiked ?? this.isLiked,
+      likesCount: likesCount ?? this.likesCount,
+    );
   }
 }

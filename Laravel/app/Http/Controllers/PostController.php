@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;;
 
 class PostController extends Controller
 {
@@ -21,7 +23,7 @@ class PostController extends Controller
             'id_user' => 'required|integer|exists:users,id',
             'id_group' => 'required|integer|exists:groups,id_group',
         ]);
-        
+
         return Post::create([
             'title' => $validatedData['title'],
             'text' => $validatedData['text'],
@@ -30,16 +32,15 @@ class PostController extends Controller
             'datetime' => $validatedData['datetime'],
             'id_user' => $validatedData['id_user'],
             'id_group' => $validatedData['id_group'],
-        ]); 
+        ]);
     }
 
-     // Affiche un post spécifique
-       public function show($id)
+    // Affiche un post spécifique
+    public function show($id)
     {
         try {
             $post = Post::with('user')->findOrFail($id); // je charge le post avec l'utilisateur
             return response()->json($post);
-          
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'error' => 'Post non retrouvé.'
@@ -52,7 +53,7 @@ class PostController extends Controller
         }
     }
 
-    public function getByGroup($groupId): JsonResponse 
+    public function getByGroup($groupId): JsonResponse
     {
         $group = Group::find($groupId);
 
@@ -60,10 +61,31 @@ class PostController extends Controller
             return response()->json(['message' => 'Group not found'], 404);
         }
 
-        $posts = Post::where('id_group', $groupId)->orderBy('created_at', 'desc')->get();
+        $user = Auth::user();
+
+        $posts = Post::with('user')
+            ->where('id_group', $groupId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($post) use ($user) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'text' => $post->text,
+                    'imageUrl' => $post->image_url,
+                    'userName' => $post->user->username ?? 'Anonyme',
+                    'dateTime' => $post->created_at,
+                    'likesCount' => Like::where('id_post', $post->id)->count(),
+                    'isLiked' => $user
+                        ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
+                        : false,
+
+                ];
+            });
 
         return response()->json($posts);
     }
+
 
 
     public function update(Request $request, $id)
@@ -126,9 +148,3 @@ class PostController extends Controller
         }
     }
 }
-
-
-
-
-
-
