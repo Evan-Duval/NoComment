@@ -54,6 +54,33 @@ class PostController extends Controller
         }
     }
 
+    public function getLastPosts(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $posts = Post::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($post) use ($user) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'text' => $post->text,
+                    'location' => $post->location,
+                    'imageUrl' => $post->image_url,
+                    'username' => $post->user->username ?? 'Anonyme',
+                    'datetime' => $post->created_at,
+                    'likesCount' => Like::where('id_post', $post->id)->count(),
+                    'isLiked' => $user
+                        ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
+                        : false,
+
+                ];
+            });
+
+        return response()->json($posts);
+    }
+
     public function getByGroup(Request $request, $groupId): JsonResponse
     {
         $group = Group::find($groupId);
@@ -73,6 +100,7 @@ class PostController extends Controller
                     'id' => $post->id,
                     'title' => $post->title,
                     'text' => $post->text,
+                    'location' => $post->location,
                     'imageUrl' => $post->image_url,
                     'username' => $post->user->username ?? 'Anonyme',
                     'datetime' => $post->created_at,

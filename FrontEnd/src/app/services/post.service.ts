@@ -23,6 +23,11 @@ export class PostService {
     return this.http.get(`${this.apiUrl}/getByGroup/${groupId}`, { headers });
   }
 
+  getLastPosts(userId?: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}/getLastPosts`, { headers });
+  }
+
   createPost(postData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, postData)
   }

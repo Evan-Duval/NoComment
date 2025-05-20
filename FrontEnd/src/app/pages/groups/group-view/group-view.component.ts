@@ -114,7 +114,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.postService.getGroupsByUser(this.groupId).subscribe({
         next: (data) => {
           if (data) {
-            console.log(data);
+            console.log(data)
             data.map((post: any) => {
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
               post['likes'] = post['likesCount'] || 0;
@@ -212,7 +212,6 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   }
 
   onLikeButtonDown(post: any) {
-    console.log(post)
     const now = Date.now();
     const lastClick = this.likeCooldowns[post.id] || 0;
     if (now - lastClick < 500) {

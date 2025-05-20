@@ -1,15 +1,40 @@
 <div class="main-content">
+
+    
     <!-- Liste des posts -->
     <div class="posts-section">
-        <div *ngFor="let post of posts" class="post-card">
+
+        <div *ngIf="errorMessage" class="welcome-message">
+            <h1>{{errorMessage}}</h1>
+        </div>
+
+        <div *ngFor="let post of postData" class="post-card">
             <div class="post-header">
-                <span class="post-author">{{ post.author }}</span>
-                <span class="post-timestamp">{{ post.timestamp }}</span>
+                <div>
+                    <span class="post-author">{{ post.username }}</span>
+                    <span class="post-timestamp">{{ post.datetime }}</span>
+                </div>
+                <span class ='post-location'>{{ post.location }}</span>
             </div>
-            <p class="post-content">{{ post.content }}</p>
+
+            <h2 class="post-title">{{ post.title }}</h2>
+            <p class="post-text">{{ post.text }}</p>
+            <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
+
             <div class="post-actions">
-                <button class="action-button">❤️ {{ post.likes || 0 }}</button>
-                <button class="action-button">💬 {{ post.comments || 0 }}</button>
+                <button
+                    class="action-button"
+                    [ngClass]="{ 'liked': post.isLiked }"
+                    [disabled]="true"
+                >
+                    ❤️ {{ post.likes || 0 }}
+                </button>
+                <button
+                    class="action-button comment-btn"
+                    [disabled]="true"
+                >
+                    💬 {{ post.commentsNumber || 0 }} commentaire{{ (post.commentsNumber || 0) > 1 ? 's' : '' }}
+                </button>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function getUsernameByUserId($userid):JsonResponse {
-         $user = User::find($userid);
+        $user = User::find($userid);
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);

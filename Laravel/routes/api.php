@@ -69,6 +69,7 @@ Route::prefix('posts')->group(function() {
     Route::get('/getById/{id}', [PostController::class, 'show']);
     Route::put('/update/{id}', [PostController::class, 'update']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+    Route::get('getLastPosts', [PostController::class, 'getLastPosts']);
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup'])->middleware('auth:sanctum');
 });
 
