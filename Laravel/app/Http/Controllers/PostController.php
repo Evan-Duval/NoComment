@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Like;
 use App\Models\Post;
@@ -108,6 +109,7 @@ class PostController extends Controller
                     'isLiked' => $user
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
                         : false,
+                    'commentsNumber' => Comment::where('id_post', $post->id)->count(),
 
                 ];
             });

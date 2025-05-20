@@ -14,6 +14,7 @@ import { GroupViewComponent } from './pages/groups/group-view/group-view.compone
 
 // Pages :
 import { HomeComponent } from './pages/home/home.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
   // Redirection de base : 
@@ -25,7 +26,7 @@ export const routes: Routes = [
 
   // Pages :
   { path: 'accueil', component: HomeComponent },
-  { path: 'dashboard', component: HomeComponent },
+  { path: 'dashboard', component: DashboardComponent },
   // { path: 'certification-form', component: HomeComponent },
   { path: 'profil/:id', component: ProfilComponent },
   
