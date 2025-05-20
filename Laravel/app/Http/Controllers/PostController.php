@@ -74,8 +74,8 @@ class PostController extends Controller
                     'title' => $post->title,
                     'text' => $post->text,
                     'media' => $post->media,
-                    'userName' => $post->user->username ?? 'Anonyme',
-                    'dateTime' => $post->created_at,
+                    'username' => $post->user->username ?? 'Anonyme',
+                    'datetime' => $post->created_at,
                     'location' => $post->location,
                     'likesCount' => Like::where('id_post', $post->id)->count(),
                     'isLiked' => $user
