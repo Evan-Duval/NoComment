@@ -114,44 +114,11 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.postService.getGroupsByUser(this.groupId).subscribe({
         next: (data) => {
           if (data) {
+            console.log(data);
             data.map((post: any) => {
-
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
-
-              this.userService.getUsernameByUserId(post['id_user']).subscribe({
-                next: (data) => {
-                  post['author'] = data['username'] || 'Inconnu';
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['author'] = 'Inconnu';
-                  return;
-                }
-              });
-
-              this.likeService.getLikesByPost(post['id_post'], this.userId).subscribe({
-                next: (data) => {
-                  post['likes'] = data['like_number'] || 0;
-                  post['liked'] = data['user_like'] || false;
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['likes'] = 0;
-                  return;
-                }
-              });
-
-              this.commentService.getCommentNumberByPost(post['id_post']).subscribe({
-                next: (data) => {
-                  post['commentsNumber'] = data['comment_number'] || 0;
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['commentsNumber'] = 0;
-                  return;
-                }
-              });
-              // ajouter likes et commentaires du post ici
+              post['likes'] = post['likesCount'] || 0;
+              post['isLiked'] = post['isLiked'] || false;
             })
 
             this.postData = data;
@@ -218,7 +185,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
 
     this.postService.createPost(this.newPost).subscribe({
       next: (data) => {
-        data['author'] = this.username;
+        data['username'] = this.username;
         data['datetime'] = this.globalFunctions.formatRelativeDateFR(data['datetime'])
 
         this.postData = [data, ...this.postData];
@@ -245,17 +212,18 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   }
 
   onLikeButtonDown(post: any) {
+    console.log(post)
     const now = Date.now();
-    const lastClick = this.likeCooldowns[post.id_post] || 0;
+    const lastClick = this.likeCooldowns[post.id] || 0;
     if (now - lastClick < 500) {
       // Cooldown de 0.5 seconde
       return;
     }
-    this.likeCooldowns[post.id_post] = now;
-    if (post.liked) {
-      this.likeService.unlikePost(post.id_post, this.userId).subscribe({
+    this.likeCooldowns[post.id] = now;
+    if (post.isLiked) {
+      this.likeService.unlikePost(post.id, this.userId).subscribe({
         next: () => {
-          post.liked = false;
+          post.isLiked = false;
           post.likes = (post.likes || 1) - 1;
         },
         error: (err) => {
@@ -263,9 +231,9 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.likeService.likePost(post.id_post, this.userId).subscribe({
+      this.likeService.likePost(post.id, this.userId).subscribe({
         next: () => {
-          post.liked = true;
+          post.isLiked = true;
           post.likes = (post.likes || 0) + 1;
         },
         error: (err) => {
@@ -279,7 +247,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.selectedPost = post;
     this.showCommentsPopup = true;
 
-    this.commentService.getCommentsByPost(post['id_post']).subscribe({
+    this.commentService.getCommentsByPost(post['id']).subscribe({
       next: (data) => {
         if (!data) {
           this.comments = [];
@@ -329,7 +297,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.commentService.addComment({
       text: this.newCommentText,
       id_user: this.userId,
-      id_post: this.selectedPost.id_post,
+      id_post: this.selectedPost.id,
       datetime: this.globalFunctions.getCurrentDateTimeSQL()
     }).subscribe({
       next: (newCommentData) => {
@@ -340,7 +308,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         this.newCommentText = '';
 
         const postIndex = this.postData.findIndex(
-          (post: any) => post.id_post === this.selectedPost.id_post
+          (post: any) => post.id === this.selectedPost.id
         );
         if (postIndex !== -1) {
           this.postData[postIndex].commentsNumber = (this.postData[postIndex].commentsNumber || 0) + 1;

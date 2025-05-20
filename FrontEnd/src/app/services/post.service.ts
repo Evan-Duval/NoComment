@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,8 +10,17 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
   getGroupsByUser(groupId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/getByGroup/${groupId}`);
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}/getByGroup/${groupId}`, { headers });
   }
 
   createPost(postData: any): Observable<any> {

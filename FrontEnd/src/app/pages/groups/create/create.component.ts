@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../../../services/group.service';
 import { UserService } from '../../../services/user.service';
+import { SidebarComponent } from '../../../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-create',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
+  providers: [SidebarComponent],
   templateUrl: './create.component.html',
   styleUrl: './create.component.css'
 })
@@ -15,12 +18,14 @@ export class CreateGroupComponent {
   userToken: string | null = localStorage.getItem('token');
   createGroupForm: FormGroup;
   group_owner: number = 0;
+  successMessage?: string;
   showErrorMessage: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private groupService: GroupService, 
-    private userService: UserService
+    private userService: UserService,
+    private sidebarComponent: SidebarComponent
   ) {
     this.createGroupForm = this.formBuilder.group({
       name: [null, Validators.required],
@@ -52,6 +57,8 @@ export class CreateGroupComponent {
       this.groupService.createGroup(createGroupData).subscribe({
         next: (response) => {
           console.log('Création du groupe réussie', response);
+          this.sidebarComponent.reloadSidebar();
+          this.successMessage = 'Groupe créé avec succès !';
         },
         error: (error) => {
           console.error('Erreur lors de la création du groupe :', error);

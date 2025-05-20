@@ -23,7 +23,6 @@ Route::prefix('user')->group(function () {
 Route::prefix('auth')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
         Route::post('register', [AuthController::class, 'register']);
-        Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
         Route::post('update-password', [AuthController::class, 'changePassword']);
         Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
         Route::post('delete-user/{id}', [AuthController::class, 'delete']);
@@ -70,7 +69,7 @@ Route::prefix('posts')->group(function() {
     Route::get('/getById/{id}', [PostController::class, 'show']);
     Route::put('/update/{id}', [PostController::class, 'update']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
-    Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
+    Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup'])->middleware('auth:sanctum');
 });
 
 Route::prefix('comments')->group(function() {

@@ -8,6 +8,7 @@ import { UserService } from '../services/user.service';
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
+  providers: [SidebarComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
@@ -62,5 +63,19 @@ export class SidebarComponent implements OnInit {
     this.moderationView = value;
     localStorage.setItem('moderationView', value ? '1' : '0');
     window.location.reload();
+  }
+
+  /**
+   * Méthode publique pour recharger les données de la sidebar
+   * Cette méthode peut être appelée de l'extérieur du composant
+   */
+  public reloadSidebar(): void {
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (currentUser) {
+      this.userId = currentUser.id!;
+      this.userRank = currentUser.rank;
+      this.loadGroups();
+    }
+    this.moderationView = (localStorage.getItem('moderationView') === '1' && localStorage.getItem('token')) ? true : false;
   }
 }

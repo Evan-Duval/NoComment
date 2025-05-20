@@ -61,7 +61,7 @@
       <div *ngFor="let post of postData" class="post-card">
         <div class="post-header">
           <div>
-            <span class="post-author">{{ post.author }}</span>
+            <span class="post-author">{{ post.username }}</span>
             <span class="post-timestamp">{{ post.datetime }}</span>
           </div>
           <span class ='post-location'>{{ post.location }}</span>
@@ -72,7 +72,7 @@
         <div class="post-actions">
           <button
             class="action-button"
-            [ngClass]="{ 'liked': post.liked }"
+            [ngClass]="{ 'liked': post.isLiked }"
             (click)="onLikeButtonDown(post)"
             [disabled]="!isConnected || !hasJoinedGroup"
           >
@@ -146,7 +146,7 @@
           <p class="post-text">{{ selectedPost?.text }}</p>
           <button
             class="action-button"
-            [ngClass]="{ 'liked': selectedPost.liked }"
+            [ngClass]="{ 'liked': selectedPost.isLiked }"
             (click)="onLikeButtonDown(selectedPost)"
             [disabled]="!isConnected || !hasJoinedGroup"
           >
