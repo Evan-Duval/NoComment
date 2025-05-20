@@ -85,6 +85,7 @@ export class ProfilComponent {
     this.editMode = !this.editMode;
     this.changePasswordMode = false;
     if (this.editMode) {
+      console.log('Mode édition activé');
       // Copie les données pour l'édition
       this.updatedUser = {...this.user};
     }

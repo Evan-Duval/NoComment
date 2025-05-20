@@ -20,23 +20,51 @@
     <!-- Affichage pour son propre profil -->
     <ng-container *ngIf="isOwnProfile; else otherUserProfile">
       <div class="info-card">
-        <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
-        <div class="info-item">
-          <span class="info-label">Nom d'utilisateur:</span>
-          <span class="info-value">{{ user.username }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Bio:</span>
-          <span class="info-value">{{ user.bio || 'Non renseignée' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Email:</span>
-          <span class="info-value">{{ user.email }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Date de naissance:</span>
-          <span class="info-value">{{ user.birthday | date:'dd/MM/yyyy' }}</span>
-        </div>
+        <ng-container *ngIf="!editMode; else editForm">
+          <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+          <div class="info-item">
+            <span class="info-label">Nom d'utilisateur:</span>
+            <span class="info-value">{{ user.username }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Bio:</span>
+            <span class="info-value">{{ user.bio || 'Non renseignée' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email:</span>
+            <span class="info-value">{{ user.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de naissance:</span>
+            <span class="info-value">{{ user.birthday | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </ng-container>
+        <ng-template #editForm>
+          <h1 class="user-name">
+            <input [(ngModel)]="updatedUser.first_name" placeholder="Prénom" class="edit-input" />
+            <input [(ngModel)]="updatedUser.last_name" placeholder="Nom" class="edit-input" />
+          </h1>
+          <div class="info-item">
+            <span class="info-label">Nom d'utilisateur:</span>
+            <input [(ngModel)]="updatedUser.username" placeholder="Nom d'utilisateur" class="edit-input" />
+          </div>
+          <div class="info-item">
+            <span class="info-label">Bio:</span>
+            <input [(ngModel)]="updatedUser.bio" placeholder="Bio" class="edit-input" />
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email:</span>
+            <input [(ngModel)]="updatedUser.email" placeholder="Email" class="edit-input" />
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de naissance:</span>
+            <input [(ngModel)]="updatedUser.birthday" type="date" placeholder="Date de naissance" class="edit-input" />
+          </div>
+          <div class="edit-actions">
+            <button class="btn btn-secondary" (click)="editMode = false">Annuler</button>
+            <button class="btn btn-primary" (click)="submitUserEdit()">Enregistrer</button>
+          </div>
+        </ng-template>
       </div>
       <!-- Groupes rejoints (présentation améliorée) -->
       <div class="groups-section">
