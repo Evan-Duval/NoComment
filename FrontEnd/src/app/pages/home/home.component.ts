@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { PostService } from '../../services/post.service';
 import { LikeService } from '../../services/like.service';
 import { GlobalFunctionsService } from '../../services/global-functions.service';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit {
     private likeService: LikeService, 
     private postService: PostService,
     private globalFunctions: GlobalFunctionsService, 
+    private supabaseService: SupabaseService,
     private router: Router
   ) {}
 
@@ -51,8 +53,16 @@ export class HomeComponent implements OnInit {
   loadGroups(): void {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
-        this.groups = data;
-        this.filteredGroups = data;
+        this.groups = this.groups = data.map((group: any) => ({
+          ...group,
+          logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
+        }));
+
+        this.filteredGroups = this.groups = data.map((group: any) => ({
+          ...group,
+          logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
+        }));
+        
         this.showCreateButton = this.groups.length === 0;
       },
       error: (error) => {
