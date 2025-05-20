@@ -42,6 +42,11 @@ export class ProfilComponent {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
     const urlUserId = this.route.snapshot.paramMap.get('id');
 
+    if (!currentUser) {
+      this.router.navigate(['login']);
+      return;
+    }
+
     if (!urlUserId || (currentUser && +urlUserId === currentUser.id)) {
       // Mon profil
       this.isOwnProfile = true;

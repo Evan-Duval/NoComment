@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { GroupService } from '../services/group.service';
-import { UserService } from '../services/user.service';
+import { GroupService } from '../../services/group.service';
+import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 
 interface Post {
