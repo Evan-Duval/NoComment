@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -155,6 +156,18 @@ class GroupController extends Controller
             return response()->json(['error' => 'Groupe non trouvé'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function toggleFollowGroup($groupId)
+    {
+        $user = Auth::user();
+        if ($user->groups->contains($groupId)) {
+            $user->groups()->detach($groupId);
+            return response()->json(['following' => false]);
+        } else {
+            $user->groups()->attach($groupId);
+            return response()->json(['following' => true]);
         }
     }
 

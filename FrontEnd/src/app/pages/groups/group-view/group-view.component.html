@@ -11,7 +11,7 @@
             <h1 class="group-title">{{ groupData.name || "Inconnu" }}</h1>
             <button
               class="join-group-button"
-              (click)="joinGroup()"
+              (click)="toggleFollowGroup()"
               [disabled]="hasJoinedGroup || !isConnected">
               <span *ngIf="hasJoinedGroup">Rejoint ✔</span>
               <span *ngIf="!hasJoinedGroup">Rejoindre le groupe</span>
@@ -108,7 +108,7 @@
         <button 
           *ngIf="hasJoinedGroup" 
           class="leave-group-button" 
-          (click)="leaveGroup()">
+          (click)="toggleFollowGroup()">
           Quitter le groupe
         </button>
       </h2>

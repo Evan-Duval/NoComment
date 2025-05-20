@@ -61,6 +61,8 @@ Route::prefix('groups')->group(function () {
                 return response()->json(['following' => true]);
             }
         });
+
+        Route::post('/toggleFollowGroup/{groupId}', [GroupController::class, 'toggleFollowGroup']);
     });
 });
 

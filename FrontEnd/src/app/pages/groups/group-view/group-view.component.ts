@@ -145,14 +145,25 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.routeSub.unsubscribe();
   }
 
-  joinGroup(): void {
-    // Logique pour rejoindre le groupe
-    console.log('Rejoindre le groupe', this.groupId);
-  }
+  toggleFollowGroup(): void {
+    console.log(this.groupData)
+    this.groupService.toggleFollowGroup(this.groupData.id_group, this.groupData).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.hasJoinedGroup = !this.hasJoinedGroup;
+        if (this.hasJoinedGroup) {
+          this.globalErrorMessage = 'Vous avez rejoint le groupe.';
+        } else {
+          this.globalErrorMessage = 'Vous avez quitté le groupe.';
+        }
 
-  leaveGroup(): void {
-    console.log('Quitter le groupe');
-    // Logique à implémenter plus tard
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du groupe', error);
+        this.globalErrorMessage = 'Erreur lors de la mise à jour du groupe';
+      }
+    });
   }
 
   redirectToUserProfile(userId: number) {
