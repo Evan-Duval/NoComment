@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../../../services/group.service';
 import { UserService } from '../../../services/user.service';
@@ -29,6 +29,7 @@ export class CreateGroupComponent {
     private userService: UserService,
     private sidebarComponent: SidebarComponent,
     private supabaseService: SupabaseService,
+    private router: Router,
   ) {
     this.createGroupForm = this.formBuilder.group({
       name: [null, Validators.required],
@@ -88,6 +89,11 @@ export class CreateGroupComponent {
         console.log('Création du groupe réussie', response);
         this.sidebarComponent.reloadSidebar();
         this.successMessage = 'Groupe créé avec succès !';
+
+        setTimeout(() => {
+          this.successMessage = undefined;
+          this.router.navigate(['/groups']);
+        }, 1500);
       },
       error: (error) => {
         console.error('Erreur lors de la création du groupe :', error);
