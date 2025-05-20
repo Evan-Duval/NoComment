@@ -1,1 +1,39 @@
-<p>dashboard works!</p>
+<h2>Derniers posts</h2>
+<table class="dashboard-table">
+  <thead>
+    <tr>
+      <th>Titre</th>
+      <th>Auteur</th>
+      <th>Date</th>
+      <th>Likes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let post of latestPosts">
+      <td>{{ post.title }}</td>
+      <td>{{ post.username }}</td>
+      <td>{{ post.datetime }}</td>
+      <td>{{ post.likesCount || post.likes || 0 }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Derniers commentaires</h2>
+<table class="dashboard-table">
+  <thead>
+    <tr>
+      <th>Commentaire</th>
+      <th>Auteur</th>
+      <th>Date</th>
+      <th>Likes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let comment of latestComments">
+      <td>{{ comment.text }}</td>
+      <td>{{ comment.username }}</td>
+      <td>{{ comment.datetime }}</td>
+      <td>{{ comment.likesCount || comment.likes || 0 }}</td>
+    </tr>
+  </tbody>
+</table>

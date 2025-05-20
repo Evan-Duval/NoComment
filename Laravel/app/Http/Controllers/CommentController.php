@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
+use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
@@ -24,6 +27,29 @@ class CommentController extends Controller
         }
 
         $comments = Comment::where('id_post', $postId)->orderBy('created_at', 'desc')->get();
+
+        return response()->json($comments);
+    }
+
+    public function getLastComments(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $comments = Comment::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($comment) use ($user) {
+                return [
+                    'id' => $comment->id_comment,
+                    'text' => $comment->text,
+                    'username' => $comment->user->username ?? 'Anonyme',
+                    'datetime' => $comment->datetime,
+                    'likesCount' => Like::where('id_comment', $comment->id_comment)->count(),
+                    'isLiked' => $user
+                        ? Like::where('id_comment', $comment->id)->where('id_user', $user->id)->exists()
+                        : false,
+                ];
+            });
 
         return response()->json($comments);
     }

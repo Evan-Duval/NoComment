@@ -76,6 +76,7 @@ Route::prefix('posts')->group(function() {
 Route::prefix('comments')->group(function() {
     Route::get('getByPost/{postId}', [CommentController::class, 'getByPost']);
     Route::get('getCommentNumberByPost/{postId}', [CommentController::class, 'getCommentNumberByPost']);
+    Route::get('getLastComments', [CommentController::class, 'getLastComments']);
     Route::post('create', [CommentController::class, 'create']);
     Route::post('update/{id}', [CommentController::class, 'update']);
     Route::get('/getById/{id}', [CommentController::class, 'show']);

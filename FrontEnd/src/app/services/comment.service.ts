@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -17,6 +17,14 @@ export class CommentService {
   private apiUrl = 'http://127.0.0.1:8000/api/comments';
   
   constructor(private http: HttpClient) {}
+  
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   getCommentsByPost(postId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/getByPost/${postId}`);
@@ -24,6 +32,11 @@ export class CommentService {
 
   getCommentNumberByPost(postId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/getCommentNumberByPost/${postId}`);
+  }
+
+  getLastComments(): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}/getLastComments/`, { headers });
   }
 
   addComment(commentData:Comment): Observable<any> {
