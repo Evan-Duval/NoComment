@@ -61,7 +61,7 @@
       <div *ngFor="let post of postData" class="post-card">
         <div class="post-header">
           <div>
-            <span class="post-author">{{ post.username }}</span>
+            <span class="post-author">{{ post.username }} </span>
             <span class="post-timestamp">{{ post.datetime }}</span>
           </div>
           <span class ='post-location'>{{ post.location }}</span>
@@ -118,7 +118,7 @@
           <div>
             <h3 class="member-name">
               {{ member.username }}
-              <span *ngIf="member.certified" class="certified-badge" title="Compte certifié">✔️</span>
+              <img *ngIf="member.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
             </h3>
             <p class="member-activity">{{ member.lastActivity }}</p>
           </div>

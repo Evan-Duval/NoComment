@@ -75,8 +75,6 @@ class PostController extends Controller
                     'isLiked' => $user
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
                         : false,
-                    'commentsNumber' => Comment::where('id_post', $post->id)->count(),
-
                 ];
             });
 

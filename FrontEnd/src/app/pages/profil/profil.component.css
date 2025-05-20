@@ -136,6 +136,13 @@
   color: var(--text-color);
 }
 
+.certified-badge {
+  color: var(--primary-color);
+  margin-left: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+}
+
 /* ============================= */
 /*        FORMULAIRE ÉDITION    */
 /* ============================= */

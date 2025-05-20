@@ -22,6 +22,8 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Ajouter vérification admin
+
     this.postService.getLastPosts().subscribe({
       next: (posts) => {
         posts.map((post: any) => {
