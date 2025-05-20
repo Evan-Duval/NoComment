@@ -24,14 +24,13 @@ class PostController extends Controller
             'id_user' => 'required|integer|exists:users,id',
             'id_group' => 'required|integer|exists:groups,id_group',
         ]);
-        $datetime = Carbon::parse($validatedData['datetime'])->format('Y-m-d H:i:s');
 
         return Post::create([
             'title' => $validatedData['title'],
             'text' => $validatedData['text'],
             'media' => $validatedData['media'] ?? null,
             'location' => $validatedData['location'],
-            'datetime' => $datetime,
+            'datetime' => $validatedData['datetime'],
             'id_user' => $validatedData['id_user'],
             'id_group' => $validatedData['id_group'],
         ]);
