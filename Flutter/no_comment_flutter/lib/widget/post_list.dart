@@ -48,13 +48,13 @@ class PostList extends StatelessWidget {
                       ),
                     ),
                   )
-                else if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+                else if (post.media != null && post.media!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        post.imageUrl!,
+                        post.media!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 200,
@@ -66,7 +66,7 @@ class PostList extends StatelessWidget {
                         const TextStyle(color: Colors.white70, fontSize: 16)),
                 const SizedBox(height: 10),
                 Text(
-                    'Posté par ${post.userName ?? 'Anonyme'} le ${post.dateTime.toLocal()}',
+                    'Posté par ${post.userName ?? 'Anonyme'} le ${post.dateTime.toLocal()} en ${post.location ?? 'Inconnu'}',
                     style:
                         const TextStyle(color: Colors.white38, fontSize: 12)),
                 const SizedBox(height: 10),

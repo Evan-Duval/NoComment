@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:no_comment_flutter/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -35,22 +36,22 @@ class _ProfilePageState extends State<ProfilePage> {
       _logo = prefs.getString('logo');
       _certified = prefs.getBool('certified');
     });
-
-    print("Données chargées :");
-    print("Username : $_username");
-    print("Email : $_email");
-    print("Bio : $_bio");
-    print("Prénom : $_firstName");
-    print("Nom : $_lastName");
-    print("Date de naissance : $_birthday");
-    print("Logo : $_logo");
-    print("Certifié : $_certified");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF17202A),
+      backgroundColor: Config.colors.backgroundColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('MON PROFIL'),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Config.colors.second_backgroundColor,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         child: ListView(

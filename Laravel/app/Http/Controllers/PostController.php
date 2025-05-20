@@ -24,7 +24,6 @@ class PostController extends Controller
             'id_user' => 'required|integer|exists:users,id',
             'id_group' => 'required|integer|exists:groups,id_group',
         ]);
-        // Transformer datetime en format MySQL datetime
         $datetime = Carbon::parse($validatedData['datetime'])->format('Y-m-d H:i:s');
 
         return Post::create([
@@ -75,9 +74,10 @@ class PostController extends Controller
                     'id' => $post->id,
                     'title' => $post->title,
                     'text' => $post->text,
-                    'imageUrl' => $post->image_url,
+                    'media' => $post->media,
                     'userName' => $post->user->username ?? 'Anonyme',
                     'dateTime' => $post->created_at,
+                    'location' => $post->location,
                     'likesCount' => Like::where('id_post', $post->id)->count(),
                     'isLiked' => $user
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()

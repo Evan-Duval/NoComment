@@ -5,9 +5,10 @@ class Post {
   final String userName;
   final DateTime dateTime;
   final String? localImagePath;
-  final String? imageUrl;
+  final String? media;
   final bool? isLiked;
   final int? likesCount;
+  final String? location;
 
   Post({
     this.id,
@@ -16,9 +17,10 @@ class Post {
     required this.userName,
     required this.dateTime,
     this.localImagePath,
-    this.imageUrl,
+    this.media,
     this.likesCount,
     this.isLiked,
+    this.location,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -29,9 +31,10 @@ class Post {
       userName: json['userName'] ?? 'Anonyme',
       dateTime: DateTime.parse(json['dateTime']),
       localImagePath: json['localImagePath'],
-      imageUrl: json['imageUrl'],
-      likesCount: json['likesCount'], // camelCase ici
-      isLiked: json['isLiked'], // camelCase ici
+      media: json['media'],
+      likesCount: json['likesCount'],
+      isLiked: json['isLiked'],
+      location: json['location'],
     );
   }
 
@@ -43,9 +46,10 @@ class Post {
       'userName': userName,
       'dateTime': dateTime.toIso8601String(),
       'localImagePath': localImagePath,
-      'imageUrl': imageUrl,
+      'media': media,
       'likesCount': likesCount,
       'isLiked': isLiked,
+      'location': location,
     };
   }
 
@@ -59,6 +63,7 @@ class Post {
     String? imageUrl,
     bool? isLiked,
     int? likesCount,
+    String? location,
   }) {
     return Post(
       id: id ?? this.id,
@@ -67,9 +72,10 @@ class Post {
       userName: userName ?? this.userName,
       dateTime: dateTime ?? this.dateTime,
       localImagePath: localImagePath ?? this.localImagePath,
-      imageUrl: imageUrl ?? this.imageUrl,
+      media: imageUrl ?? this.media,
       isLiked: isLiked ?? this.isLiked,
       likesCount: likesCount ?? this.likesCount,
+      location: location ?? this.location,
     );
   }
 }

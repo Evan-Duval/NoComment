@@ -28,12 +28,7 @@ class _GroupContentState extends State<GroupContent> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {
-      print("Token: ${prefs.getString('token')}");
-      print("User ID: ${prefs.getInt('id')}");
-    });
-
-    print('initState appelé'); // debug
+    SharedPreferences.getInstance().then((prefs) {});
     apiUrl = dotenv.env['URL'] ?? '';
     _checkIfFollowing();
     _loadPosts();
@@ -246,7 +241,12 @@ class _GroupContentState extends State<GroupContent> {
       backgroundColor: const Color(0xFF17202A),
       appBar: AppBar(
         title: Text(widget.group['name'] ?? 'Groupe'),
-        backgroundColor: const Color(0xFF2C3E50),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Config.colors.second_backgroundColor,
         actions: [
           IconButton(
             icon: isLoading
