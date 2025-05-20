@@ -10,6 +10,8 @@ import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class CreatePost extends StatefulWidget {
   final int groupId;
 
@@ -105,6 +107,11 @@ class _CreatePostState extends State<CreatePost> {
         SnackBar(content: Text('Erreur de localisation: $e')),
       );
     }
+    await Supabase.initialize(
+      url: 'https://cblssbvfgxtadeevsldy.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNibHNzYnZmZ3h0YWRlZXZzbGR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDE3MzMsImV4cCI6MjA2MzMxNzczM30.6vfHowlW_UT2jeO1MdaqlB6lWWd3qloqppOAsUCD3Ts',
+    );
   }
 
   Future<void> _pickImageFromCamera() async {
@@ -248,7 +255,7 @@ class _CreatePostState extends State<CreatePost> {
       }
 
       // Création de la requête
-      final uri = Uri.parse('${apiUrl}api/posts');
+      final uri = Uri.parse('${apiUrl}api/posts/create');
       final request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer $token';
 
@@ -259,11 +266,44 @@ class _CreatePostState extends State<CreatePost> {
       request.fields['datetime'] = dateTime;
       request.fields['location'] = administrativeArea ?? 'Inconnue';
 
+      Future<String?> _uploadImageToSupabase(File imageFile) async {
+        try {
+          final supabase = Supabase.instance.client;
+
+          final fileBytes = await imageFile.readAsBytes();
+          final fileName = 'post_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final filePath = '/$fileName'; // Chemin dans le bucket
+
+          final response = await supabase.storage
+              .from('nocomment') // ← Nom de ton bucket
+              .uploadBinary(filePath, fileBytes,
+                  fileOptions: const FileOptions(
+                    contentType: 'image/jpeg',
+                    upsert: true,
+                  ));
+
+          if (response.isEmpty) {
+            throw Exception('Erreur lors de l\'upload');
+          }
+
+          // Récupère l'URL publique
+          final publicUrl =
+              supabase.storage.from('nocomment').getPublicUrl(filePath);
+          return publicUrl;
+        } catch (e) {
+          print('Erreur upload Supabase: $e');
+          return null;
+        }
+      }
+
       // Ajout de l'image si présente
       if (_imageFile != null && await _imageFile!.exists()) {
-        final imageFile =
-            await http.MultipartFile.fromPath('media', _imageFile!.path);
-        request.files.add(imageFile);
+        final imageUrl = await _uploadImageToSupabase(_imageFile!);
+        if (imageUrl != null) {
+          request.fields['media'] = imageUrl;
+        } else {
+          throw Exception('Échec de l\'upload de l\'image');
+        }
       }
 
       // Envoi de la requête
@@ -282,6 +322,7 @@ class _CreatePostState extends State<CreatePost> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e')),
       );
+      print(e);
     } finally {
       if (mounted) {
         setState(() {

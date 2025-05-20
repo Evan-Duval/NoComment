@@ -26,7 +26,7 @@ class _GroupsListState extends State<GroupsList> {
   }
 
   Future<void> fetchGroups() async {
-    final apiUrl = '${dotenv.env['URL']}api/groups';
+    final apiUrl = '${dotenv.env['URL']}api/groups/get-all';
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -52,38 +52,58 @@ class _GroupsListState extends State<GroupsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF17202A),
+      backgroundColor: Config.colors.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Groupes'),
-        backgroundColor: const Color(0xFF2C3E50),
+        title: const Text('GROUPES'),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Config.colors.second_backgroundColor,
         actions: [
           IconButton(
             icon: Icon(_showForm ? Icons.close : Icons.add),
             onPressed: _toggleForm,
+            color: Config.colors.primaryColor,
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: _showForm
-            ? CreateGroupForm(
-                onGroupCreated: () {
-                  fetchGroups();
-                  setState(() => _showForm = false);
-                },
-              )
-            : ListView.builder(
-                itemCount: groups.length,
-                itemBuilder: (context, index) {
-                  final group = groups[index];
-                  return _buildStyledContainer(
-                    group['name'] ?? 'Nom inconnu',
-                    group['description'] ?? 'Pas de description',
-                    group,
-                  );
-                },
-              ),
+      body: Column(
+        children: [
+          // 👇 ligne blanche horizontale
+          Container(
+            height: 1,
+            color: Colors.white,
+            width: double.infinity,
+          ),
+
+          // 👇 contenu principal
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: _showForm
+                  ? CreateGroupForm(
+                      onGroupCreated: () {
+                        fetchGroups();
+                        setState(() => _showForm = false);
+                      },
+                    )
+                  : ListView.builder(
+                      itemCount: groups.length,
+                      itemBuilder: (context, index) {
+                        final group = groups[index];
+                        return _buildStyledContainer(
+                          group['name'] ?? 'Nom inconnu',
+                          group['description'] ?? 'Pas de description',
+                          group,
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -95,7 +115,7 @@ class _GroupsListState extends State<GroupsList> {
       child: Container(
         padding: const EdgeInsets.all(15.0),
         decoration: BoxDecoration(
-          color: const Color(0xFF2C3E50),
+          color: Config.colors.second_backgroundColor,
           borderRadius: BorderRadius.circular(10.0),
           boxShadow: [
             BoxShadow(
