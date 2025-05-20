@@ -72,14 +72,11 @@ class _GroupsListState extends State<GroupsList> {
       ),
       body: Column(
         children: [
-          // 👇 ligne blanche horizontale
           Container(
             height: 1,
             color: Colors.white,
             width: double.infinity,
           ),
-
-          // 👇 contenu principal
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),

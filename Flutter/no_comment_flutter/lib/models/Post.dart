@@ -2,8 +2,8 @@ class Post {
   final int? id;
   final String title;
   final String text;
-  final String userName;
-  final DateTime dateTime;
+  final String username;
+  final DateTime datetime;
   final String? localImagePath;
   final String? media;
   final bool? isLiked;
@@ -14,8 +14,8 @@ class Post {
     this.id,
     required this.title,
     required this.text,
-    required this.userName,
-    required this.dateTime,
+    required this.username,
+    required this.datetime,
     this.localImagePath,
     this.media,
     this.likesCount,
@@ -28,8 +28,8 @@ class Post {
       id: json['id'],
       title: json['title'] ?? '',
       text: json['text'] ?? '',
-      userName: json['userName'] ?? 'Anonyme',
-      dateTime: DateTime.parse(json['dateTime']),
+      username: json['username'] ?? 'Anonyme',
+      datetime: DateTime.parse(json['datetime']),
       localImagePath: json['localImagePath'],
       media: json['media'],
       likesCount: json['likesCount'],
@@ -43,8 +43,8 @@ class Post {
       'id': id,
       'title': title,
       'text': text,
-      'userName': userName,
-      'dateTime': dateTime.toIso8601String(),
+      'username': username,
+      'datetime': datetime.toIso8601String(),
       'localImagePath': localImagePath,
       'media': media,
       'likesCount': likesCount,
@@ -57,8 +57,8 @@ class Post {
     int? id,
     String? title,
     String? text,
-    String? userName,
-    DateTime? dateTime,
+    String? username,
+    DateTime? datetime,
     String? localImagePath,
     String? imageUrl,
     bool? isLiked,
@@ -69,8 +69,8 @@ class Post {
       id: id ?? this.id,
       title: title ?? this.title,
       text: text ?? this.text,
-      userName: userName ?? this.userName,
-      dateTime: dateTime ?? this.dateTime,
+      username: username ?? this.username,
+      datetime: datetime ?? this.datetime,
       localImagePath: localImagePath ?? this.localImagePath,
       media: imageUrl ?? this.media,
       isLiked: isLiked ?? this.isLiked,

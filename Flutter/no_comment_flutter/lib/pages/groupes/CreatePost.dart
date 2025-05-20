@@ -242,7 +242,7 @@ class _CreatePostState extends State<CreatePost> {
       // Récupération des données
       final title = _titleController.text.trim();
       final text = _textController.text.trim();
-      final dateTime = DateTime.now().toIso8601String();
+      final datetime = DateTime.now().toIso8601String();
 
       // Récupération des infos utilisateur
       final prefs = await SharedPreferences.getInstance();
@@ -263,7 +263,7 @@ class _CreatePostState extends State<CreatePost> {
       request.fields['text'] = text;
       request.fields['id_group'] = widget.groupId.toString();
       request.fields['id_user'] = userId.toString();
-      request.fields['datetime'] = dateTime;
+      request.fields['datetime'] = datetime;
       request.fields['location'] = administrativeArea ?? 'Inconnue';
 
       Future<String?> _uploadImageToSupabase(File imageFile) async {
