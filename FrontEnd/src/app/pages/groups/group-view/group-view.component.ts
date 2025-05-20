@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { LikeService } from '../../../services/like.service';
 import { CommentService } from '../../../services/comment.service';
+import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-group-view',
@@ -63,6 +64,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private userService: UserService, 
     private likeService: LikeService,
     private globalFunctions: GlobalFunctionsService,
+    private supabaseService: SupabaseService,
     private router: Router,
   ) {}
 
@@ -87,6 +89,11 @@ export class GroupViewComponent implements OnInit, OnDestroy {
           if (!data) {
             this.globalErrorMessage = 'Aucun groupe trouvé avec cet ID.';
             return;
+          }
+          if (data.logo) {
+            data.logoUrl = this.supabaseService.getPublicMediaUrl(data.logo);
+          } else {
+            data.logoUrl = 'default_logo.png';
           }
           this.groupData = data;
         },
@@ -114,8 +121,8 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       this.postService.getGroupsByUser(this.groupId).subscribe({
         next: (data) => {
           if (data) {
-            console.log(data)
             data.map((post: any) => {
+              // post['logoUrl'] = this.supabaseService.getPublicMediaUrl(post.media)
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
               post['likes'] = post['likesCount'] || 0;
               post['isLiked'] = post['isLiked'] || false;

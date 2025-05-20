@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../services/group.service';
 import { UserService } from '../services/user.service';
+import { SupabaseService } from '../services/supabase.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -19,7 +20,12 @@ export class SidebarComponent implements OnInit {
   userRank: string = 'user';
   showCreateButton: boolean = false;
   moderationView: boolean = (localStorage.getItem('moderationView') === '1' && localStorage.getItem('token')) ? true : false;
-  constructor(private groupService: GroupService, private userService: UserService, private router: Router) {}
+
+  constructor(
+    private groupService: GroupService, 
+    private userService: UserService, 
+    private supabaseService: SupabaseService,
+    private router: Router) {}
 
   ngOnInit() {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
@@ -35,7 +41,10 @@ export class SidebarComponent implements OnInit {
   loadGroups() {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
-        this.groups = data;
+        this.groups = data.map((group: any) => ({
+          ...group,
+          logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
+        }));
         this.showCreateButton = this.groups.length === 0;
       },
       error: (error) => {

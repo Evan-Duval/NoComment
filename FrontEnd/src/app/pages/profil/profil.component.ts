@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { GroupService } from '../../services/group.service';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ export class ProfilComponent {
   constructor(
     private userService: UserService,
     private groupService: GroupService,
+    private supabaseService: SupabaseService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -72,7 +74,10 @@ export class ProfilComponent {
   loadUserGroups(userId: number | string) {
     this.groupService.getGroupsByUser(userId).subscribe({
       next: (groups) => {
-        this.groups = groups;
+        this.groups = groups.map((group: any) => ({
+          ...group,
+          logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
+        }));
       }
     });
   }

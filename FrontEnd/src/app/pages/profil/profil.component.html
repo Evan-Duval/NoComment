@@ -7,7 +7,7 @@
 <div *ngIf="!isLoading && user" class="profile-container">
   <div class="profile-image-container" *ngIf="isOwnProfile">
     <img
-      [src]="user.logo ? 'profiles/' + user.logo : 'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'"
+      [src]="'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'"
       alt="Photo de profil"
       class="profile-picture"
     />
@@ -71,7 +71,7 @@
         <h2 class="groups-title">Groupes rejoints</h2>
         <div *ngIf="groups.length > 0; else noGroups" class="groups-list">
           <div *ngFor="let group of groups" class="group-card" (click)="redirectToGroup(group.id_group)">
-            <img [src]="group.imagePath || 'assets/default-group.png'" alt="Image groupe" class="group-image">
+            <img [src]="group.logoUrl" alt="Image groupe" class="group-image">
             <div class="group-info">
               <div class="group-name">{{ group.name }}</div>
               <div class="group-description">{{ group.description }}</div>

@@ -32,7 +32,7 @@
     <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
       <li *ngFor="let group of groups | slice:0:4">
         <a [routerLink]="['/groups/view', group.id_group]">
-          <img [src]="group.imagePath" alt="groupe" class="group-avatar" />
+          <img [src]="group.logoUrl" alt="groupe" class="group-avatar" />
           <span>{{ group.name }}</span>
           <span class="notification-badge" *ngIf="group.notifications">{{ group.notifications }}</span>
         </a>

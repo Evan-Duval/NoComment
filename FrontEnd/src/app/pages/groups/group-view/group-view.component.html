@@ -4,7 +4,7 @@
     <div class="posts-section">
 
       <div class="group-header">
-        <img [src]="groupData.imagePath" class="group-image" alt="Groupe">
+        <img [src]="groupData.logoUrl" class="group-image" alt="Groupe">
       
         <div class="group-info">
           <div class="group-header-top">
@@ -114,7 +114,7 @@
       </h2>
       <div *ngIf="filteredMembers.length > 0; else noResults">
         <div *ngFor="let member of filteredMembers" class="member-item" (click)="redirectToUserProfile(member.id)">
-          <img [src]="member.logo || 'assets/default-profile.png'" class="member-image" alt="{{ member.username }}">
+          <img [src]="'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'" class="member-image" alt="{{ member.username }}">
           <div>
             <h3 class="member-name">
               {{ member.username }}

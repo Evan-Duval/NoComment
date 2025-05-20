@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { GroupService } from '../../../services/group.service';
 import { UserService } from '../../../services/user.service';
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-create',
@@ -20,12 +21,14 @@ export class CreateGroupComponent {
   group_owner: number = 0;
   successMessage?: string;
   showErrorMessage: boolean = false;
+  selectedFile: File | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
     private groupService: GroupService, 
     private userService: UserService,
-    private sidebarComponent: SidebarComponent
+    private sidebarComponent: SidebarComponent,
+    private supabaseService: SupabaseService,
   ) {
     this.createGroupForm = this.formBuilder.group({
       name: [null, Validators.required],
@@ -43,27 +46,53 @@ export class CreateGroupComponent {
     }
   }
 
-  onSubmit(): void {
-    if (this.createGroupForm.valid) {
-      const formValues = this.createGroupForm.value;
-
-      const createGroupData = {
-        name: formValues.name,
-        description: formValues.description,
-        logo: formValues.logo || 'default_logo.png',
-        group_owner: this.group_owner,
-      };
-            
-      this.groupService.createGroup(createGroupData).subscribe({
-        next: (response) => {
-          console.log('Création du groupe réussie', response);
-          this.sidebarComponent.reloadSidebar();
-          this.successMessage = 'Groupe créé avec succès !';
-        },
-        error: (error) => {
-          console.error('Erreur lors de la création du groupe :', error);
-        },
-      });
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
     }
   }
+
+  async onSubmit(): Promise<void> {
+    if (!this.createGroupForm.valid || !this.userToken) return;
+
+    const formValues = this.createGroupForm.value;
+    let logoPath = 'default_logo.png'; // chemin par défaut
+
+    // S'il y a un fichier sélectionné, on l'upload
+    console.log(this.selectedFile)
+    if (this.selectedFile) {
+      const fileName = `${Date.now()}_${this.selectedFile.name}`;
+      const { error } = await this.supabaseService.client
+        .storage
+        .from('nocomment') // ← nom du bucket
+        .upload(`${fileName}`, this.selectedFile);
+
+      if (error) {
+        console.error('Erreur upload Supabase :', error.message);
+        return;
+      }
+
+      logoPath = `${fileName}`; // ← chemin stocké en DB
+    }
+
+    const createGroupData = {
+      name: formValues.name,
+      description: formValues.description,
+      logo: logoPath,
+      group_owner: this.group_owner,
+    };
+
+    this.groupService.createGroup(createGroupData).subscribe({
+      next: (response) => {
+        console.log('Création du groupe réussie', response);
+        this.sidebarComponent.reloadSidebar();
+        this.successMessage = 'Groupe créé avec succès !';
+      },
+      error: (error) => {
+        console.error('Erreur lors de la création du groupe :', error);
+      },
+    });
+  }
+
 }
