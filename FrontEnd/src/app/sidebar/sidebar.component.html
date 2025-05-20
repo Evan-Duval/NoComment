@@ -46,28 +46,6 @@
     </ng-template>
   </div>
 
-  <!-- Vue modération pour admin -->
-  <div *ngIf="moderationView" class="moderation-toggle">
-    <label>
-      <input
-        type="radio"
-        name="moderationView"
-        [checked]="moderationView"
-        (change)="toggleModerationView(true)"
-      />
-      Vue modération activée
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="moderationView"
-        [checked]="!moderationView"
-        (change)="toggleModerationView(false)"
-      />
-      Vue normale
-    </label>
-  </div>
-
   <!-- Section Personnel -->
   <div class="sidebar-section bottom">
     <h3>Personnel</h3>
@@ -81,7 +59,7 @@
       <li>
         <a routerLink="/login" routerLinkActive="active">
           <span class="icon">⚙️</span>
-          <span>Connexion</span>
+          <span>Connexion / Inscription</span>
         </a>
       </li>
     </ul>

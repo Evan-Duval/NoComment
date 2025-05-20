@@ -19,7 +19,6 @@ export class SidebarComponent implements OnInit {
   userId: number = 0;
   userRank: string = 'user';
   showCreateButton: boolean = false;
-  moderationView: boolean = (localStorage.getItem('moderationView') === '1' && localStorage.getItem('token')) ? true : false;
 
   constructor(
     private groupService: GroupService, 
@@ -66,14 +65,6 @@ export class SidebarComponent implements OnInit {
     this.router.navigate(['/groups']);
   }
 
-  toggleModerationView(value: boolean) {
-    if (!this.userRank || this.userRank !== 'admin' || !this.moderationView) {return;}
-
-    this.moderationView = value;
-    localStorage.setItem('moderationView', value ? '1' : '0');
-    window.location.reload();
-  }
-
   /**
    * Méthode publique pour recharger les données de la sidebar
    * Cette méthode peut être appelée de l'extérieur du composant
@@ -85,6 +76,5 @@ export class SidebarComponent implements OnInit {
       this.userRank = currentUser.rank;
       this.loadGroups();
     }
-    this.moderationView = (localStorage.getItem('moderationView') === '1' && localStorage.getItem('token')) ? true : false;
   }
 }
