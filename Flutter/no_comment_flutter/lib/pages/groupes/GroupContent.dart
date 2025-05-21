@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/config/config.dart';
 import 'package:no_comment_flutter/models/Post.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:no_comment_flutter/pages/groupes/CreatePost.dart';
+import 'package:no_comment_flutter/widget/post_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupContent extends StatefulWidget {
   final Map<String, dynamic> group;
@@ -29,10 +28,8 @@ class _GroupContentState extends State<GroupContent> {
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((prefs) {});
     apiUrl = dotenv.env['URL'] ?? '';
-    if (apiUrl.endsWith('/')) {
-      apiUrl = apiUrl.substring(0, apiUrl.length - 1);
-    }
     _checkIfFollowing();
     _loadPosts();
   }
@@ -63,7 +60,7 @@ class _GroupContentState extends State<GroupContent> {
 
       final response = await http.get(
         Uri.parse(
-            '$apiUrl/api/groups/${widget.group['id_group']}/follow-status'),
+            '$apiUrl' 'api/groups/${widget.group['id_group']}/follow-status'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -97,7 +94,7 @@ class _GroupContentState extends State<GroupContent> {
 
       final response = await http.post(
         Uri.parse(
-            '$apiUrl/api/groups/${widget.group['id_group']}/toggle-follow'),
+            '$apiUrl' 'api/groups/${widget.group['id_group']}/toggle-follow'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -128,9 +125,8 @@ class _GroupContentState extends State<GroupContent> {
         throw Exception('Token non trouvé');
       }
 
-      // Correction de l'URL
       final response = await http.get(
-        Uri.parse('$apiUrl/api/groups/$groupId/posts'),
+        Uri.parse('$apiUrl' 'api/posts/getByGroup/$groupId'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -150,16 +146,92 @@ class _GroupContentState extends State<GroupContent> {
     }
   }
 
-  // Fonction pour vérifier si un fichier existe sans provoquer d'erreur
-  bool fileExists(String? path) {
-    if (kIsWeb)
-      return false; // Sur le Web, on ne peut pas vérifier les fichiers locaux
-    if (path == null || path.isEmpty) return false;
+  // Récupère l'id de l'utilisateur depuis SharedPreferences
+  Future<int?> _getCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('id');
+  }
+
+  Future<void> _addLike(int postId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final userId = await _getCurrentUserId();
+
+    if (token == null || userId == null)
+      throw Exception('Token ou userId non trouvé');
+
+    final response = await http.post(
+      Uri.parse('$apiUrl' 'api/likes/addLike'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'id_user': userId,
+        'id_post': postId,
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception(
+          'Erreur lors de l\'ajout du like: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _removeLike(int postId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final userId = await _getCurrentUserId();
+
+    if (token == null || userId == null)
+      throw Exception('Token ou userId non trouvé');
+
+    final response = await http.delete(
+      Uri.parse('$apiUrl' 'api/likes/removePostLike/$postId'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'id_user': userId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Erreur lors de la suppression du like: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _toggleLike(int postId) async {
     try {
-      return File(path).existsSync();
+      final index = posts.indexWhere((p) => p.id == postId);
+      if (index == -1) return;
+
+      final post = posts[index];
+      final currentlyLiked = post.isLiked ?? false;
+
+      // Mise à jour locale immédiate
+      setState(() {
+        posts[index] = post.copyWith(
+          isLiked: !currentlyLiked,
+          likesCount: currentlyLiked
+              ? (post.likesCount != null ? post.likesCount! - 1 : 0)
+              : (post.likesCount != null ? post.likesCount! + 1 : 1),
+        );
+      });
+
+      // Envoi requête réseau
+      if (currentlyLiked) {
+        await _removeLike(postId);
+      } else {
+        await _addLike(postId);
+      }
     } catch (e) {
-      print('Erreur lors de la vérification du fichier: $e');
-      return false;
+      print('Erreur _toggleLike: $e');
+
+      // En cas d’erreur, reload les posts (ou revert localement)
+      await _loadPosts();
     }
   }
 
@@ -169,7 +241,12 @@ class _GroupContentState extends State<GroupContent> {
       backgroundColor: const Color(0xFF17202A),
       appBar: AppBar(
         title: Text(widget.group['name'] ?? 'Groupe'),
-        backgroundColor: const Color(0xFF2C3E50),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Config.colors.second_backgroundColor,
         actions: [
           IconButton(
             icon: isLoading
@@ -194,9 +271,7 @@ class _GroupContentState extends State<GroupContent> {
         ],
       ),
       body: isLoadingPosts
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : posts.isEmpty
               ? const Center(
                   child: Text(
@@ -206,111 +281,10 @@ class _GroupContentState extends State<GroupContent> {
                 )
               : RefreshIndicator(
                   onRefresh: _loadPosts,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      final post = posts[index];
-                      return Card(
-                        color: const Color(0xFF1C2833),
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(post.title ?? 'Sans titre',
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 5),
-                              if (!kIsWeb &&
-                                  post.localImagePath != null &&
-                                  fileExists(post.localImagePath))
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.file(
-                                      File(post.localImagePath!),
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: 200,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        print(
-                                            'Erreur d\'affichage de l\'image locale: $error');
-                                        return const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: Text(
-                                            'Erreur de chargement de l\'image locale',
-                                            style: TextStyle(
-                                                color: Colors.redAccent),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                )
-                              else if (post.imageUrl != null &&
-                                  post.imageUrl!.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(
-                                      post.imageUrl!,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: 200,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        print(
-                                            'Erreur d\'affichage de l\'image distante: $error');
-                                        return const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: Text(
-                                            'Erreur de chargement de l\'image',
-                                            style: TextStyle(
-                                                color: Colors.redAccent),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              Text(post.text ?? 'Pas de contenu',
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 16)),
-                              const SizedBox(height: 10),
-                              Text(
-                                  'Posté par ${post.userName ?? 'Anonyme'} le ${post.dateTime.toLocal()}',
-                                  style: const TextStyle(
-                                      color: Colors.white38, fontSize: 12)),
-                            ],
-                          ),
-                        ),
-                      );
+                  child: PostList(
+                    posts: posts,
+                    onToggleLike: (postId) async {
+                      await _toggleLike(postId);
                     },
                   ),
                 ),
@@ -323,9 +297,7 @@ class _GroupContentState extends State<GroupContent> {
                     builder: (_) =>
                         CreatePost(groupId: widget.group['id_group']),
                   ),
-                ).then((_) {
-                  _loadPosts(); // Recharger les posts après ajout
-                });
+                ).then((_) => _loadPosts());
               },
               backgroundColor: Config.colors.primaryColor,
               child: const Icon(Icons.add),

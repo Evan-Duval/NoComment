@@ -9,6 +9,8 @@ use App\Models\Post;
 use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PostController extends Controller
 {
@@ -33,16 +35,15 @@ class PostController extends Controller
             'datetime' => $validatedData['datetime'],
             'id_user' => $validatedData['id_user'],
             'id_group' => $validatedData['id_group'],
-        ]); 
+        ]);
     }
 
-     // Affiche un post spécifique
-       public function show($id)
+    // Affiche un post spécifique
+    public function show($id)
     {
         try {
             $post = Post::with('user')->findOrFail($id); // je charge le post avec l'utilisateur
             return response()->json($post);
-          
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'error' => 'Post non retrouvé.'
@@ -116,7 +117,6 @@ class PostController extends Controller
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
                         : false,
                     'commentsNumber' => Comment::where('id_post', $post->id)->count(),
-
                 ];
             });
 
@@ -234,9 +234,3 @@ class PostController extends Controller
         }
     }
 }
-
-
-
-
-
-
