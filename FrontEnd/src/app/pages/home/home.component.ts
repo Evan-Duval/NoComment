@@ -57,12 +57,12 @@ export class HomeComponent implements OnInit {
   loadGroups(): void {
     this.groupService.getGroupsByUser(this.userId).subscribe({
       next: (data) => {
-        this.groups = this.groups = data.map((group: any) => ({
+        this.groups = data.map((group: any) => ({
           ...group,
           logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
         }));
 
-        this.filteredGroups = this.groups = data.map((group: any) => ({
+        this.filteredGroups = data.map((group: any) => ({
           ...group,
           logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
         }));

@@ -74,8 +74,9 @@ export class ProfilComponent {
 
   loadUserGroups(userId: number | string) {
     this.groupService.getGroupsByUser(userId).subscribe({
-      next: (groups) => {
-        this.groups = groups.map((group: any) => ({
+      next: (data) => {
+        console.log('Groups:', data);
+        this.groups = data.map((group: any) => ({
           ...group,
           logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
         }));

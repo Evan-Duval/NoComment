@@ -86,6 +86,7 @@ Route::prefix('comments')->group(function () {
     Route::get('/getById/{id}', [CommentController::class, 'show']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::put('/updateMyComment/{commentId}', [CommentController::class, 'updateMyComment']);
         Route::put('/update/{commentId}', [CommentController::class, 'update'])->middleware('role:admin');
         Route::delete('/delete/{commentId}', [CommentController::class, 'destroy'])->middleware('role:admin');
     });

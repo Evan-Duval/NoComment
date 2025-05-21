@@ -9,6 +9,10 @@ interface Comment {
   datetime: string;
 }
 
+interface newComment {
+  text: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +45,11 @@ export class CommentService {
 
   addComment(commentData:Comment): Observable<any> {
     return this.http.post(`${this.apiUrl}/create/`, commentData);
+  }
+
+  updateMyComment(commentId: number, newCommentData: newComment): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put(`${this.apiUrl}/updateMyComment/${commentId}`, newCommentData, { headers });
   }
 
   updateComment(commentId: number): Observable<any> {

@@ -64,6 +64,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   editPostData: any = { title: '', text: '', location: '' };
   editErrorMessage: string = '';
 
+  editCommentId: number | null = null;
+  editCommentData: any = { text: '' };
+  editCommentErrorMessage: string = '';
+
   constructor(
     private route: ActivatedRoute, 
     private groupService: GroupService, 
@@ -496,6 +500,41 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.editErrorMessage = err?.error?.error || "Erreur lors de la modification du post.";
         this.notification = this.editErrorMessage;
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleStartEditComment(comment: any) {
+    this.editCommentId = comment.id_comment;
+    this.editCommentData = { text: comment.text };
+    this.editCommentErrorMessage = '';
+  }
+
+  handleCancelEditComment() {
+    this.editCommentId = null;
+    this.editCommentData = { text: '' };
+    this.editCommentErrorMessage = '';
+  }
+
+  handleConfirmEditComment(comment: any) {
+    if (!this.editCommentData.text.trim()) {
+      this.editCommentErrorMessage = 'Le commentaire ne peut pas être vide.';
+      return;
+    }
+    this.commentService.updateMyComment(comment.id_comment, {
+      text: this.editCommentData.text
+    }).subscribe({
+      next: (updatedComment) => {
+        comment.text = updatedComment.text;
+        this.editCommentId = null;
+        this.editCommentErrorMessage = '';
+        this.notification = 'Commentaire modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: (err) => {
+        this.editCommentErrorMessage = err?.error?.error || "Erreur lors de la modification du commentaire.";
+        this.notification = this.editCommentErrorMessage;
         setTimeout(() => this.notification = '', 3000);
       }
     });

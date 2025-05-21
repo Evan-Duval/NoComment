@@ -192,7 +192,7 @@
         <div class="popup-post post-card">
           <div class="post-header">
             <div>
-              <span class="post-author">{{ selectedPost?.author }}</span>
+              <span class="post-author">{{ selectedPost?.username }}</span>
               <span class="post-timestamp">{{ selectedPost?.datetime }}</span>
             </div>
             <span class="post-location">{{ selectedPost?.location }}</span>
@@ -212,37 +212,55 @@
           <h3>Commentaires</h3>
           <div *ngIf="comments.length > 0; else noComments">
             <div *ngFor="let comment of comments" class="comment-item">
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.author || 'Utilisateur' }}</span>
-                <span class="comment-timestamp">{{ comment.datetime }}</span>
+              <div *ngIf="editCommentId === comment.id_comment; else commentView">
+                <textarea
+                  class="edit-input-text"
+                  [(ngModel)]="editCommentData.text"
+                  placeholder="Modifier le commentaire"
+                  rows="3"
+                  maxlength="1000"
+                ></textarea>
+                <div class="edit-actions">
+                  <button class="submit-post-button" (click)="handleConfirmEditComment(comment)">Enregistrer</button>
+                  <button class="cancel-edit-btn" (click)="handleCancelEditComment()">Annuler</button>
+                </div>
+                <div *ngIf="editCommentErrorMessage" class="error-message">{{ editCommentErrorMessage }}</div>
               </div>
-              <p class="comment-text">{{ comment.text }}</p>
-              <button
-                class="action-button"
-                [ngClass]="{ 'liked': comment.liked }"
-                (click)="onLikeComment(comment)"
-                [disabled]="!isConnected || !hasJoinedGroup"
-                style="margin-top: 0.5rem;"
-              >
-                ❤️ {{ comment.likes || 0 }}
-              </button>
-
-              <div *ngIf="userRank == 'admin'" class="moderation-actions">
+              <ng-template #commentView>
+                <div class="comment-header">
+                  <span class="comment-author">{{ comment.author || 'Utilisateur' }}</span>
+                  <span class="comment-timestamp">{{ comment.datetime }}</span>
+                  <button
+                    *ngIf="comment.id_user === userId"
+                    class="edit-btn"
+                    (click)="handleStartEditComment(comment)"
+                    title="Modifier le commentaire"
+                    style="margin-left: 0.5rem;"
+                  >✏️</button>
+                </div>
+                <p class="comment-text">{{ comment.text }}</p>
                 <button
+                  class="action-button"
+                  [ngClass]="{ 'liked': comment.liked }"
+                  (click)="onLikeComment(comment)"
+                  [disabled]="!isConnected || !hasJoinedGroup"
+                  style="margin-top: 0.5rem;"
+                >
+                  ❤️ {{ comment.likes || 0 }}
+                </button>
+                <div *ngIf="userRank == 'admin'" class="moderation-actions">
+                  <button
                     class="ask-change-btn"
                     (click)="handleCommentVerification(comment.id_comment)"
                     title="Vérifier le commentaire"
-                >
-                    ❓
-                </button>
-                <button
+                  >❓</button>
+                  <button
                     class="delete-btn"
                     (click)="handleDeleteComment(comment.id_comment)"
                     title="Supprimer le commentaire"
-                >
-                    🗑️
-                </button>
-              </div>
+                  >🗑️</button>
+                </div>
+              </ng-template>
             </div>
           </div>
 

@@ -92,6 +92,27 @@ class CommentController extends Controller
         }
     }
 
+    public function updateMyComment(Request $request, $commentId)
+    {
+        $user = Auth::user();
+        $comment = Comment::find($commentId);
+
+        if (!$comment) {
+            return response()->json(['error' => 'Commentaire non trouvé'], 404);
+        }
+
+        if ($comment->id_user !== $user->id) {
+            return response()->json(['error' => 'Vous ne pouvez modifier que vos propres commentaires'], 403);
+        }
+
+        if ($request->filled('text')) {
+            $comment->text = $request->text;
+            $comment->save();
+            return response()->json($comment, 200);
+        } else {
+            return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+        }
+    }
 
     // Met à jour un commentaire
     public function update(Request $request, $commentId)
