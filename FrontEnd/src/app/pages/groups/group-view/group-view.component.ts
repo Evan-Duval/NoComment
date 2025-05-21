@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { LikeService } from '../../../services/like.service';
 import { CommentService } from '../../../services/comment.service';
+import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-group-view',
@@ -26,6 +27,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   groupId!: number;
   userId!: number;
   username!: string;
+  userRank: string = "user";
   private routeSub: Subscription = new Subscription();
   members: any[] = [];
   filteredMembers: any[] = [];
@@ -36,11 +38,12 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   hasJoinedGroup!: boolean;
   isConnected: boolean = false;
 
+  selectedFile: File | null = null;
   newPost = {
     title: '',
     text: '',
     location: '',
-    media: null,
+    media: '',
     datetime: '',
     id_user: this.userId,
     id_group: this.groupId
@@ -48,11 +51,22 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   mediaPreviewUrl: string | ArrayBuffer | null = null;
   isImage: boolean = true;
   likeCooldowns: { [postId: number]: number } = {}; // Ajouté pour le cooldown
+  commentLikeCooldowns: { [commentId: number]: number } = {}; // Cooldown pour les likes de commentaires
 
   showCommentsPopup = false;
   selectedPost: any = null;
   comments: any[] = [];
   newCommentText: string = '';
+
+  notification: string = '';
+
+  editPostId: number | null = null;
+  editPostData: any = { title: '', text: '', location: '' };
+  editErrorMessage: string = '';
+
+  editCommentId: number | null = null;
+  editCommentData: any = { text: '' };
+  editCommentErrorMessage: string = '';
 
   constructor(
     private route: ActivatedRoute, 
@@ -62,6 +76,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     private userService: UserService, 
     private likeService: LikeService,
     private globalFunctions: GlobalFunctionsService,
+    private supabaseService: SupabaseService,
     private router: Router,
   ) {}
 
@@ -71,6 +86,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     if (currentUser) {
       this.userId = currentUser.id!;
       this.username = currentUser.username;
+      this.userRank = currentUser.rank;
       this.isConnected = true;
     } else {
       console.error('Utilisateur non trouvé dans le service global');
@@ -86,6 +102,11 @@ export class GroupViewComponent implements OnInit, OnDestroy {
           if (!data) {
             this.globalErrorMessage = 'Aucun groupe trouvé avec cet ID.';
             return;
+          }
+          if (data.logo) {
+            data.logoUrl = this.supabaseService.getPublicMediaUrl(data.logo);
+          } else {
+            data.logoUrl = 'default_logo.png';
           }
           this.groupData = data;
         },
@@ -114,43 +135,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         next: (data) => {
           if (data) {
             data.map((post: any) => {
-
+              post['media'] = post.media ? this.supabaseService.getPublicMediaUrl(post.media) : null;
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
-
-              this.userService.getUsernameByUserId(post['id_user']).subscribe({
-                next: (data) => {
-                  post['author'] = data['username'] || 'Inconnu';
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['author'] = 'Inconnu';
-                  return;
-                }
-              });
-
-              this.likeService.getLikesByPost(post['id_post'], this.userId).subscribe({
-                next: (data) => {
-                  post['likes'] = data['like_number'] || 0;
-                  post['liked'] = data['user_like'] || false;
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['likes'] = 0;
-                  return;
-                }
-              });
-
-              this.commentService.getCommentNumberByPost(post['id_post']).subscribe({
-                next: (data) => {
-                  post['commentsNumber'] = data['comment_number'] || 0;
-                },
-                error: (error) => {
-                  console.error(error);
-                  post['commentsNumber'] = 0;
-                  return;
-                }
-              });
-              // ajouter likes et commentaires du post ici
+              post['likes'] = post['likesCount'] || 0;
+              post['isLiked'] = post['isLiked'] || false;
             })
 
             this.postData = data;
@@ -170,14 +158,25 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.routeSub.unsubscribe();
   }
 
-  joinGroup(): void {
-    // Logique pour rejoindre le groupe
-    console.log('Rejoindre le groupe', this.groupId);
-  }
+  toggleFollowGroup(): void {
+    console.log(this.groupData)
+    this.groupService.toggleFollowGroup(this.groupData.id_group, this.groupData).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.hasJoinedGroup = !this.hasJoinedGroup;
+        if (this.hasJoinedGroup) {
+          this.globalErrorMessage = 'Vous avez rejoint le groupe.';
+        } else {
+          this.globalErrorMessage = 'Vous avez quitté le groupe.';
+        }
 
-  leaveGroup(): void {
-    console.log('Quitter le groupe');
-    // Logique à implémenter plus tard
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du groupe', error);
+        this.globalErrorMessage = 'Erreur lors de la mise à jour du groupe';
+      }
+    });
   }
 
   redirectToUserProfile(userId: number) {
@@ -188,22 +187,14 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.showCreatePost = !this.showCreatePost;
   }
 
-  onMediaSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.newPost.media = file;
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        this.mediaPreviewUrl = reader.result;
-        this.isImage = file.type.startsWith('image/');
-      };
-
-      reader.readAsDataURL(file);
+  onMediaSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
     }
   }
 
-  submitPost() {
+  async submitPost() {
     // Validation des champs
     if (!this.newPost.title || !this.newPost.text || !this.newPost.location) {
       this.errorMessage = 'Tous les champs doivent être remplis avant de soumettre le post.';
@@ -215,16 +206,34 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.newPost.id_user = this.userId;
     this.newPost.id_group = this.groupId;
 
+    if (this.selectedFile) {
+      const fileName = `${Date.now()}_${this.selectedFile.name}`;
+      const { error } = await this.supabaseService.client
+        .storage
+        .from('nocomment') // ← nom du bucket
+        .upload(`${fileName}`, this.selectedFile);
+
+      if (error) {
+        console.error('Erreur upload Supabase :', error.message);
+        return;
+      }
+
+      this.newPost.media = `${fileName}`; // ← chemin stocké en DB
+    } else {
+      this.newPost.media = '';
+    }
+
     this.postService.createPost(this.newPost).subscribe({
       next: (data) => {
-        data['author'] = this.username;
+        data['username'] = this.username;
         data['datetime'] = this.globalFunctions.formatRelativeDateFR(data['datetime'])
+        data['media'] = data.media ? this.supabaseService.getPublicMediaUrl(data.media) : null;
 
         this.postData = [data, ...this.postData];
         this.showCreatePost = false;
 
         // Réinitialiser le formulaire après soumission
-        this.newPost = { title: '', text: '', location: '', media: null, datetime: '', id_user: this.userId, id_group: this.groupId };
+        this.newPost = { title: '', text: '', location: '', media: '', datetime: '', id_user: this.userId, id_group: this.groupId };
       },
       error: (error) => {
         console.error('Erreur lors de la création du post:', error);
@@ -245,16 +254,16 @@ export class GroupViewComponent implements OnInit, OnDestroy {
 
   onLikeButtonDown(post: any) {
     const now = Date.now();
-    const lastClick = this.likeCooldowns[post.id_post] || 0;
+    const lastClick = this.likeCooldowns[post.id] || 0;
     if (now - lastClick < 500) {
-      // Cooldown de 1 seconde
+      // Cooldown de 0.5 seconde
       return;
     }
-    this.likeCooldowns[post.id_post] = now;
-    if (post.liked) {
-      this.likeService.unlikePost(post.id_post, this.userId).subscribe({
+    this.likeCooldowns[post.id] = now;
+    if (post.isLiked) {
+      this.likeService.unlikePost(post.id, this.userId).subscribe({
         next: () => {
-          post.liked = false;
+          post.isLiked = false;
           post.likes = (post.likes || 1) - 1;
         },
         error: (err) => {
@@ -262,9 +271,9 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.likeService.likePost(post.id_post, this.userId).subscribe({
+      this.likeService.likePost(post.id, this.userId).subscribe({
         next: () => {
-          post.liked = true;
+          post.isLiked = true;
           post.likes = (post.likes || 0) + 1;
         },
         error: (err) => {
@@ -278,15 +287,14 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.selectedPost = post;
     this.showCommentsPopup = true;
 
-    this.commentService.getCommentsByPost(post['id_post']).subscribe({
+    this.commentService.getCommentsByPost(post['id']).subscribe({
       next: (data) => {
         if (!data) {
           this.comments = [];
           return;
         }
-
         data.forEach((comment: any) => {
-          comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime'])
+          comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime']);
           this.userService.getUsernameByUserId(comment['id_user']).subscribe({
             next: (data) => {
               comment['author'] = data['username'] || 'Inconnu';
@@ -294,17 +302,25 @@ export class GroupViewComponent implements OnInit, OnDestroy {
             error: (error) => {
               console.error(error);
               comment['author'] = 'Inconnu';
-              return;
+            }
+          });
+          // Récupère likes pour chaque commentaire
+          this.likeService.getLikesByComment(comment.id_comment, this.userId).subscribe({
+            next: (likeData) => {
+              comment.likes = likeData.like_number || 0;
+              comment.liked = likeData.user_like || false;
+            },
+            error: () => {
+              comment.likes = 0;
+              comment.liked = false;
             }
           });
         });
-
         this.comments = data;
       },
       error: (error) => {
         console.error(error);
         this.comments = [];
-        return;
       }
     });
   }
@@ -321,7 +337,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.commentService.addComment({
       text: this.newCommentText,
       id_user: this.userId,
-      id_post: this.selectedPost.id_post,
+      id_post: this.selectedPost.id,
       datetime: this.globalFunctions.getCurrentDateTimeSQL()
     }).subscribe({
       next: (newCommentData) => {
@@ -332,11 +348,195 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         this.newCommentText = '';
 
         const postIndex = this.postData.findIndex(
-          (post: any) => post.id_post === this.selectedPost.id_post
+          (post: any) => post.id === this.selectedPost.id
         );
         if (postIndex !== -1) {
           this.postData[postIndex].commentsNumber = (this.postData[postIndex].commentsNumber || 0) + 1;
         }
+      }
+    });
+  }
+
+  onLikeComment(comment: any) {
+    if (!this.isConnected || !this.hasJoinedGroup) return;
+
+    if (!this.commentLikeCooldowns) this.commentLikeCooldowns = {};
+    const now = Date.now();
+    const lastClick = this.commentLikeCooldowns[comment.id_comment] || 0;
+    if (now - lastClick < 500) return; // cooldown de 0.5 seconde
+    this.commentLikeCooldowns[comment.id_comment] = now;
+
+    if (comment.liked) {
+      this.likeService.unLikeComment(comment.id_comment, this.userId).subscribe({
+        next: () => {
+          comment.liked = false;
+          comment.likes = (comment.likes || 1) - 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du unlike commentaire', err);
+        }
+      });
+    } else {
+      this.likeService.likeComment(comment.id_comment, this.userId).subscribe({
+        next: () => {
+          comment.liked = true;
+          comment.likes = (comment.likes || 0) + 1;
+        },
+        error: (err) => {
+          console.error('Erreur lors du like commentaire', err);
+        }
+      });
+    }
+  }
+
+  handlePostVerification(postId: number) {
+    this.postService.updatePost(postId).subscribe({
+      next: () => {
+        window.location.reload();
+        this.notification = 'Post modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la modification du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleDeletePost(postId: number) {
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.notification = 'Post supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleCommentVerification(commentId: number) {
+    this.commentService.updateComment(commentId).subscribe({
+      next: () => {
+        this.notification = 'Commentaire modifié avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la modification du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleDeleteComment(commentId: number) {
+    this.commentService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.notification = 'Commentaire supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleEditOwnPost(post: any) {
+    // postData doit contenir les champs à modifier (title, text, etc.)
+    this.postService.updateMyPost(post.id, {
+      title: post.title,
+      text: post.text,
+      location: post.location,
+      media: post.media
+    }).subscribe({
+      next: (updatedPost) => {
+        // Mets à jour l'affichage ou affiche une notification de succès
+      },
+      error: (err) => {
+        // Affiche une erreur
+      }
+    });
+  }
+
+  handleStartEditPost(post: any) {
+    this.editPostId = post.id;
+    this.editPostData = {
+      title: post.title,
+      text: post.text,
+      location: post.location
+    };
+    this.editErrorMessage = '';
+  }
+
+  handleCancelEditPost() {
+    this.editPostId = null;
+    this.editPostData = { title: '', text: '', location: '' };
+    this.editErrorMessage = '';
+  }
+
+  handleConfirmEditPost(post: any) {
+    if (!this.editPostData.title.trim() || !this.editPostData.text.trim() || !this.editPostData.location.trim()) {
+      this.editErrorMessage = 'Tous les champs doivent être remplis.';
+      return;
+    }
+    this.postService.updateMyPost(post.id, {
+      title: this.editPostData.title,
+      text: this.editPostData.text,
+      location: this.editPostData.location
+    }).subscribe({
+      next: (updatedPost) => {
+        // Mets à jour le post dans postData
+        post.title = updatedPost.title;
+        post.text = updatedPost.text;
+        post.location = updatedPost.location;
+        this.editPostId = null;
+        this.editErrorMessage = '';
+        this.notification = 'Post modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: (err) => {
+        this.editErrorMessage = err?.error?.error || "Erreur lors de la modification du post.";
+        this.notification = this.editErrorMessage;
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleStartEditComment(comment: any) {
+    this.editCommentId = comment.id_comment;
+    this.editCommentData = { text: comment.text };
+    this.editCommentErrorMessage = '';
+  }
+
+  handleCancelEditComment() {
+    this.editCommentId = null;
+    this.editCommentData = { text: '' };
+    this.editCommentErrorMessage = '';
+  }
+
+  handleConfirmEditComment(comment: any) {
+    if (!this.editCommentData.text.trim()) {
+      this.editCommentErrorMessage = 'Le commentaire ne peut pas être vide.';
+      return;
+    }
+    this.commentService.updateMyComment(comment.id_comment, {
+      text: this.editCommentData.text
+    }).subscribe({
+      next: (updatedComment) => {
+        comment.text = updatedComment.text;
+        this.editCommentId = null;
+        this.editCommentErrorMessage = '';
+        this.notification = 'Commentaire modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: (err) => {
+        this.editCommentErrorMessage = err?.error?.error || "Erreur lors de la modification du commentaire.";
+        this.notification = this.editCommentErrorMessage;
+        setTimeout(() => this.notification = '', 3000);
       }
     });
   }

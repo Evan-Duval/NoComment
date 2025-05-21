@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { GroupService } from '../../services/group.service';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ export class ProfilComponent {
   constructor(
     private userService: UserService,
     private groupService: GroupService,
+    private supabaseService: SupabaseService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -41,6 +43,11 @@ export class ProfilComponent {
   ngOnInit(): void {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
     const urlUserId = this.route.snapshot.paramMap.get('id');
+
+    if (!currentUser) {
+      this.router.navigate(['login']);
+      return;
+    }
 
     if (!urlUserId || (currentUser && +urlUserId === currentUser.id)) {
       // Mon profil
@@ -59,6 +66,7 @@ export class ProfilComponent {
         },
         error: () => {
           this.isLoading = false;
+          this.router.navigate(['/accueil'])
         }
       });
     }
@@ -66,8 +74,12 @@ export class ProfilComponent {
 
   loadUserGroups(userId: number | string) {
     this.groupService.getGroupsByUser(userId).subscribe({
-      next: (groups) => {
-        this.groups = groups;
+      next: (data) => {
+        console.log('Groups:', data);
+        this.groups = data.map((group: any) => ({
+          ...group,
+          logoUrl: this.supabaseService.getPublicMediaUrl(group.logo)
+        }));
       }
     });
   }
@@ -80,6 +92,7 @@ export class ProfilComponent {
     this.editMode = !this.editMode;
     this.changePasswordMode = false;
     if (this.editMode) {
+      console.log('Mode édition activé');
       // Copie les données pour l'édition
       this.updatedUser = {...this.user};
     }

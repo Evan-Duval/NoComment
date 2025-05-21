@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Like;
 use App\Models\Post;
@@ -54,7 +55,39 @@ class PostController extends Controller
         }
     }
 
-    public function getByGroup($groupId): JsonResponse
+    public function getLastPosts(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $posts = Post::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($post) use ($user) {
+                $groupName = null;
+                if ($post->id_group) {
+                    $group = Group::find($post->id_group);
+                    $groupName = $group ? $group->name : null;
+                }
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'text' => $post->text,
+                    'location' => $post->location,
+                    'media' => $post->media,
+                    'username' => $post->user->username ?? 'Anonyme',
+                    'datetime' => $post->created_at,
+                    'likesCount' => Like::where('id_post', $post->id)->count(),
+                    'isLiked' => $user
+                        ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
+                        : false,
+                    'groupName' => $groupName,
+                ];
+            });
+
+        return response()->json($posts);
+    }
+
+    public function getByGroup(Request $request, $groupId): JsonResponse
     {
         $group = Group::find($groupId);
 
@@ -73,45 +106,95 @@ class PostController extends Controller
                     'id' => $post->id,
                     'title' => $post->title,
                     'text' => $post->text,
+                    'location' => $post->location,
                     'media' => $post->media,
+                    'id_user' => $post->id_user,
                     'username' => $post->user->username ?? 'Anonyme',
                     'datetime' => $post->created_at,
-                    'location' => $post->location,
                     'likesCount' => Like::where('id_post', $post->id)->count(),
                     'isLiked' => $user
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
                         : false,
-
+                    'commentsNumber' => Comment::where('id_post', $post->id)->count(),
                 ];
             });
 
         return response()->json($posts);
     }
 
+    public function updateMyPost(Request $request, $postId)
+    {
+        $user = Auth::user();
+        $post = Post::find($postId);
 
+        if (!$post) {
+            return response()->json(['error' => 'Post non trouvé'], 404);
+        }
 
-    public function update(Request $request, $id)
+        if ($post->id_user !== $user->id) {
+            return response()->json(['error' => 'Vous ne pouvez modifier que vos posts'], 403);
+        }
+
+        // Liste des champs modifiables
+        $fields = [
+            'title',
+            'text',
+            'media',
+            'location',
+            'datetime'
+        ];
+
+        $updated = false;
+
+        foreach ($fields as $field) {
+            if ($request->filled($field)) {
+                $post->$field = $request->$field;
+                $updated = true;
+            }
+        }
+
+        if ($updated) {
+            $post->save();
+            return response()->json($post, 200);
+        } else {
+            return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+        }
+    }
+
+    public function update(Request $request, $postId)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::findOrFail($postId);
 
-            $validated = $request->validate([
-                'title' => 'sometimes|required|string|max:255',
-                'text' => 'sometimes|required|string',
-                'media' => 'nullable|string',
-                'location' => 'nullable|string',
-                'datetime' => 'sometimes|required|date',
-                'id_user' => 'sometimes|required|exists:users,id',
-                'id_group' => 'nullable|exists:groups,id_group', // Assure-toi que c’est bien id_group dans la table
-            ]);
+            // Liste des champs modifiables
+            $fields = [
+                'title',
+                'text',
+                'media',
+                'location',
+                'datetime',
+                'id_user',
+                'id_group'
+            ];
 
-            $post->update($validated);
+            $updated = false;
 
-            return response()->json($post, 200);
+            // On ne modifie que les champs présents dans la requête
+            foreach ($fields as $field) {
+                if ($request->filled($field)) { // filled() vérifie aussi que ce n'est pas null
+                    $post->$field = $request->$field;
+                    $updated = true;
+                }
+            }
+
+            if ($updated) {
+                $post->save();
+                return response()->json($post, 200);
+            } else {
+                return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+            }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Post non trouvé'], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }
@@ -119,10 +202,10 @@ class PostController extends Controller
 
 
     // Supprime un post spécifique
-    public function destroy($id)
+    public function destroy($postId)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::findOrFail($postId);
             $post->delete();
 
             return response()->json(['message' => 'Post supprimé avec succès'], 200);

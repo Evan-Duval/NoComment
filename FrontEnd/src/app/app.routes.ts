@@ -6,7 +6,6 @@ import { RegisterComponent } from './pages/auth/register/register.component';
 
 // Bottom components :
 import { ProfilComponent } from './pages/profil/profil.component';
-import { SettingsComponent } from './pages/settings/settings.component';
 
 // Groups :
 import { GroupsComponent } from './pages/groups/groups.component';
@@ -14,7 +13,8 @@ import { CreateGroupComponent } from './pages/groups/create/create.component';
 import { GroupViewComponent } from './pages/groups/group-view/group-view.component';
 
 // Pages :
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './pages/home/home.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
   // Redirection de base : 
@@ -26,10 +26,9 @@ export const routes: Routes = [
 
   // Pages :
   { path: 'accueil', component: HomeComponent },
-  { path: 'dashboard', component: HomeComponent },
-  { path: 'certification-form', component: HomeComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  // { path: 'certification-form', component: HomeComponent },
   { path: 'profil/:id', component: ProfilComponent },
-  { path: 'settings', component: SettingsComponent },
   
   // Groups:
   { path: 'groups', component: GroupsComponent },

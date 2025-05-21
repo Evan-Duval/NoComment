@@ -8,8 +8,14 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function getAllUsers(): JsonResponse {
+    $users = User::select('username', 'created_at', 'bio')->get();
+
+        return response()->json($users);
+    }
+
     public function getUsernameByUserId($userid):JsonResponse {
-         $user = User::find($userid);
+        $user = User::find($userid);
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);

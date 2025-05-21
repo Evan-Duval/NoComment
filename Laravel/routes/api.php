@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::prefix('user')->group(function () {
+    Route::get('getAllUsers', [UserController::class, 'getAllUsers']);
     Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
     Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });
@@ -23,7 +24,6 @@ Route::prefix('user')->group(function () {
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-    Route::post('reset-password', [AuthController::class, 'resetpassword']); // todo
     Route::post('update-password', [AuthController::class, 'changePassword']);
     Route::post('update-user/{id}', [AuthController::class, 'updateUser']);
     Route::post('delete-user/{id}', [AuthController::class, 'delete']);
@@ -40,9 +40,7 @@ Route::prefix('groups')->group(function () {
     Route::get('getGroup/{groupId}', [GroupController::class, 'getGroupById']);
     Route::get('getUserGroups/{userId}', [GroupController::class, 'getUserGroups']);
     Route::get('getGroupMembers/{groupId}', [GroupController::class, 'getGroupMembers']);
-    Route::post('addUserToGroup/{groupId}', [GroupController::class, 'addUserToGroup']); // todo
     Route::post('updateGroup/{groupId}', [GroupController::class, 'update']);
-    Route::delete('removeUserFromGroup/{groupId}/{userId}', [GroupController::class, 'removeUserFromGroup']); // todo
 
     // Routes protégées par Sanctum
     Route::middleware('auth:sanctum')->group(function () {
@@ -62,25 +60,36 @@ Route::prefix('groups')->group(function () {
                 return response()->json(['following' => true]);
             }
         });
+
+        Route::post('/toggleFollowGroup/{groupId}', [GroupController::class, 'toggleFollowGroup']);
     });
 });
 
 Route::prefix('posts')->group(function () {
     Route::post('/create', [PostController::class, 'create']);
     Route::get('/getById/{id}', [PostController::class, 'show']);
-    Route::put('/update/{id}', [PostController::class, 'update']);
-    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
-    Route::middleware('auth:sanctum')->get('/getByGroup/{groupId}', [PostController::class, 'getByGroup']);
+    Route::get('getLastPosts', [PostController::class, 'getLastPosts']);
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
+        Route::put('/updateMyPost/{postId}', [PostController::class, 'updateMyPost']);
+        Route::put('/update/{postId}', [PostController::class, 'update'])->middleware('role:admin');
+        Route::delete('/delete/{postId}', [PostController::class, 'destroy'])->middleware('role:admin');
+    });
 });
 
 Route::prefix('comments')->group(function () {
     Route::get('getByPost/{postId}', [CommentController::class, 'getByPost']);
     Route::get('getCommentNumberByPost/{postId}', [CommentController::class, 'getCommentNumberByPost']);
+    Route::get('getLastComments', [CommentController::class, 'getLastComments']);
     Route::post('create', [CommentController::class, 'create']);
-    Route::post('update/{id}', [CommentController::class, 'update']);
     Route::get('/getById/{id}', [CommentController::class, 'show']);
-    Route::put('/update/{id}', [CommentController::class, 'update']);
-    Route::delete('/delete/{id}', [CommentController::class, 'destroy']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::put('/updateMyComment/{commentId}', [CommentController::class, 'updateMyComment']);
+        Route::put('/update/{commentId}', [CommentController::class, 'update'])->middleware('role:admin');
+        Route::delete('/delete/{commentId}', [CommentController::class, 'destroy'])->middleware('role:admin');
+    });
 });
 
 Route::prefix('likes')->group(function () {

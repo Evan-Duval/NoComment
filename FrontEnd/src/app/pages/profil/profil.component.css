@@ -136,6 +136,13 @@
   color: var(--text-color);
 }
 
+.certified-badge {
+  color: var(--primary-color);
+  margin-left: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+}
+
 /* ============================= */
 /*        FORMULAIRE ÉDITION    */
 /* ============================= */
@@ -189,6 +196,21 @@ label {
   border: none;
   cursor: pointer;
   color: var(--light-text);
+}
+
+.edit-input {
+  width: 100%;
+  margin: 4px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.edit-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
 }
 
 /* ============================= */

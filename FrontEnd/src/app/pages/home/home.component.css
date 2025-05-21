@@ -19,6 +19,7 @@
   }
   
   .post-card {
+    position: relative;
     background-color: #1F2937; /* Slightly lighter dark background for cards */
     border-radius: 0.5rem;
     margin-bottom: 1rem;
@@ -29,6 +30,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+    justify-content: space-between;
   }
   
   .post-author {
@@ -39,6 +41,10 @@
   .post-timestamp {
     color: #6B7280; /* Gray color for timestamp */
     font-size: 0.875rem;
+  }
+
+  .post-location {
+    color: #93dcf8
   }
   
   .post-content {
@@ -63,7 +69,73 @@
   .action-button:hover {
     color: #EF4444; /* Red on hover for like button */
   }
+
+  .action-button:disabled {
+    cursor: not-allowed;
+  }
+
+  .comment-btn {
+    color: #60a5fa;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+    font-size: 1rem;
+    gap: 0.3rem;
+  }
+  .comment-btn:hover:enabled {
+    color: #2563eb;
+  }
+  .comment-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   
+  .moderation-actions {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .edit-btn {
+    background: #fbbf24;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: background 0.2s;
+  }
+  .edit-btn:hover {
+    background: #b45309;
+  }
+
+  .delete-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .delete-btn:hover {
+    background: #b91c1c;
+  }
 
 
 
@@ -120,6 +192,20 @@
     color: #6B7280;
   }
 
+  .more-groups {
+    text-align: center;
+    color: #60a5fa;
+    font-weight: 500;
+    padding: 6px 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s;
+    margin-bottom: 1rem;
+  }
+  .more-groups:hover {
+    background: #23272f;
+  }
+
   .no-results {
     color: #6c757d;
     font-size: 0.9rem;
@@ -142,4 +228,23 @@
 
   .create-group-button:hover {
     background-color: #0056b3;
+  }
+
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: #323232;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .post-group {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    color: #60a5fa;
+    font-size: 1rem;
   }

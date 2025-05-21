@@ -16,6 +16,10 @@
                 </ul>
             </div>
 
+            <div *ngIf="successMessage" class="success-message">
+                {{ successMessage }}
+            </div>
+
 
             <div class="form-grid">
                 <div class="form-group">
@@ -30,7 +34,7 @@
 
                 <div class="form-group">
                     <label for="logo">Logo</label>
-                    <input type="file" formControlName="logo" required>
+                    <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg, image/svg+xml" />
                 </div>
             </div>
 

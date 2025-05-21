@@ -17,12 +17,12 @@
           <span>Dashboard</span>
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a [routerLink]="['/certification-form']" routerLinkActive="link-active">
           <span class="icon"><img src="..//public/certified.png" alt="certified-badge" width="125%"></span>
           <span>Certification</span>
         </a>
-      </li>
+      </li> -->
     </ul>
   </div>
 
@@ -32,40 +32,18 @@
     <ul class="group-list" *ngIf="groups.length > 0; else noGroups">
       <li *ngFor="let group of groups | slice:0:4">
         <a [routerLink]="['/groups/view', group.id_group]">
-          <img [src]="group.imagePath" alt="groupe" class="group-avatar" />
+          <img [src]="group.logoUrl" alt="groupe" class="group-avatar" />
           <span>{{ group.name }}</span>
           <span class="notification-badge" *ngIf="group.notifications">{{ group.notifications }}</span>
         </a>
       </li>
       <li *ngIf="groups.length > 4" class="more-groups" (click)="redirectToGroups()">
-        +{{ groups.length -4 }} autres
+        +{{ groups.length -4 }} autre(s)
       </li>
     </ul>
     <ng-template #noGroups>
       <button class="create-group-button" (click)="redirectToCreate()">Créer un groupe</button>
     </ng-template>
-  </div>
-
-  <!-- Vue modération pour admin -->
-  <div *ngIf="userRank === 'admin'" class="moderation-toggle">
-    <label>
-      <input
-        type="radio"
-        name="moderationView"
-        [checked]="moderationView"
-        (change)="toggleModerationView(true)"
-      />
-      Vue modération activée
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="moderationView"
-        [checked]="!moderationView"
-        (change)="toggleModerationView(false)"
-      />
-      Vue normale
-    </label>
   </div>
 
   <!-- Section Personnel -->
@@ -79,9 +57,9 @@
         </a>
       </li>
       <li>
-        <a routerLink="/settings" routerLinkActive="active">
+        <a routerLink="/login" routerLinkActive="active">
           <span class="icon">⚙️</span>
-          <span>Settings</span>
+          <span>Connexion / Inscription</span>
         </a>
       </li>
     </ul>
