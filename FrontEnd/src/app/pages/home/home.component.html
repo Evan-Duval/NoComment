@@ -25,6 +25,11 @@
             <p class="post-text">{{ post.text }}</p>
             <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
 
+            <!-- Ajoute ici le nom du groupe -->
+            <div class="post-group" *ngIf="post.groupName">
+                Groupe : <span class="group-name">{{ post.groupName }}</span>
+            </div>
+
             <div class="post-actions">
                 <button
                     class="action-button"

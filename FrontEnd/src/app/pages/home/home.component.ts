@@ -79,7 +79,6 @@ export class HomeComponent implements OnInit {
   loadLastPosts(): void {
     this.postService.getLastPosts().subscribe({
       next: (data) => {
-        this.postData = data;
         if (data) {
           data.map((post: any) => {
             post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
@@ -87,6 +86,7 @@ export class HomeComponent implements OnInit {
             post['isLiked'] = post['isLiked'] || false;
           });
         }
+        this.postData = data;
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des derniers posts', error);

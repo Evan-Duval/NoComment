@@ -60,6 +60,10 @@ export class GroupViewComponent implements OnInit, OnDestroy {
 
   notification: string = '';
 
+  editPostId: number | null = null;
+  editPostData: any = { title: '', text: '', location: '' };
+  editErrorMessage: string = '';
+
   constructor(
     private route: ActivatedRoute, 
     private groupService: GroupService, 
@@ -431,6 +435,67 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.notification = 'Erreur lors de la suppression du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleEditOwnPost(post: any) {
+    // postData doit contenir les champs à modifier (title, text, etc.)
+    this.postService.updateMyPost(post.id, {
+      title: post.title,
+      text: post.text,
+      location: post.location,
+      media: post.media
+    }).subscribe({
+      next: (updatedPost) => {
+        // Mets à jour l'affichage ou affiche une notification de succès
+      },
+      error: (err) => {
+        // Affiche une erreur
+      }
+    });
+  }
+
+  handleStartEditPost(post: any) {
+    this.editPostId = post.id;
+    this.editPostData = {
+      title: post.title,
+      text: post.text,
+      location: post.location
+    };
+    this.editErrorMessage = '';
+  }
+
+  handleCancelEditPost() {
+    this.editPostId = null;
+    this.editPostData = { title: '', text: '', location: '' };
+    this.editErrorMessage = '';
+  }
+
+  handleConfirmEditPost(post: any) {
+    if (!this.editPostData.title.trim() || !this.editPostData.text.trim() || !this.editPostData.location.trim()) {
+      this.editErrorMessage = 'Tous les champs doivent être remplis.';
+      return;
+    }
+    this.postService.updateMyPost(post.id, {
+      title: this.editPostData.title,
+      text: this.editPostData.text,
+      location: this.editPostData.location
+    }).subscribe({
+      next: (updatedPost) => {
+        // Mets à jour le post dans postData
+        post.title = updatedPost.title;
+        post.text = updatedPost.text;
+        post.location = updatedPost.location;
+        this.editPostId = null;
+        this.editErrorMessage = '';
+        this.notification = 'Post modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: (err) => {
+        this.editErrorMessage = err?.error?.error || "Erreur lors de la modification du post.";
+        this.notification = this.editErrorMessage;
         setTimeout(() => this.notification = '', 3000);
       }
     });

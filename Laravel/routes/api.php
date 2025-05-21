@@ -72,6 +72,7 @@ Route::prefix('posts')->group(function() {
     Route::get('getByGroup/{groupId}', [PostController::class, 'getByGroup']);
     
     Route::middleware('auth:sanctum')->group(function () {
+        Route::put('/updateMyPost/{postId}', [PostController::class, 'updateMyPost']);
         Route::put('/update/{postId}', [PostController::class, 'update'])->middleware('role:admin');
         Route::delete('/delete/{postId}', [PostController::class, 'destroy'])->middleware('role:admin');
     });

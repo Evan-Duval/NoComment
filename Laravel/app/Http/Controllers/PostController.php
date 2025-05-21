@@ -63,6 +63,11 @@ class PostController extends Controller
             ->take(10)
             ->get()
             ->map(function ($post) use ($user) {
+                $groupName = null;
+                if ($post->id_group) {
+                    $group = Group::find($post->id_group);
+                    $groupName = $group ? $group->name : null;
+                }
                 return [
                     'id' => $post->id,
                     'title' => $post->title,
@@ -75,6 +80,7 @@ class PostController extends Controller
                     'isLiked' => $user
                         ? Like::where('id_post', $post->id)->where('id_user', $user->id)->exists()
                         : false,
+                    'groupName' => $groupName,
                 ];
             });
 
@@ -102,6 +108,7 @@ class PostController extends Controller
                     'text' => $post->text,
                     'location' => $post->location,
                     'imageUrl' => $post->image_url,
+                    'id_user' => $post->id_user,
                     'username' => $post->user->username ?? 'Anonyme',
                     'datetime' => $post->created_at,
                     'likesCount' => Like::where('id_post', $post->id)->count(),
@@ -116,6 +123,44 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
+    public function updateMyPost(Request $request, $postId)
+    {
+        $user = Auth::user();
+        $post = Post::find($postId);
+
+        if (!$post) {
+            return response()->json(['error' => 'Post non trouvé'], 404);
+        }
+
+        if ($post->id_user !== $user->id) {
+            return response()->json(['error' => 'Vous ne pouvez modifier que vos posts'], 403);
+        }
+
+        // Liste des champs modifiables
+        $fields = [
+            'title',
+            'text',
+            'media',
+            'location',
+            'datetime'
+        ];
+
+        $updated = false;
+
+        foreach ($fields as $field) {
+            if ($request->filled($field)) {
+                $post->$field = $request->$field;
+                $updated = true;
+            }
+        }
+
+        if ($updated) {
+            $post->save();
+            return response()->json($post, 200);
+        } else {
+            return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+        }
+    }
 
     public function update(Request $request, $postId)
     {

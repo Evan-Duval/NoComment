@@ -32,6 +32,11 @@ export class PostService {
     return this.http.post(`${this.apiUrl}/create`, postData)
   }
 
+  updateMyPost(postId: number, postData: any): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put(`${this.apiUrl}/updateMyPost/${postId}`, postData, { headers });
+  }
+
   updatePost(postId: number): Observable<any> {
     const headers = this.getHeaders()
     const newPostData = {

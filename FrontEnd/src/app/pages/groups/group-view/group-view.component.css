@@ -303,6 +303,14 @@
     background: #b45309;
   }
 
+  .edit-btn-top-right {
+    position: absolute;
+    top: 12px;
+    right: 13%;
+    margin: 0;
+    z-index: 2;
+  }
+
   .delete-btn {
     background: #ef4444;
     color: #fff;
@@ -536,4 +544,54 @@
   border-radius: 8px;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.post-card {
+  position: relative;
+}
+
+.edit-input-title,
+.edit-input-location {
+  background-color: #374151;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  width: 97%;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.edit-input-text {
+  background-color: #374151;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  width: 97%;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+  min-height: 90px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cancel-edit-btn {
+  background: #374151;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.cancel-edit-btn:hover {
+  background: #23272f;
 }
