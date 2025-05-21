@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
   loginForm: FormGroup;
   successMessage: string = ''; // Message de succès
+  errorMessage: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -26,7 +27,7 @@ export class LoginComponent {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(12)]]
     });
   }
 
@@ -45,6 +46,7 @@ export class LoginComponent {
           this.userService.getUserByToken(token).subscribe({
             next: (user) => {
               this.globalUserService.saveUser(user); // Stocker l'utilisateur dans le service global
+              this.errorMessage = '';
               this.successMessage = 'Connexion réussie ! Vous serez redirigé dans 3 secondes.';
               console.log('Utilisateur connecté et sauvegardé:', this.globalUserService.currentUser);
 
@@ -60,8 +62,11 @@ export class LoginComponent {
         },
         error: (error) => {
           console.error('Erreur de Connexion', error);
+          this.errorMessage = error?.error?.message || "Erreur de connexion. Veuillez vérifier vos identifiants.";
         }
       });
+    } else {
+      this.errorMessage = 'Veuillez corriger les erreurs du formulaire.';
     }
   }
 }

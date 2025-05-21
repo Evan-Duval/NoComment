@@ -43,14 +43,14 @@
                 <div *ngIf="userRank == 'admin'" class="moderation-actions">
                     <button
                         class="edit-btn"
-                        (click)="editPost(post.id)"
-                        title="Modifier le post"
+                        (click)="handlePostVerification(post.id)"
+                        title="Vérifier le post"
                     >
-                        ✏️
+                        ❓
                     </button>
                     <button
                         class="delete-btn"
-                        (click)="deletePost(post.id)"
+                        (click)="handleDeletePost(post.id)"
                         title="Supprimer le post"
                     >
                         🗑️

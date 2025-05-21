@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  editPost(postId: number) {
+  handlePostVerification(postId: number) {
     this.postService.updatePost(postId).subscribe({
       next: () => {
         this.notification = 'Post modifié avec succès !';
@@ -130,7 +130,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  deletePost(postId: number) {
+  handleDeletePost(postId: number) {
     this.postService.deletePost(postId).subscribe({
       next: () => {
         this.notification = 'Post supprimé avec succès !';
