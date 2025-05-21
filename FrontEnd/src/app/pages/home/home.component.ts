@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   errorMessage: string = '';
   postData: any
   isConnected: boolean = false;
-  likeCooldowns: { [postId: number]: number } = {}; // Ajouté pour le cooldown
+  likeCooldowns: { [postId: number]: number } = {};
 
   constructor(
     private groupService: GroupService,

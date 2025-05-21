@@ -37,11 +37,12 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   hasJoinedGroup!: boolean;
   isConnected: boolean = false;
 
+  selectedFile: File | null = null;
   newPost = {
     title: '',
     text: '',
     location: '',
-    media: null,
+    media: '',
     datetime: '',
     id_user: this.userId,
     id_group: this.groupId
@@ -122,7 +123,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         next: (data) => {
           if (data) {
             data.map((post: any) => {
-              // post['logoUrl'] = this.supabaseService.getPublicMediaUrl(post.media)
+              post['media'] = post.media ? this.supabaseService.getPublicMediaUrl(post.media) : null; // Pas fonctionnel, à voir
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
               post['likes'] = post['likesCount'] || 0;
               post['isLiked'] = post['isLiked'] || false;
@@ -145,14 +146,25 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.routeSub.unsubscribe();
   }
 
-  joinGroup(): void {
-    // Logique pour rejoindre le groupe
-    console.log('Rejoindre le groupe', this.groupId);
-  }
+  toggleFollowGroup(): void {
+    console.log(this.groupData)
+    this.groupService.toggleFollowGroup(this.groupData.id_group, this.groupData).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.hasJoinedGroup = !this.hasJoinedGroup;
+        if (this.hasJoinedGroup) {
+          this.globalErrorMessage = 'Vous avez rejoint le groupe.';
+        } else {
+          this.globalErrorMessage = 'Vous avez quitté le groupe.';
+        }
 
-  leaveGroup(): void {
-    console.log('Quitter le groupe');
-    // Logique à implémenter plus tard
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du groupe', error);
+        this.globalErrorMessage = 'Erreur lors de la mise à jour du groupe';
+      }
+    });
   }
 
   redirectToUserProfile(userId: number) {
@@ -163,22 +175,14 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.showCreatePost = !this.showCreatePost;
   }
 
-  onMediaSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.newPost.media = file;
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        this.mediaPreviewUrl = reader.result;
-        this.isImage = file.type.startsWith('image/');
-      };
-
-      reader.readAsDataURL(file);
+  onMediaSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
     }
   }
 
-  submitPost() {
+  async submitPost() {
     // Validation des champs
     if (!this.newPost.title || !this.newPost.text || !this.newPost.location) {
       this.errorMessage = 'Tous les champs doivent être remplis avant de soumettre le post.';
@@ -190,6 +194,23 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     this.newPost.id_user = this.userId;
     this.newPost.id_group = this.groupId;
 
+    if (this.selectedFile) {
+      const fileName = `${Date.now()}_${this.selectedFile.name}`;
+      const { error } = await this.supabaseService.client
+        .storage
+        .from('nocomment') // ← nom du bucket
+        .upload(`${fileName}`, this.selectedFile);
+
+      if (error) {
+        console.error('Erreur upload Supabase :', error.message);
+        return;
+      }
+
+      this.newPost.media = `${fileName}`; // ← chemin stocké en DB
+    } else {
+      this.newPost.media = '';
+    }
+
     this.postService.createPost(this.newPost).subscribe({
       next: (data) => {
         data['username'] = this.username;
@@ -199,7 +220,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         this.showCreatePost = false;
 
         // Réinitialiser le formulaire après soumission
-        this.newPost = { title: '', text: '', location: '', media: null, datetime: '', id_user: this.userId, id_group: this.groupId };
+        this.newPost = { title: '', text: '', location: '', media: '', datetime: '', id_user: this.userId, id_group: this.groupId };
       },
       error: (error) => {
         console.error('Erreur lors de la création du post:', error);

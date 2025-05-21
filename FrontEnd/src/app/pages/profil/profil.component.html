@@ -21,7 +21,10 @@
     <ng-container *ngIf="isOwnProfile; else otherUserProfile">
       <div class="info-card">
         <ng-container *ngIf="!editMode; else editForm">
-          <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+          <div class="info-item">
+            <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+            <img *ngIf="user.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
+          </div>
           <div class="info-item">
             <span class="info-label">Nom d'utilisateur:</span>
             <span class="info-value">{{ user.username }}</span>
@@ -84,6 +87,7 @@
       </div>
     </ng-container>
 
+
     <!-- Affichage pour un autre utilisateur -->
     <ng-template #otherUserProfile>
       <div class="info-card">
@@ -94,15 +98,16 @@
             class="profile-picture"
           />
         </div>
-        <div class="info-item">
-          <span class="info-label">Nom d'utilisateur:</span>
-          <span class="info-value">{{ user.username }}</span>
+        <div>
+          
         </div>
-        <div class="info-item">
-          <span class="info-label">Bio:</span>
-          <span class="info-value">{{ user.bio || 'Non renseignée' }}</span>
+        <div class="info-item" style="display: flex; align-items: center; justify-content: center;">
+          <h1 class="user-name">{{ user.username }}</h1>
+          <img *ngIf="!user.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
         </div>
+          <span class="info-value" style="display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">{{ user.bio || 'Non renseignée' }}</span>
       </div>
+
       <!-- Groupes rejoints (présentation améliorée) -->
       <div class="groups-section">
         <h2 class="groups-title">Groupes rejoints</h2>
@@ -123,7 +128,7 @@
   </div>
 
   <!-- Actions du profil (boutons) -->
-  <div *ngIf="!editMode && !changePasswordMode" class="profile-actions">
+  <div *ngIf="isOwnProfile && !editMode && !changePasswordMode" class="profile-actions">
     <button class="btn btn-edit" (click)="toggleEditMode()">
       <i class="fas fa-user-edit"></i> Modifier Mes Informations
     </button>
