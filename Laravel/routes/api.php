@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::prefix('user')->group(function () {
+    Route::get('getAllUsers', [UserController::class, 'getAllUsers']);
     Route::get('getUsernameByUserId/{userId}', [UserController::class, 'getUsernameByUserId']);
     Route::get('getOtherUserById/{userId}', [UserController::class, 'getOtherUserById']);
 });

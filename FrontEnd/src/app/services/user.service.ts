@@ -10,6 +10,10 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  getAllUsers(): Observable<any> {
+    return this.http.get<any>(`http://127.0.0.1:8000/api/user/getAllUsers`);
+  }
+
   getUserByToken(token: string): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,

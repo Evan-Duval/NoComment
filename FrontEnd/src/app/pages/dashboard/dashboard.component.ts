@@ -4,6 +4,7 @@ import { CommentService } from '../../services/comment.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { GlobalFunctionsService } from '../../services/global-functions.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,17 +13,30 @@ import { GlobalFunctionsService } from '../../services/global-functions.service'
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
+  users: any[] = [];
   latestPosts: any[] = [];
   latestComments: any[] = [];
 
   constructor(
+    private userService: UserService,
     private postService: PostService,
     private commentService: CommentService,
     private globalFunctions: GlobalFunctionsService,
   ) {}
 
   ngOnInit(): void {
-    // Ajouter vérification admin
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        users.map((user: any) => {
+          user['created_at'] = this.globalFunctions.getFormttedDate(user['created_at'])
+        });
+        this.users = users 
+      },
+      error: (error) => {
+        console.error('Error fetching users :', error);
+        this.users = []
+      }
+    });
 
     this.postService.getLastPosts().subscribe({
       next: (posts) => {
@@ -40,7 +54,6 @@ export class DashboardComponent implements OnInit {
 
     this.commentService.getLastComments().subscribe({
       next: (comments) => {
-        console.log(comments);
         comments.map((comment: any) => {
           comment['datetime'] = this.globalFunctions.formatRelativeDateFR(comment['datetime'])
         });
