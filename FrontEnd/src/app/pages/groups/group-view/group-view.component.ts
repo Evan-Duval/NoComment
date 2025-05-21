@@ -131,7 +131,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         next: (data) => {
           if (data) {
             data.map((post: any) => {
-              post['media'] = post.media ? this.supabaseService.getPublicMediaUrl(post.media) : null; // Pas fonctionnel, à voir
+              post['media'] = post.media ? this.supabaseService.getPublicMediaUrl(post.media) : null;
               post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
               post['likes'] = post['likesCount'] || 0;
               post['isLiked'] = post['isLiked'] || false;

@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit {
       next: (data) => {
         if (data) {
           data.map((post: any) => {
+            post['media'] = post.media ? this.supabaseService.getPublicMediaUrl(post.media) : null;
             post['datetime'] = this.globalFunctions.formatRelativeDateFR(post['datetime'])
             post['likes'] = post['likesCount'] || 0;
             post['isLiked'] = post['isLiked'] || false;
