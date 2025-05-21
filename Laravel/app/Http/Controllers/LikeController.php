@@ -101,27 +101,6 @@ class LikeController extends Controller
         }
     }
 
-    public function getLikesByComment(Request $request, $commentId): JsonResponse
-    {
-        $likeNumber = Like::where('id_comment', $commentId)->count();
-
-        $userId = $request->query('userId');
-        if ($userId) {
-            $userLikes = Like::where('id_comment', $commentId)
-                ->where('id_user', $userId)
-                ->exists();
-
-            return response()->json([
-                'like_number' => $likeNumber,
-                'user_like' => $userLikes
-            ]);
-        }
-
-        return response()->json([
-            'like_number' => $likeNumber
-        ]);
-    }
-
     public function removePostLike(Request $request, $postId): JsonResponse
     {
         try {
