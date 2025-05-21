@@ -63,11 +63,11 @@ class AuthController extends Controller
             $token = $tokenResult->plainTextToken;
 
             return response()->json([
-                'message' => 'Successfully created user!',
+                'message' => 'Votre compte a été créé!',
                 'accessToken' => $token,
             ], 201);
         } else {
-            return response()->json(['error' => 'Provide proper details']);
+            return response()->json(['error' => 'Détails de l\'erreur'], 500);
         }
     }
 
@@ -206,7 +206,7 @@ class AuthController extends Controller
      * @param request (Request) -- The `updateUser` function takes two parameters:
      * @return JsonResponse with a success message indicating that the user has been updated
      * successfully, along with a status of 'success'.
-     * 
+     *
      * 04/26/2025
      */
     public function updateUser(int $id, Request $request): JsonResponse
