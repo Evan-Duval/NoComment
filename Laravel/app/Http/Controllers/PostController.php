@@ -6,7 +6,6 @@ use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Like;
 use App\Models\Post;
-use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
