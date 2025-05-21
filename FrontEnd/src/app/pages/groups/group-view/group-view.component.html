@@ -59,21 +59,24 @@
       </div>
 
       <div *ngFor="let post of postData" class="post-card">
+        <!-- === Header du post === -->
         <div class="post-header">
-          <div>
-            <span class="post-author">{{ post.username }} </span>
+          <div class="post-header-main">
+            <span class="post-author">{{ post.username }}</span>
             <span class="post-timestamp">{{ post.datetime }}</span>
           </div>
-          <span class="post-location">{{ post.location }}</span>
-          <button
-            *ngIf="post.id_user === userId"
-            class="edit-btn edit-btn-top-right"
-            (click)="handleStartEditPost(post)">
-            ✏️
-          </button>
+          <div class="post-header-right">
+            <button
+              *ngIf="post.id_user === userId"
+              class="edit-btn"
+              (click)="handleStartEditPost(post)"
+              title="Modifier le post"
+            >✏️</button>
+            <span class="post-location">{{ post.location }}</span>
+          </div>
         </div>
 
-        <!-- Vue édition -->
+        <!-- === Vue édition === -->
         <div *ngIf="editPostId === post.id; else postView">
           <input
             class="edit-input-title"
@@ -101,11 +104,13 @@
           <div *ngIf="editErrorMessage" class="error-message">{{ editErrorMessage }}</div>
         </div>
 
-        <!-- Vue normale -->
+        <!-- === Vue normale === -->
         <ng-template #postView>
-          <h2 class="post-title">{{ post.title }}</h2>
-          <p class="post-text">{{ post.text }}</p>
-          <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
+          <div class="post-content">
+            <h2 class="post-title">{{ post.title }}</h2>
+            <p class="post-text">{{ post.text }}</p>
+            <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
+          </div>
           <div class="post-actions">
             <button
               class="action-button"
@@ -122,22 +127,17 @@
             >
               💬 {{ post.commentsNumber || 0 }} commentaire{{ (post.commentsNumber || 0) > 1 ? 's' : '' }}
             </button>
-
             <div *ngIf="userRank == 'admin'" class="moderation-actions">
               <button
-                  class="edit-btn"
-                  (click)="handlePostVerification(post.id)"
-                  title="Vérifier le post"
-              >
-                  ❓
-              </button>
+                class="edit-btn"
+                (click)="handlePostVerification(post.id)"
+                title="Vérifier le post"
+              >❓</button>
               <button
-                  class="delete-btn"
-                  (click)="handleDeletePost(post.id)"
-                  title="Supprimer le post"
-              >
-                  🗑️
-              </button>
+                class="delete-btn"
+                (click)="handleDeletePost(post.id)"
+                title="Supprimer le post"
+              >🗑️</button>
             </div>
           </div>
         </ng-template>

@@ -215,9 +215,22 @@
   
   .post-header {
     display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
     justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    gap: 0.2rem;
+  }
+
+  .post-header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .post-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   
   .post-author {
@@ -231,10 +244,18 @@
   }
 
   .post-location {
-    color: #93dcf8
+    color: #93dcf8;
+    font-size: 1rem;
+    margin-left: 0.2rem;
+    white-space: pre-line;
+    word-break: break-word;
   }
   
   .post-text {
+    margin-bottom: 1rem;
+  }
+  
+  .post-content {
     margin-bottom: 1rem;
   }
   
@@ -296,7 +317,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    margin-right: 6px;
+    margin: 0;
     transition: background 0.2s;
   }
   .edit-btn:hover {
