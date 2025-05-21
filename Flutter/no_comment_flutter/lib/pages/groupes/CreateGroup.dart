@@ -18,7 +18,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
   final TextEditingController _descriptionController = TextEditingController();
 
   Future<void> _createGroup() async {
-    final apiUrl = '${dotenv.env['URL']}api/groups';
+    final apiUrl = '${dotenv.env['URL']}api/groups/create';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {

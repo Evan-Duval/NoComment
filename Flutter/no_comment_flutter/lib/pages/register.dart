@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
+import 'package:no_comment_flutter/config/config.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -62,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (response.statusCode == 201) {
         showDialog(
           context: context,
-          barrierDismissible: false, // L'utilisateur doit appuyer sur le bouton
+          barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Inscription réussie'),
@@ -77,9 +78,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextButton(
                   child: const Text('OK'),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Ferme le dialogue
-                    Navigator.pushNamed(
-                        context, '/login'); // Redirige vers la page de login
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, '/login');
                   },
                 ),
               ],
@@ -104,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(23, 32, 42, 1),
+      backgroundColor: Config.colors.backgroundColor,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -120,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     textAlign: TextAlign.center,
                     textStyle: GoogleFonts.nanumBrushScript(
                       fontSize: 56,
-                      color: const Color.fromRGBO(246, 112, 63, 1),
+                      color: Config.colors.primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                     strokeWidth: 3,
@@ -235,11 +235,15 @@ class _RegisterPageState extends State<RegisterPage> {
             color: const Color.fromRGBO(255, 255, 255, 0.8),
             fontWeight: FontWeight.bold,
           ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Config.colors.primaryColor,
+            ),
           ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Config.colors.primaryColor,
+            ),
           ),
         ),
       ),
@@ -266,13 +270,12 @@ class _RegisterPageState extends State<RegisterPage> {
             color: const Color.fromRGBO(255, 255, 255, 0.8),
             fontWeight: FontWeight.bold,
           ),
-          contentPadding:
-              const EdgeInsets.all(12), // 👈 Espace intérieur du champ
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+          contentPadding: const EdgeInsets.all(12),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Config.colors.primaryColor),
           ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Config.colors.primaryColor),
           ),
         ),
       ),
@@ -294,9 +297,9 @@ class _RegisterPageState extends State<RegisterPage> {
               return Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: ColorScheme.light(
-                    primary: const Color.fromRGBO(246, 112, 63, 1),
+                    primary: Config.colors.primaryColor,
                     onPrimary: Colors.white,
-                    surface: const Color.fromRGBO(23, 32, 42, 1),
+                    surface: Config.colors.backgroundColor,
                     onSurface: Colors.white,
                   ),
                   dialogBackgroundColor: Color.fromARGB(255, 230, 231, 233),
@@ -322,13 +325,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 color: const Color.fromRGBO(255, 255, 255, 0.8),
                 fontWeight: FontWeight.bold,
               ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Config.colors.primaryColor),
               ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromARGB(255, 246, 112, 63)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Config.colors.primaryColor),
               ),
             ),
             style: const TextStyle(color: Colors.white),

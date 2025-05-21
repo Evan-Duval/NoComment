@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/config/config.dart';
-import 'package:no_comment_flutter/pages/HomeContent.dart';
 import 'package:no_comment_flutter/pages/groupes/GroupContent.dart';
 import 'dart:convert';
-import 'package:no_comment_flutter/pages/home.dart';
 import 'package:no_comment_flutter/pages/groupes/CreateGroup.dart';
 
 class GroupsList extends StatefulWidget {

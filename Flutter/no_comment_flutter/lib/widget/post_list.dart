@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:no_comment_flutter/models/Post.dart'; // Import modèle Post
+import 'package:no_comment_flutter/models/Post.dart';
 
 class PostList extends StatelessWidget {
   final List<Post> posts;

@@ -32,7 +32,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    // Sauvegarde des autres informations utilisateur
+
     if (_id != null) prefs.setInt('id', _id!);
     if (_username != null) prefs.setString('username', _username!);
     if (_firstName != null) prefs.setString('firstName', _firstName!);
@@ -140,7 +140,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 100),
       child: Form(
-        // ✅ Étape 2 : Ajoute le `Form`
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,8 +148,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
               child: Text(
                 'Connexion',
                 style: TextStyle(
-                    fontSize: 30,
-                    color: Color.fromRGBO(255, 255, 255, 0.8),
+                    fontSize: 40,
+                    color: Color.fromRGBO(255, 255, 255, 1),
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -235,7 +234,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: ElevatedButton(
-                  onPressed: _login, // ✅ La validation est dans _login()
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
