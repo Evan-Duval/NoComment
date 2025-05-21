@@ -529,34 +529,72 @@
   margin-bottom: 1rem;
   position: relative;
 }
+
 .comment-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.95rem;
-  color: #60a5fa;
-  margin-bottom: 0.25rem;
-}
-.comment-text {
-  color: #fff;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
+  gap: 0.2rem;
 }
+
+.comment-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.comment-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comment-author {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.comment-timestamp {
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+.comment-item .edit-btn {
+  background: #fbbf24;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.2s;
+}
+
+.comment-item .edit-btn:hover {
+  background: #b45309;
+}
+
+.add-comment-section textarea {
+  resize: vertical;
+  min-height: 60px;
+  width: 100%;
+}
+
 .no-comments, .info-message {
   color: #aaa;
   margin: 1rem 0;
 }
 .add-comment-section {
   margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
-.add-comment-section textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
-.post-card {
+.comment-header-right .edit-btn {
   position: relative;
+  right: 0;
 }
 
 .edit-input-title,

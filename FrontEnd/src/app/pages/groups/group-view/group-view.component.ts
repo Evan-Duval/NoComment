@@ -227,6 +227,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
       next: (data) => {
         data['username'] = this.username;
         data['datetime'] = this.globalFunctions.formatRelativeDateFR(data['datetime'])
+        data['media'] = data.media ? this.supabaseService.getPublicMediaUrl(data.media) : null;
 
         this.postData = [data, ...this.postData];
         this.showCreatePost = false;

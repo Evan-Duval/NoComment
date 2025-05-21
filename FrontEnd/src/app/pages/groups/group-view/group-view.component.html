@@ -228,15 +228,18 @@
               </div>
               <ng-template #commentView>
                 <div class="comment-header">
-                  <span class="comment-author">{{ comment.author || 'Utilisateur' }}</span>
-                  <span class="comment-timestamp">{{ comment.datetime }}</span>
-                  <button
-                    *ngIf="comment.id_user === userId"
-                    class="edit-btn"
-                    (click)="handleStartEditComment(comment)"
-                    title="Modifier le commentaire"
-                    style="margin-left: 0.5rem;"
-                  >✏️</button>
+                  <div class="comment-header-main">
+                    <span class="comment-author">{{ comment.author || 'Utilisateur' }}</span>
+                    <span class="comment-timestamp">{{ comment.datetime }}</span>
+                  </div>
+                  <div class="comment-header-right">
+                    <button
+                      *ngIf="comment.id_user === userId"
+                      class="edit-btn"
+                      (click)="handleStartEditComment(comment)"
+                      title="Modifier le commentaire"
+                    >✏️</button>
+                  </div>
                 </div>
                 <p class="comment-text">{{ comment.text }}</p>
                 <button
@@ -250,7 +253,7 @@
                 </button>
                 <div *ngIf="userRank == 'admin'" class="moderation-actions">
                   <button
-                    class="ask-change-btn"
+                    class="edit-btn"
                     (click)="handleCommentVerification(comment.id_comment)"
                     title="Vérifier le commentaire"
                   >❓</button>
