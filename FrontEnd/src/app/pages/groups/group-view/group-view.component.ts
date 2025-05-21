@@ -27,6 +27,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   groupId!: number;
   userId!: number;
   username!: string;
+  userRank: string = "user";
   private routeSub: Subscription = new Subscription();
   members: any[] = [];
   filteredMembers: any[] = [];
@@ -57,6 +58,8 @@ export class GroupViewComponent implements OnInit, OnDestroy {
   comments: any[] = [];
   newCommentText: string = '';
 
+  notification: string = '';
+
   constructor(
     private route: ActivatedRoute, 
     private groupService: GroupService, 
@@ -75,6 +78,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
     if (currentUser) {
       this.userId = currentUser.id!;
       this.username = currentUser.username;
+      this.userRank = currentUser.rank;
       this.isConnected = true;
     } else {
       console.error('Utilisateur non trouvé dans le service global');
@@ -374,5 +378,61 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  handlePostVerification(postId: number) {
+    this.postService.updatePost(postId).subscribe({
+      next: () => {
+        window.location.reload();
+        this.notification = 'Post modifié avec succès !';
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la modification du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleDeletePost(postId: number) {
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.notification = 'Post supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleCommentVerification(commentId: number) {
+    this.commentService.updateComment(commentId).subscribe({
+      next: () => {
+        this.notification = 'Commentaire modifié avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la modification du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleDeleteComment(commentId: number) {
+    this.commentService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.notification = 'Commentaire supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
   }
 }

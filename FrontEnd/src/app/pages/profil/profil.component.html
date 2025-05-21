@@ -103,7 +103,7 @@
         </div>
         <div class="info-item" style="display: flex; align-items: center; justify-content: center;">
           <h1 class="user-name">{{ user.username }}</h1>
-          <img *ngIf="!user.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
+          <img *ngIf="user.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
         </div>
           <span class="info-value" style="display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">{{ user.bio || 'Non renseignée' }}</span>
       </div>

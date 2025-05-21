@@ -239,6 +239,7 @@
   }
   
   .post-actions {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -274,6 +275,50 @@
     font-size: 0.9rem;
     text-align: center;
     margin-top: 1rem;
+  }
+
+  .moderation-actions {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .edit-btn {
+    background: #fbbf24;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: background 0.2s;
+  }
+  .edit-btn:hover {
+    background: #b45309;
+  }
+
+  .delete-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .delete-btn:hover {
+    background: #b91c1c;
   }
 
 
@@ -453,6 +498,7 @@
   border-radius: 6px;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
+  position: relative;
 }
 .comment-header {
   display: flex;
@@ -480,3 +526,14 @@
   min-height: 60px;
 }
 
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: #323232;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}

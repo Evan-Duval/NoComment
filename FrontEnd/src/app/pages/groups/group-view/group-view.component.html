@@ -85,6 +85,23 @@
           >
             💬 {{ post.commentsNumber || 0 }} commentaire{{ (post.commentsNumber || 0) > 1 ? 's' : '' }}
           </button>
+
+          <div *ngIf="userRank == 'admin'" class="moderation-actions">
+            <button
+                class="edit-btn"
+                (click)="handlePostVerification(post.id)"
+                title="Vérifier le post"
+            >
+                ❓
+            </button>
+            <button
+                class="delete-btn"
+                (click)="handleDeletePost(post.id)"
+                title="Supprimer le post"
+            >
+                🗑️
+            </button>
+          </div>
         </div>
       </div>
 
@@ -171,15 +188,35 @@
               >
                 ❤️ {{ comment.likes || 0 }}
               </button>
+
+              <div *ngIf="userRank == 'admin'" class="moderation-actions">
+                <button
+                    class="edit-btn"
+                    (click)="handleCommentVerification(comment.id_comment)"
+                    title="Vérifier le commentaire"
+                >
+                    ❓
+                </button>
+                <button
+                    class="delete-btn"
+                    (click)="handleDeleteComment(comment.id_comment)"
+                    title="Supprimer le commentaire"
+                >
+                    🗑️
+                </button>
+              </div>
             </div>
           </div>
+
           <ng-template #noComments>
             <p class="no-comments">Pas encore de commentaires, soyez le premier à en ajouter un !</p>
           </ng-template>
+
           <div *ngIf="isConnected && hasJoinedGroup" class="add-comment-section">
             <textarea [(ngModel)]="newCommentText" placeholder="Ajouter un commentaire..."></textarea>
             <button class="submit-post-button" (click)="addComment()" [disabled]="!newCommentText.trim()">Publier</button>
           </div>
+
           <div *ngIf="!isConnected || !hasJoinedGroup" class="info-message">
             Vous devez être membre du groupe et connecté pour commenter.
           </div>

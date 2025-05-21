@@ -94,26 +94,39 @@ class CommentController extends Controller
 
 
     // Met à jour un commentaire
-      public function update(Request $request, $id)
+    public function update(Request $request, $commentId)
     {
         try {
-            $comment = Comment::findOrFail($id);
+            $comment = Comment::findOrFail($commentId);
 
-            $validated = $request->validate([
-                'text' => 'sometimes|required|string',
-                'media' => 'nullable|string',
-                'datetime' => 'sometimes|required|date',
-                'id_user' => 'sometimes|required|exists:users,id',
-                'id_post' => 'sometimes|required|exists:posts,id_post',
-            ]);
+            // Liste des champs modifiables
+            $fields = [
+                'text',
+                'datetime',
+                'id_user',
+                'id_post'
+            ];
 
-            $comment->update($validated);
-            return response()->json($comment);
+            $updated = false;
 
+            // On ne modifie que les champs présents dans la requête
+            foreach ($fields as $field) {
+                if ($request->filled($field)) { // filled() vérifie aussi que ce n'est pas null
+                    $comment->$field = $request->$field;
+                    $updated = true;
+                }
+            }
+
+            if ($updated) {
+                $comment->save();
+                return response()->json($comment, 200);
+            } else {
+                return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+            }
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Commentaire non trouvé'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Erreur lors de la mise à jour', 'details' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }
     }
 

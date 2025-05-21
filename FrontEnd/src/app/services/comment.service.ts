@@ -42,4 +42,17 @@ export class CommentService {
   addComment(commentData:Comment): Observable<any> {
     return this.http.post(`${this.apiUrl}/create/`, commentData);
   }
+
+  updateComment(commentId: number): Observable<any> {
+    const headers = this.getHeaders();
+    const newCommentData = {
+      "text": "Commentaire caché. Raison : Vérification par un modérateur...",
+    }
+    return this.http.put(`${this.apiUrl}/update/${commentId}`, newCommentData, { headers });
+  }
+
+  deleteComment(commentId: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.delete(`${this.apiUrl}/delete/${commentId}`, { headers });
+  }
 }

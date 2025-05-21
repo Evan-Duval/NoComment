@@ -117,10 +117,10 @@ class PostController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $postId)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::findOrFail($postId);
 
             // Liste des champs modifiables
             $fields = [
@@ -158,10 +158,10 @@ class PostController extends Controller
 
 
     // Supprime un post spécifique
-    public function destroy($id)
+    public function destroy($postId)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::findOrFail($postId);
             $post->delete();
 
             return response()->json(['message' => 'Post supprimé avec succès'], 200);
