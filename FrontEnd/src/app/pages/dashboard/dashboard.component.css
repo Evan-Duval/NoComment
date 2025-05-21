@@ -20,3 +20,29 @@
 .dashboard-table tr:last-child td {
   border-bottom: none;
 }
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: #323232;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4em 0.8em;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background: #b91c1c;
+}

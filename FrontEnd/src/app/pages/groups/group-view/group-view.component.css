@@ -555,18 +555,6 @@
   min-height: 60px;
 }
 
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  background: #323232;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
 .post-card {
   position: relative;
 }
@@ -615,4 +603,16 @@
 
 .cancel-edit-btn:hover {
   background: #23272f;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: #323232;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }

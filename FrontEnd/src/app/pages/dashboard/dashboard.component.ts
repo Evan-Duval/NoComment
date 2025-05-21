@@ -14,8 +14,11 @@ import { UserService } from '../../services/user.service';
 })
 export class DashboardComponent implements OnInit {
   users: any[] = [];
+  userRank: string = 'user';
   latestPosts: any[] = [];
   latestComments: any[] = [];
+
+  notification: string = '';
 
   constructor(
     private userService: UserService,
@@ -25,6 +28,11 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
+    if (currentUser) {
+      this.userRank = currentUser.rank;
+    }
+
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         users.map((user: any) => {
@@ -60,6 +68,34 @@ export class DashboardComponent implements OnInit {
         this.latestComments = comments
       },
       error: () => this.latestComments = []
+    });
+  }
+
+  handleDeletePost(postId: number) {
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.notification = 'Post supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  handleDeleteComment(commentId: number) {
+    this.commentService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.notification = 'Commentaire supprimé avec succès !';
+        window.location.reload();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du commentaire.';
+        setTimeout(() => this.notification = '', 3000);
+      }
     });
   }
 }
