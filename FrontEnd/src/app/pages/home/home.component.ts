@@ -90,15 +90,19 @@ export class HomeComponent implements OnInit {
     });
   };
 
-  redirectToGroup(groupId: number): void {
+  redirectToGroups() {
+    this.router.navigate(['/groups'])
+  }
+
+  redirectToGroup(groupId: number) {
     this.router.navigate(['/groups/view', groupId]);
   }
 
-  redirectToCreate(): void {
+  redirectToCreate() {
     this.router.navigate(['/groups/create']);
   }
 
-  onSearchChange(): void {
+  onSearchChange() {
     if (this.searchQuery.trim() === '') {
       this.filteredGroups = this.groups;
     } else {

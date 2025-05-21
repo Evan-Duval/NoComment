@@ -66,6 +66,7 @@ export class ProfilComponent {
         },
         error: () => {
           this.isLoading = false;
+          this.router.navigate(['/accueil'])
         }
       });
     }

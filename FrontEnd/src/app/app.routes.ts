@@ -15,7 +15,6 @@ import { GroupViewComponent } from './pages/groups/group-view/group-view.compone
 // Pages :
 import { HomeComponent } from './pages/home/home.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { ModerationViewComponent } from './pages/moderation-view/moderation-view.component';
 
 export const routes: Routes = [
   // Redirection de base : 
@@ -29,7 +28,6 @@ export const routes: Routes = [
   { path: 'accueil', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent },
   // { path: 'certification-form', component: HomeComponent },
-  // { path: 'moderation-view', component: ModerationViewComponent },
   { path: 'profil/:id', component: ProfilComponent },
   
   // Groups:

@@ -148,6 +148,20 @@
     color: #6B7280;
   }
 
+  .more-groups {
+    text-align: center;
+    color: #60a5fa;
+    font-weight: 500;
+    padding: 6px 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s;
+    margin-bottom: 1rem;
+  }
+  .more-groups:hover {
+    background: #23272f;
+  }
+
   .no-results {
     color: #6c757d;
     font-size: 0.9rem;
