@@ -122,23 +122,35 @@ class PostController extends Controller
         try {
             $post = Post::findOrFail($id);
 
-            $validated = $request->validate([
-                'title' => 'sometimes|required|string|max:255',
-                'text' => 'sometimes|required|string',
-                'media' => 'nullable|string',
-                'location' => 'nullable|string',
-                'datetime' => 'sometimes|required|date',
-                'id_user' => 'sometimes|required|exists:users,id',
-                'id_group' => 'nullable|exists:groups,id_group', // Assure-toi que c’est bien id_group dans la table
-            ]);
+            // Liste des champs modifiables
+            $fields = [
+                'title',
+                'text',
+                'media',
+                'location',
+                'datetime',
+                'id_user',
+                'id_group'
+            ];
 
-            $post->update($validated);
+            $updated = false;
 
-            return response()->json($post, 200);
+            // On ne modifie que les champs présents dans la requête
+            foreach ($fields as $field) {
+                if ($request->filled($field)) { // filled() vérifie aussi que ce n'est pas null
+                    $post->$field = $request->$field;
+                    $updated = true;
+                }
+            }
+
+            if ($updated) {
+                $post->save();
+                return response()->json($post, 200);
+            } else {
+                return response()->json(['message' => 'Aucune donnée à mettre à jour.'], 400);
+            }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Post non trouvé'], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }

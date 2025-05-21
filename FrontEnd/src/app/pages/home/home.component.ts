@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   groups: any[] = [];
   userToken: string | null = localStorage.getItem('token');
   userId: number = 0;
+  userRank: string = 'user';
   showCreateButton: boolean = false;
   filteredGroups: any[] = [];
   searchQuery: string = '';
@@ -27,6 +28,8 @@ export class HomeComponent implements OnInit {
   postData: any
   isConnected: boolean = false;
   likeCooldowns: { [postId: number]: number } = {};
+
+  notification: string = '';
 
   constructor(
     private groupService: GroupService,
@@ -41,6 +44,7 @@ export class HomeComponent implements OnInit {
     const currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null;
     if (currentUser) {
       this.userId = currentUser.id!;
+      this.userRank = currentUser.rank
       this.isConnected = true;
       this.loadGroups();
       this.loadLastPosts();
@@ -110,6 +114,34 @@ export class HomeComponent implements OnInit {
         group.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
+  }
+
+  editPost(postId: number) {
+    this.postService.updatePost(postId).subscribe({
+      next: () => {
+        this.notification = 'Post modifié avec succès !';
+        this.loadLastPosts();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la modification du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
+  }
+
+  deletePost(postId: number) {
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.notification = 'Post supprimé avec succès !';
+        this.loadLastPosts();
+        setTimeout(() => this.notification = '', 3000);
+      },
+      error: () => {
+        this.notification = 'Erreur lors de la suppression du post.';
+        setTimeout(() => this.notification = '', 3000);
+      }
+    });
   }
 }
 

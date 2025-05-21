@@ -31,4 +31,18 @@ export class PostService {
   createPost(postData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, postData)
   }
+
+  updatePost(postId: number):Observable<any> {
+    const headers = this.getHeaders()
+    const newPostData = {
+      "title": "Post Caché", 
+      "text": "Le contenu de ce post est caché car en vérification par l'un de nos modérateurs",
+    }
+    return this.http.put(`${this.apiUrl}/update/${postId}`, { newPostData }, { headers })
+  }
+
+  deletePost(postId: number):Observable<any> {
+    const headers = this.getHeaders()
+    return this.http.delete(`${this.apiUrl}/delete/${postId}`, { headers })
+  }
 }
