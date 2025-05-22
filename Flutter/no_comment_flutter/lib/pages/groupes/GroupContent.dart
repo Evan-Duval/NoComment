@@ -1,12 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 import 'package:no_comment_flutter/config/config.dart';
 import 'package:no_comment_flutter/models/Post.dart';
 import 'package:no_comment_flutter/pages/groupes/CreatePost.dart';
 import 'package:no_comment_flutter/widget/post_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'GroupService.dart';
+import 'PostService.dart';
 
 class GroupContent extends StatefulWidget {
   final Map<String, dynamic> group;
@@ -23,184 +24,54 @@ class _GroupContentState extends State<GroupContent> {
   bool isLoadingPosts = true;
   List<Post> posts = [];
 
+  late SharedPreferences prefs;
   late String apiUrl;
 
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {});
+    _init();
+  }
+
+  Future<void> _init() async {
+    prefs = await SharedPreferences.getInstance();
     apiUrl = dotenv.env['URL'] ?? '';
-    _checkIfFollowing();
-    _loadPosts();
+
+    setState(() => isLoading = true);
+    try {
+      isFollowing = await GroupService.checkIfFollowing(
+          apiUrl, prefs, widget.group['id_group']);
+      posts =
+          await PostService.fetchPosts(apiUrl, prefs, widget.group['id_group']);
+    } catch (e) {
+      print('Erreur init: $e');
+    }
+    setState(() {
+      isLoading = false;
+      isLoadingPosts = false;
+    });
   }
 
   Future<void> _loadPosts() async {
     setState(() => isLoadingPosts = true);
     try {
-      final fetchedPosts = await _fetchPosts(widget.group['id_group']);
-      setState(() {
-        posts = fetchedPosts;
-        isLoadingPosts = false;
-      });
+      posts =
+          await PostService.fetchPosts(apiUrl, prefs, widget.group['id_group']);
     } catch (e) {
       print('Erreur lors du chargement des posts: $e');
-      setState(() => isLoadingPosts = false);
     }
-  }
-
-  Future<void> _checkIfFollowing() async {
-    setState(() => isLoading = true);
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-
-      if (token == null) {
-        throw Exception('Token non trouvé');
-      }
-
-      final response = await http.get(
-        Uri.parse(
-            '$apiUrl' 'api/groups/${widget.group['id_group']}/follow-status'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          isFollowing = data['is_following'] ?? false;
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Erreur API status follow: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Erreur _checkIfFollowing: $e');
-      setState(() => isLoading = false);
-    }
+    setState(() => isLoadingPosts = false);
   }
 
   Future<void> _toggleFollow() async {
     setState(() => isLoading = true);
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-
-      if (token == null) {
-        throw Exception('Token non trouvé');
-      }
-
-      final response = await http.post(
-        Uri.parse(
-            '$apiUrl' 'api/groups/${widget.group['id_group']}/toggle-follow'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          isFollowing = data['following'] ?? false;
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Erreur API toggle follow: ${response.statusCode}');
-      }
+      isFollowing = await GroupService.toggleFollow(
+          apiUrl, prefs, widget.group['id_group']);
     } catch (e) {
       print('Erreur _toggleFollow: $e');
-      setState(() => isLoading = false);
     }
-  }
-
-  Future<List<Post>> _fetchPosts(int groupId) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-
-      if (token == null) {
-        throw Exception('Token non trouvé');
-      }
-
-      final response = await http.get(
-        Uri.parse('$apiUrl' 'api/posts/getByGroup/$groupId'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> postData = jsonDecode(response.body);
-        return postData.map((json) => Post.fromJson(json)).toList();
-      } else {
-        throw Exception(
-            'Erreur lors de la récupération des posts: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Erreur _fetchPosts: $e');
-      return [];
-    }
-  }
-
-  // Récupère l'id de l'utilisateur depuis SharedPreferences
-  Future<int?> _getCurrentUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('id');
-  }
-
-  Future<void> _addLike(int postId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    final userId = await _getCurrentUserId();
-
-    if (token == null || userId == null)
-      throw Exception('Token ou userId non trouvé');
-
-    final response = await http.post(
-      Uri.parse('$apiUrl' 'api/likes/addLike'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'id_user': userId,
-        'id_post': postId,
-      }),
-    );
-
-    if (response.statusCode != 201) {
-      throw Exception(
-          'Erreur lors de l\'ajout du like: ${response.statusCode}');
-    }
-  }
-
-  Future<void> _removeLike(int postId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    final userId = await _getCurrentUserId();
-
-    if (token == null || userId == null)
-      throw Exception('Token ou userId non trouvé');
-
-    final response = await http.delete(
-      Uri.parse('$apiUrl' 'api/likes/removePostLike/$postId'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'id_user': userId}),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception(
-          'Erreur lors de la suppression du like: ${response.statusCode}');
-    }
+    setState(() => isLoading = false);
   }
 
   Future<void> _toggleLike(int postId) async {
@@ -211,7 +82,6 @@ class _GroupContentState extends State<GroupContent> {
       final post = posts[index];
       final currentlyLiked = post.isLiked ?? false;
 
-      // Mise à jour locale immédiate
       setState(() {
         posts[index] = post.copyWith(
           isLiked: !currentlyLiked,
@@ -221,16 +91,13 @@ class _GroupContentState extends State<GroupContent> {
         );
       });
 
-      // Envoi requête réseau
       if (currentlyLiked) {
-        await _removeLike(postId);
+        await PostService.removeLike(apiUrl, prefs, postId);
       } else {
-        await _addLike(postId);
+        await PostService.addLike(apiUrl, prefs, postId);
       }
     } catch (e) {
       print('Erreur _toggleLike: $e');
-
-      // En cas d’erreur, reload les posts (ou revert localement)
       await _loadPosts();
     }
   }
@@ -238,7 +105,7 @@ class _GroupContentState extends State<GroupContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF17202A),
+      backgroundColor: Config.colors.backgroundColor,
       appBar: AppBar(
         title: Text(widget.group['name'] ?? 'Groupe'),
         titleTextStyle: const TextStyle(

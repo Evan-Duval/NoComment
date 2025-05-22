@@ -52,21 +52,30 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         backgroundColor: Config.colors.second_backgroundColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-        child: ListView(
-          children: [
-            _buildStyledContainer('Nom d\'utilisateur', _username),
-            _buildStyledContainer('Email', _email),
-            _buildStyledContainer('Bio', _bio),
-            _buildStyledContainer('Prénom', _firstName),
-            _buildStyledContainer('Nom', _lastName),
-            _buildStyledContainer('Date de naissance', _birthday),
-            _buildStyledContainer('Logo', _logo),
-            _buildStyledContainer(
-                'Certifié', _certified != null && _certified! ? 'Oui' : 'Non'),
-          ],
-        ),
+      body: Column(
+        children: [
+          Container(
+            height: 1,
+            color: Colors.white,
+            width: double.infinity,
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                _buildStyledContainer('Nom d\'utilisateur', _username),
+                _buildStyledContainer('Email', _email),
+                _buildStyledContainer('Bio', _bio),
+                _buildStyledContainer('Prénom', _firstName),
+                _buildStyledContainer('Nom', _lastName),
+                _buildStyledContainer('Date de naissance', _birthday),
+                _buildStyledContainer('Logo', _logo),
+                _buildStyledContainer('Certifié',
+                    _certified != null && _certified! ? 'Oui' : 'Non'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

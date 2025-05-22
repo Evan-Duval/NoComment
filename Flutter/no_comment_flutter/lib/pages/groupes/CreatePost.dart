@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
+import 'package:no_comment_flutter/config/config.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -27,7 +27,7 @@ class _CreatePostState extends State<CreatePost> {
   final TextEditingController _textController = TextEditingController();
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false; // Indicateur de chargement
+  bool _isLoading = false;
 
   final loc.Location location = loc.Location();
   double? latitude;
@@ -44,7 +44,6 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   void dispose() {
-    // Libérer les ressources des contrôleurs pour éviter les fuites de mémoire
     _titleController.dispose();
     _textController.dispose();
     super.dispose();
@@ -127,8 +126,7 @@ class _CreatePostState extends State<CreatePost> {
       final savedImage = await File(pickedFile.path).copy(savedPath);
 
       setState(() {
-        _imageFile =
-            savedImage; // Mise à jour de l'état avec l'image sélectionnée
+        _imageFile = savedImage;
       });
     } catch (e) {
       print('Erreur lors de la prise de photo: $e');
@@ -142,22 +140,46 @@ class _CreatePostState extends State<CreatePost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Créer un post'),
+        backgroundColor: Config.colors.backgroundColor,
+        title: Text(
+          'Créer un post',
+          style: TextStyle(
+            color: Config.colors.primaryColor,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: Config.colors.second_backgroundColor,
+        ),
       ),
+      backgroundColor: Config.colors.backgroundColor,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(25.0),
               child: Form(
                 key: _formKey,
                 child: ListView(
-                  // ListView pour éviter overflow avec clavier et image
                   children: [
+                    const SizedBox(height: 20),
                     TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: _titleController,
                       decoration: const InputDecoration(
                         labelText: 'Titre',
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -168,9 +190,15 @@ class _CreatePostState extends State<CreatePost> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: _textController,
                       decoration: const InputDecoration(
                         labelText: 'Contenu',
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                        ),
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 5,
@@ -185,7 +213,15 @@ class _CreatePostState extends State<CreatePost> {
                     ElevatedButton.icon(
                       onPressed: _pickImageFromCamera,
                       icon: const Icon(Icons.camera_alt),
-                      label: const Text('Prendre une photo'),
+                      label: const Text(
+                        'Prendre une photo',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
                     ),
                     if (_imageFile != null)
                       Padding(
@@ -209,10 +245,11 @@ class _CreatePostState extends State<CreatePost> {
                     ElevatedButton(
                       onPressed: _isLoading ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: Config.colors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text('Publier le post'),
+                      child: const Text('Publier le post',
+                          style: TextStyle(color: Colors.black)),
                     ),
                     const SizedBox(height: 20),
                     if (city != null ||
@@ -242,7 +279,7 @@ class _CreatePostState extends State<CreatePost> {
       // Récupération des données
       final title = _titleController.text.trim();
       final text = _textController.text.trim();
-      final dateTime = DateTime.now().toIso8601String();
+      final datetime = DateTime.now().toIso8601String();
 
       // Récupération des infos utilisateur
       final prefs = await SharedPreferences.getInstance();
@@ -263,7 +300,7 @@ class _CreatePostState extends State<CreatePost> {
       request.fields['text'] = text;
       request.fields['id_group'] = widget.groupId.toString();
       request.fields['id_user'] = userId.toString();
-      request.fields['datetime'] = dateTime;
+      request.fields['datetime'] = datetime;
       request.fields['location'] = administrativeArea ?? 'Inconnue';
 
       Future<String?> _uploadImageToSupabase(File imageFile) async {
@@ -272,10 +309,10 @@ class _CreatePostState extends State<CreatePost> {
 
           final fileBytes = await imageFile.readAsBytes();
           final fileName = 'post_${DateTime.now().millisecondsSinceEpoch}.jpg';
-          final filePath = '/$fileName'; // Chemin dans le bucket
+          final filePath = '/$fileName';
 
           final response = await supabase.storage
-              .from('nocomment') // ← Nom de ton bucket
+              .from('nocomment')
               .uploadBinary(filePath, fileBytes,
                   fileOptions: const FileOptions(
                     contentType: 'image/jpeg',

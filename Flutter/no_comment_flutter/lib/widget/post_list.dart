@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:no_comment_flutter/models/Post.dart'; // Import modèle Post
+import 'package:no_comment_flutter/models/Post.dart';
 
 class PostList extends StatelessWidget {
   final List<Post> posts;
@@ -66,7 +66,7 @@ class PostList extends StatelessWidget {
                         const TextStyle(color: Colors.white70, fontSize: 16)),
                 const SizedBox(height: 10),
                 Text(
-                    'Posté par ${post.userName ?? 'Anonyme'} le ${post.dateTime.toLocal()} en ${post.location ?? 'Inconnu'}',
+                    'Posté par ${post.username ?? 'Anonyme'} le ${post.datetime.toLocal()} en ${post.location ?? 'Inconnu'}',
                     style:
                         const TextStyle(color: Colors.white38, fontSize: 12)),
                 const SizedBox(height: 10),
