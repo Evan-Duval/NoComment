@@ -24,6 +24,10 @@ class GroupService {
     }
   }
 
+  static Future<int?> getCurrentUserId(SharedPreferences prefs) async {
+    return prefs.getInt('id');
+  }
+
   static Future<bool> toggleFollow(
       String apiUrl, SharedPreferences prefs, int groupId) async {
     final token = prefs.getString('token');

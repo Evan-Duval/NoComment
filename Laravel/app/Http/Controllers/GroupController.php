@@ -11,25 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class GroupController extends Controller
 {
-    // 1. Créer un groupe
-
-    public function store(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'logo' => 'nullable|string|max:255',
-            ]);
-
-            $group = Group::create($validated);
-
-            return response()->json($group, 201);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => 'Validation échouée', 'messages' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
-        }
-    }
 
     public function getGroupById($groupId): JsonResponse
     {
@@ -75,7 +56,7 @@ class GroupController extends Controller
             'name' => 'required|string|max:20',
             'description' => 'required|string|max:255',
             'logo' => 'nullable|string',
-            // 'group_owner' => 'required|exists:users,id',
+            'group_owner' => 'required|exists:users,id',
         ]);
 
         // Créer le groupe avec le propriétaire
@@ -83,11 +64,11 @@ class GroupController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'logo' => $validatedData['logo'] ?? "default_logo.png",
-            // 'group_owner' => $validatedData['group_owner'],
+            'group_owner' => $validatedData['group_owner'],
         ]);
 
         // Ajouter le propriétaire du groupe à la table de jointure
-        // $group->users()->attach($validatedData['group_owner']);
+        $group->users()->attach($validatedData['group_owner']);
 
         return response()->json($group, 201);
     }
