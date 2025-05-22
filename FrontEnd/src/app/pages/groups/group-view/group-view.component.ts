@@ -101,6 +101,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         next: (data) => {
           if (!data) {
             this.globalErrorMessage = 'Aucun groupe trouvé avec cet ID.';
+            this.router.navigate(['/accueil']);
             return;
           }
           if (data.logo) {
@@ -113,6 +114,7 @@ export class GroupViewComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.globalErrorMessage = 'Erreur lors de la récupération du groupe';
           console.error('Erreur lors de la récupération du groupe', error);
+          this.router.navigate(['/accueil']);
           return;
         }
       });
