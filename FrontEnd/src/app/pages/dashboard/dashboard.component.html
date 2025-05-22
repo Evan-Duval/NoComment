@@ -1,0 +1,70 @@
+<!-- Affichage notification -->
+<div *ngIf="notification" class="notification">
+  {{ notification }}
+</div>
+    
+<h2>Utilisateurs de NoComment</h2>
+<table class="dashboard-table">
+  <thead>
+    <tr>
+      <th>Nom d'utilisateur</th>
+      <th>Bio</th>
+      <th>Date d'inscription</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.username }}</td>
+      <td>{{ user.bio }}</td>
+      <td>{{ user.created_at }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Derniers posts</h2>
+<table class="dashboard-table">
+  <thead>
+    <tr>
+      <th>Titre</th>
+      <th>Auteur</th>
+      <th>Date</th>
+      <th>Likes</th>
+      <th *ngIf="userRank === 'admin'">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let post of latestPosts">
+      <td>{{ post.title }}</td>
+      <td>{{ post.username }}</td>
+      <td>{{ post.datetime }}</td>
+      <td>{{ post.likesCount || post.likes || 0 }}</td>
+      <td *ngIf="userRank === 'admin'">
+        <button title="Supprimer le post" class="delete-btn" (click)="handleDeletePost(post.id)">🗑️</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Derniers commentaires</h2>
+<table class="dashboard-table">
+  <thead>
+    <tr>
+      <th>Commentaire</th>
+      <th>Auteur</th>
+      <th>Date</th>
+      <th>Likes</th>
+      <th *ngIf="userRank === 'admin'">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let comment of latestComments">
+      <td>{{ comment.text }}</td>
+      <td>{{ comment.username }}</td>
+      <td>{{ comment.datetime }}</td>
+      <td>{{ comment.likesCount || comment.likes || 0 }}</td>
+      <td *ngIf="userRank === 'admin'">
+        <button title="Supprimer le commentaire" class="delete-btn" (click)="handleDeleteComment(comment)">🗑️</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

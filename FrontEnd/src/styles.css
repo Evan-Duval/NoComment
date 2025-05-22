@@ -1,0 +1,168 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Quicksand, sans-serif;
+    color: #f5f5f5;
+    background-color: #17202A;
+}
+
+
+/* Login & Register */
+.login-container, .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #17202A;
+    padding: 20px;
+}
+
+.login-box, .register-box {
+    background: #333;
+    border: 1px solid #fff;
+    padding: 2rem;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.register-container .register-box h2, .login-container .login-box h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #FF5722;
+    font-family: 'Courier', monospace;
+}
+
+.register-container .register-box .form-grid, .login-container .login-box .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 1fr;
+    gap: 1rem;
+}
+
+.register-container .register-box .form-group, .login-container .login-box .form-group {
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.register-container .register-box .form-group:nth-child(odd) {
+    grid-column: 1;
+}
+
+.form-group:nth-child(even) {
+    grid-column: 3;
+}
+
+.register-container .register-box label, .login-container .login-box label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.register-container .register-box .form-group input[type="text"],
+.register-container .register-box .form-group input[type="email"],
+.register-container .register-box .form-group input[type="password"],
+.register-container .register-box .form-group input[type="date"],
+.login-container .login-box .form-group input[type="email"],
+.login-container .login-box .form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #444;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.register-container .register-box .form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.register-container .register-box .terms {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    margin-top: 2rem;
+}
+
+.register-container .register-box .submit-btn,
+.login-container .login-box .submit-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #FF5722;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+}
+
+.register-container .register-box .submit-btn:hover,
+.login-container .login-box .submit-btn:hover {
+    background-color: #e64a19;
+}
+
+.register-container .register-box .login-link,
+.login-container .login-box .register-link{
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.register-container .register-box .login-link a,
+.login-container .login-box .register-link a  {
+    color: #FF5722;
+    text-decoration: none;
+}
+
+.register-container .register-box .login-link a:hover,
+.login-container .login-box .register-link a:hover {
+    text-decoration: underline;
+}
+
+.register-container .register-box .error-message, .login-container .login-box .error-message {
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.register-container .register-box .error-message ul, .login-container .login-box .error-message ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.register-container .register-box .error-message li, .login-container .login-box .error-message li {
+    color: #FF0000;
+    margin-bottom: 0.5rem;
+}
+
+.success-message {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+
+/* Scrollbar styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1F2937;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4B5563;
+  }

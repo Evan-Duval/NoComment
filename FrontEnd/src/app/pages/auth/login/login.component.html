@@ -1,0 +1,41 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Connexion</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Afficher le message de succès -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="loginForm.invalid && loginForm.touched" class="error-message">
+        <ul>
+          <li *ngIf="loginForm.get('email')?.invalid">
+            L'email est requis et doit être valide.
+          </li>
+          <li *ngIf="loginForm.get('password')?.invalid">
+            Le mot de passe est requis et doit contenir au moins 12 caractères.
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" formControlName="email" placeholder="Votre email" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" formControlName="password" placeholder="Votre mot de passe" required>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="loginForm.invalid">Se connecter</button>
+      
+      <div class="register-link">
+        <p>Vous n'avez pas de compte ? <a routerLink="/register">S'inscrire</a></p>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="groups-container">
+    <div *ngIf="groups.length > 0; else noGroups">
+      <div *ngFor="let group of groups" class="group-card" (click)="redirectToGroup(group.id_group)">
+        <h3 class="group-title">{{ group.name }}</h3>
+        <p class="group-description">
+          {{ group.description || 'Aucune description disponible.' }}
+        </p>
+      </div>
+    </div>
+  
+    <ng-template #noGroups>
+      <p class="no-groups-text">Vous n'avez encore rejoint aucun groupe.</p>
+    </ng-template>
+  
+    <button class="creategroup-create-group-btn" (click)="redirectToCreate()">
+        Créer un nouveau groupe
+    </button>
+</div>
+  

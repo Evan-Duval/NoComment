@@ -1,0 +1,86 @@
+<div class="register-container">
+    <div class="register-box">
+        <h2>Formulaire d'Inscription</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <!-- Afficher le(s) message(s) d'erreur -->
+            <div *ngIf="registerForm.invalid && registerForm.touched" class="error-message">
+                <ul>
+                    <li *ngIf="registerForm.get('first_name')?.invalid">
+                        Le champ Prénom est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('last_name')?.invalid">
+                        Le champ Nom est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('email')?.invalid">
+                        Le champ Email est requis et doit être valide.
+                    </li>
+                    <li *ngIf="registerForm.get('birthday')?.invalid">
+                        Le champ Date de naissance est requis.
+                    </li>
+                    <li *ngIf="registerForm.get('password')?.invalid">
+                        Le champ Mot de passe est requis et doit contenir au moins 12 caractères.
+                    </li>
+                    <li *ngIf="registerForm.get('c_password')?.invalid || registerForm.hasError('passwordMismatch')">
+                        Le champ Confirmation du mot de passe est requis et doit être identique au champ Mot de passe.
+                    </li>
+                    <li *ngIf="registerForm.get('username')?.invalid">
+                        Le champ Pseudonyme est requis.
+                    </li>
+                </ul>
+            </div>
+            <!-- Afficher le message de succès -->
+            <div *ngIf="successMessage" class="success-message">
+                {{ successMessage }}
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="first_name">Prénom</label>
+                    <input type="text" formControlName="first_name" placeholder="Votre prénom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Nom</label>
+                    <input type="text" formControlName="last_name" placeholder="Votre nom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" formControlName="email" placeholder="Votre email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="birthday">Date de Naissance</label>
+                    <input type="date" formControlName="birthday" placeholder="Votre date de naissance" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" formControlName="password" placeholder="Votre mot de passe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="c_password">Confirmer le mot de passe</label>
+                    <input type="password" formControlName="c_password" placeholder="Confirmez votre mot de passe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Pseudonyme</label>
+                    <input type="text" formControlName="username" placeholder="Choisissez un pseudonyme" required>
+                </div>
+
+                <div class="form-group terms" style="grid-column: span 2;">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">J'accepte les conditions d'utilisations</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">S'inscrire</button>
+
+            <div class="login-link">
+                <p>Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+            </div>
+        </form>
+    </div>
+</div>

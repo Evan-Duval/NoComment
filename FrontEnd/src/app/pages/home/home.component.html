@@ -1,0 +1,98 @@
+<div class="main-content">
+
+    <!-- Affichage notification -->
+    <div *ngIf="notification" class="notification">
+      {{ notification }}
+    </div>
+    
+    <!-- Liste des posts -->
+    <div class="posts-section">
+
+        <div *ngIf="errorMessage" class="welcome-message">
+            <h1>{{errorMessage}}</h1>
+        </div>
+
+        <div *ngFor="let post of postData" class="post-card">
+            <div class="post-header">
+                <div>
+                    <span class="post-author">{{ post.username }}</span>
+                    <span class="post-timestamp">{{ post.datetime }}</span>
+                </div>
+                <span class ='post-location'>{{ post.location }}</span>
+            </div>
+
+            <h2 class="post-title">{{ post.title }}</h2>
+            <p class="post-text">{{ post.text }}</p>
+            <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
+
+            <!-- Ajoute ici le nom du groupe -->
+            <div class="post-group" *ngIf="post.groupName">
+                Groupe : <span class="group-name">{{ post.groupName }}</span>
+            </div>
+
+            <div class="post-actions">
+                <button
+                    class="action-button"
+                    [ngClass]="{ 'liked': post.isLiked }"
+                    [disabled]="true"
+                >
+                    ❤️ {{ post.likes || 0 }}
+                </button>
+                <button
+                    class="action-button comment-btn"
+                    [disabled]="true"
+                >
+                    💬 {{ post.commentsNumber || 0 }} commentaire{{ (post.commentsNumber || 0) > 1 ? 's' : '' }}
+                </button>
+
+                <div *ngIf="userRank == 'admin'" class="moderation-actions">
+                    <button
+                        class="edit-btn"
+                        (click)="handlePostVerification(post.id)"
+                        title="Vérifier le post"
+                    >
+                        ❓
+                    </button>
+                    <button
+                        class="delete-btn"
+                        (click)="handleDeletePost(post.id)"
+                        title="Supprimer le post"
+                    >
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel à droite pour les groupes -->
+    <div class="groups-sidebar">
+      <input 
+        type="text" 
+        class="searchBar" 
+        placeholder="Rechercher une personne" 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearchChange()"
+      >
+        <h2 class="groups-title">Vos groupes</h2>
+        <div *ngIf="filteredGroups.length > 0; else noResults">
+            <div *ngFor="let group of filteredGroups | slice:0:4" (click)="redirectToGroup(group.id_group)" class="group-item">
+                <img [src]="group.logoUrl" class="group-image" alt="{{ group.name }}">
+                <div>
+                    <h3 class="group-name">{{ group.name }}</h3>
+                    <p class="group-activity">{{ group.lastActivity }}</p>
+                </div>
+            </div>
+            <li *ngIf="filteredGroups.length > 4" class="more-groups" (click)="redirectToGroups()">
+                +{{ filteredGroups.length -4 }} autre(s)
+            </li>
+        </div>
+
+        <ng-template #noResults>
+            <p class="no-results">Aucun groupe trouvé.</p>
+        </ng-template>
+
+        <!-- Bouton pour créer un nouveau groupe -->
+         <button class="create-group-button" (click)="redirectToCreate()">Créer un nouveau groupe</button>
+    </div>
+</div>

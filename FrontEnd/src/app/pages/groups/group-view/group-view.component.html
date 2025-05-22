@@ -1,0 +1,285 @@
+<div class="main-content">
+
+    <!-- Liste des posts -->
+    <div class="posts-section">
+
+      <div class="group-header">
+        <img [src]="groupData.logoUrl" class="group-image" alt="Groupe">
+      
+        <div class="group-info">
+          <div class="group-header-top">
+            <h1 class="group-title">{{ groupData.name || "Inconnu" }}</h1>
+            <button
+              class="join-group-button"
+              (click)="toggleFollowGroup()"
+              [disabled]="hasJoinedGroup || !isConnected">
+              <span *ngIf="hasJoinedGroup">Rejoint ✔</span>
+              <span *ngIf="!hasJoinedGroup">Rejoindre le groupe</span>
+            </button>
+          </div>
+          <h2 class="group-description">{{ groupData.description || "Inconnu" }}</h2>
+        </div>
+      </div>
+
+      <div *ngIf="globalErrorMessage">
+        {{ globalErrorMessage }}
+      </div>
+      <!-- Bouton de toggle pour afficher/masquer le formulaire -->
+      <button (click)="toggleCreatePost()" class="toggle-post-button" *ngIf="isConnected && hasJoinedGroup">
+        <span>{{ showCreatePost ? 'Masquer le formulaire' : 'Créer un nouveau post' }}</span>
+        <span [ngClass]="{ 'arrow-up': showCreatePost, 'arrow-down': !showCreatePost }">▼</span>
+      </button>
+
+      <!-- Zone de création de post -->
+      <div class="create-post-section" *ngIf="showCreatePost && isConnected && hasJoinedGroup">
+        <h2>Créer un nouveau post</h2>
+        
+        <input type="text" [(ngModel)]="newPost.title" class="input-title" placeholder="Titre du post">
+        
+        <textarea [(ngModel)]="newPost.text" class="input-text" placeholder="Contenu du post"></textarea>
+        
+        <input type="file" (change)="onMediaSelected($event)" accept="image/*,video/*" class="input-media">
+        <!-- Prévisualisation du média -->
+        <div class="media-preview" *ngIf="mediaPreviewUrl">
+          <img *ngIf="isImage" [src]="mediaPreviewUrl" alt="Aperçu de l'image" class="preview-image">
+          <video *ngIf="!isImage" [src]="mediaPreviewUrl" controls class="preview-video"></video>
+        </div>
+        
+        <input type="text" [(ngModel)]="newPost.location" class="input-location" placeholder="Lieu">
+        
+        <!-- Message d'erreur -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        
+        <button (click)="submitPost()" class="submit-post-button">Publier</button>
+      </div>
+      <div *ngIf="showCreatePost && (!isConnected || !hasJoinedGroup)" class="info-message">
+        Vous devez être membre du groupe et connecté pour publier un post.
+      </div>
+
+      <div *ngFor="let post of postData" class="post-card">
+        <!-- === Header du post === -->
+        <div class="post-header">
+          <div class="post-header-main">
+            <span class="post-author">{{ post.username }}</span>
+            <span class="post-timestamp">{{ post.datetime }}</span>
+          </div>
+          <div class="post-header-right">
+            <button
+              *ngIf="post.id_user === userId"
+              class="edit-btn"
+              (click)="handleStartEditPost(post)"
+              title="Modifier le post"
+            >✏️</button>
+            <span class="post-location">{{ post.location }}</span>
+          </div>
+        </div>
+
+        <!-- === Vue édition === -->
+        <div *ngIf="editPostId === post.id; else postView">
+          <input
+            class="edit-input-title"
+            [(ngModel)]="editPostData.title"
+            placeholder="Titre du post"
+            maxlength="100"
+          />
+          <textarea
+            class="edit-input-text"
+            [(ngModel)]="editPostData.text"
+            placeholder="Contenu du post"
+            rows="4"
+            maxlength="1000"
+          ></textarea>
+          <input
+            class="edit-input-location"
+            [(ngModel)]="editPostData.location"
+            placeholder="Lieu"
+            maxlength="100"
+          />
+          <div class="edit-actions">
+            <button class="submit-post-button" (click)="handleConfirmEditPost(post)">Enregistrer</button>
+            <button class="cancel-edit-btn" (click)="handleCancelEditPost()">Annuler</button>
+          </div>
+          <div *ngIf="editErrorMessage" class="error-message">{{ editErrorMessage }}</div>
+        </div>
+
+        <!-- === Vue normale === -->
+        <ng-template #postView>
+          <div class="post-content">
+            <h2 class="post-title">{{ post.title }}</h2>
+            <p class="post-text">{{ post.text }}</p>
+            <img *ngIf="post.media" [src]="post.media" alt="Post media" class="post-media">
+          </div>
+          <div class="post-actions">
+            <button
+              class="action-button"
+              [ngClass]="{ 'liked': post.isLiked }"
+              (click)="onLikeButtonDown(post)"
+              [disabled]="!isConnected || !hasJoinedGroup"
+            >
+              ❤️ {{ post.likes || 0 }}
+            </button>
+            <button
+              class="action-button comment-btn"
+              [disabled]="!isConnected || !hasJoinedGroup"
+              (click)="openCommentsPopup(post)"
+            >
+              💬 {{ post.commentsNumber || 0 }} commentaire{{ (post.commentsNumber || 0) > 1 ? 's' : '' }}
+            </button>
+            <div *ngIf="userRank == 'admin'" class="moderation-actions">
+              <button
+                class="edit-btn"
+                (click)="handlePostVerification(post.id)"
+                title="Vérifier le post"
+              >❓</button>
+              <button
+                class="delete-btn"
+                (click)="handleDeletePost(post.id)"
+                title="Supprimer le post"
+              >🗑️</button>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+
+       <div *ngIf="!postData || postData.length === 0" class="empty-state">
+        Ce groupe ne contient aucun post pour le moment !
+      </div>
+
+    </div>
+  
+    <!-- Sidebar des membres -->
+    <div class="groups-sidebar">
+      <input 
+        type="text" 
+        class="searchBar" 
+        placeholder="Rechercher une personne" 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearchChange()"
+      >
+      <h2 class="members-title">
+        Membres
+        <button 
+          *ngIf="hasJoinedGroup" 
+          class="leave-group-button" 
+          (click)="toggleFollowGroup()">
+          Quitter le groupe
+        </button>
+      </h2>
+      <div *ngIf="filteredMembers.length > 0; else noResults">
+        <div *ngFor="let member of filteredMembers" class="member-item" (click)="redirectToUserProfile(member.id)">
+          <img [src]="'https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png'" class="member-image" alt="{{ member.username }}">
+          <div>
+            <h3 class="member-name">
+              {{ member.username }}
+              <img *ngIf="member.certified" [src]="'certified.png'" class="certified-badge" title="Compte certifié">
+            </h3>
+            <p class="member-activity">{{ member.lastActivity }}</p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noResults>
+        <p class="no-results">Aucun membre trouvé.</p>
+      </ng-template>
+    </div>
+
+    <!-- Popup commentaires -->
+    <div class="comments-popup" *ngIf="showCommentsPopup">
+      <div class="popup-overlay" (click)="closeCommentsPopup()"></div>
+      <div class="popup-content">
+        <button class="close-btn" (click)="closeCommentsPopup()">✖</button>
+        <div class="popup-post post-card">
+          <div class="post-header">
+            <div>
+              <span class="post-author">{{ selectedPost?.username }}</span>
+              <span class="post-timestamp">{{ selectedPost?.datetime }}</span>
+            </div>
+            <span class="post-location">{{ selectedPost?.location }}</span>
+          </div>
+          <h2 class="post-title">{{ selectedPost?.title }}</h2>
+          <p class="post-text">{{ selectedPost?.text }}</p>
+          <button
+            class="action-button"
+            [ngClass]="{ 'liked': selectedPost.isLiked }"
+            (click)="onLikeButtonDown(selectedPost)"
+            [disabled]="!isConnected || !hasJoinedGroup"
+          >
+            ❤️ {{ selectedPost.likes || 0 }}
+          </button>
+        </div>
+        <div class="popup-comments">
+          <h3>Commentaires</h3>
+          <div *ngIf="comments.length > 0; else noComments">
+            <div *ngFor="let comment of comments" class="comment-item">
+              <div *ngIf="editCommentId === comment.id_comment; else commentView">
+                <textarea
+                  class="edit-input-text"
+                  [(ngModel)]="editCommentData.text"
+                  placeholder="Modifier le commentaire"
+                  rows="3"
+                  maxlength="1000"
+                ></textarea>
+                <div class="edit-actions">
+                  <button class="submit-post-button" (click)="handleConfirmEditComment(comment)">Enregistrer</button>
+                  <button class="cancel-edit-btn" (click)="handleCancelEditComment()">Annuler</button>
+                </div>
+                <div *ngIf="editCommentErrorMessage" class="error-message">{{ editCommentErrorMessage }}</div>
+              </div>
+              <ng-template #commentView>
+                <div class="comment-header">
+                  <div class="comment-header-main">
+                    <span class="comment-author">{{ comment.author || 'Utilisateur' }}</span>
+                    <span class="comment-timestamp">{{ comment.datetime }}</span>
+                  </div>
+                  <div class="comment-header-right">
+                    <button
+                      *ngIf="comment.id_user === userId"
+                      class="edit-btn"
+                      (click)="handleStartEditComment(comment)"
+                      title="Modifier le commentaire"
+                    >✏️</button>
+                  </div>
+                </div>
+                <p class="comment-text">{{ comment.text }}</p>
+                <button
+                  class="action-button"
+                  [ngClass]="{ 'liked': comment.liked }"
+                  (click)="onLikeComment(comment)"
+                  [disabled]="!isConnected || !hasJoinedGroup"
+                  style="margin-top: 0.5rem;"
+                >
+                  ❤️ {{ comment.likes || 0 }}
+                </button>
+                <div *ngIf="userRank == 'admin'" class="moderation-actions">
+                  <button
+                    class="edit-btn"
+                    (click)="handleCommentVerification(comment.id_comment)"
+                    title="Vérifier le commentaire"
+                  >❓</button>
+                  <button
+                    class="delete-btn"
+                    (click)="handleDeleteComment(comment.id_comment)"
+                    title="Supprimer le commentaire"
+                  >🗑️</button>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <ng-template #noComments>
+            <p class="no-comments">Pas encore de commentaires, soyez le premier à en ajouter un !</p>
+          </ng-template>
+
+          <div *ngIf="isConnected && hasJoinedGroup" class="add-comment-section">
+            <textarea [(ngModel)]="newCommentText" placeholder="Ajouter un commentaire..."></textarea>
+            <button class="submit-post-button" (click)="addComment()" [disabled]="!newCommentText.trim()">Publier</button>
+          </div>
+
+          <div *ngIf="!isConnected || !hasJoinedGroup" class="info-message">
+            Vous devez être membre du groupe et connecté pour commenter.
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
